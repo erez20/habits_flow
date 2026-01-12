@@ -27,5 +27,11 @@ linter:
     # avoid_print: false  # Uncomment to disable the `avoid_print` rule
     # prefer_single_quotes: true  # Uncomment to enable the `prefer_single_quotes` rule
 
+    # This prevents you from reaching UP (e.g., ../../)
+    # but allows you to reach DOWN or stay level.
+    - avoid_relative_lib_imports
+
+    # Standard Flutter rules usually included in 'flutter_lints'
+    - prefer_relative_imports: false
 # Additional information about this file can be found at
 # https://dart.dev/guides/language/analysis-options
