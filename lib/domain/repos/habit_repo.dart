@@ -1,7 +1,7 @@
 import 'package:habits_flow/domain/entities/habit_entity.dart';
 import 'package:habits_flow/domain/responses/domain_response.dart';
 
-abstract class HabitsRepo {
+abstract class HabitRepo {
   Stream<DomainResponse<HabitEntity>> habitStream({required int id});
 
   Future<DomainResponse<HabitEntity>> createHabit({

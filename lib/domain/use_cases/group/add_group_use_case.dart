@@ -1,11 +1,11 @@
 import 'package:habits_flow/domain/entities/group_entity.dart';
 import 'package:habits_flow/domain/repos/group_repo.dart';
 import 'package:habits_flow/domain/responses/domain_response.dart';
-import 'package:habits_flow/domain/use_cases/base/get_use_case.dart';
+import 'package:habits_flow/domain/use_cases/base/exec_use_case.dart';
 import 'package:injectable/injectable.dart';
 
 @Injectable()
-class AddGroupUseCase extends GetUseCase<GroupEntity, AddGroupUseCaseParams> {
+class AddGroupUseCase extends ExecUseCase<GroupEntity, AddGroupUseCaseParams> {
   final GroupRepo groupRepo;
 
   AddGroupUseCase({required this.groupRepo});

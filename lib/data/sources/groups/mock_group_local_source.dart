@@ -1,4 +1,4 @@
-import 'package:habits_flow/data/sources/group_local_source.dart';
+import 'package:habits_flow/data/sources/groups/group_local_source.dart';
 import 'package:habits_flow/domain/entities/group_entity.dart';
 import 'package:injectable/injectable.dart';
 
@@ -21,5 +21,10 @@ class GroupLocalSourceMock extends GroupLocalSource {
         colorHex: colorHex,
       ),
     );
+  }
+
+  @override
+  Future<void> deleteGroup({required String groupId}) {
+    return Future.value();
   }
 }

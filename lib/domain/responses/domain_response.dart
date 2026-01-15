@@ -7,7 +7,7 @@ sealed class DomainResponse<T> {
 
   bool get isSuccess => this is Success<T>;
   bool get isFailure => this is Failure<T>;
-  bool get isLoading => this is Loading<T>;
+  // bool get isLoading => this is Loading<T>;
 }
 
 final class Success<T> extends DomainResponse<T> {
@@ -17,13 +17,13 @@ final class Success<T> extends DomainResponse<T> {
   const Success(this.data);
 }
 
-final class Loading<T> extends DomainResponse<T> {
-  /// The last known data
-  @override
-  final T? data;
-
-  const Loading({this.data});
-}
+// final class Loading<T> extends DomainResponse<T> {
+//   /// The last known data
+//   @override
+//   final T? data;
+//
+//   const Loading({this.data});
+// }
 
 final class Failure<T> extends DomainResponse<T> {
   final DomainError error;

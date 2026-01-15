@@ -11,8 +11,8 @@
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:get_it/get_it.dart' as _i174;
 import 'package:habits_flow/data/repos/group_repo_impl.dart' as _i38;
-import 'package:habits_flow/data/sources/group_local_source.dart' as _i110;
-import 'package:habits_flow/data/sources/mock_group_local_source.dart' as _i345;
+import 'package:habits_flow/data/sources/groups/group_local_source.dart' as _i110;
+import 'package:habits_flow/data/sources/groups/mock_group_local_source.dart' as _i345;
 import 'package:habits_flow/domain/repos/group_repo.dart' as _i136;
 import 'package:habits_flow/domain/use_cases/group/add_group_use_case.dart'
     as _i655;

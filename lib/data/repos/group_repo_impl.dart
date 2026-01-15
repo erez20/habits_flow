@@ -1,4 +1,4 @@
-import 'package:habits_flow/data/sources/group_local_source.dart';
+import 'package:habits_flow/data/sources/groups/group_local_source.dart';
 import 'package:habits_flow/domain/entities/group_entity.dart';
 import 'package:habits_flow/domain/entities/habit_entity.dart';
 import 'package:habits_flow/domain/repos/group_repo.dart';
@@ -48,7 +48,7 @@ class GroupRepoImpl extends GroupRepo {
         weight: weight,
         colorHex: colorHex,
       );
-      _updateMap(group);
+      _addToMap(group);
       _updateStream();
       return Success(group);
     } on Exception catch (e){
@@ -56,14 +56,19 @@ class GroupRepoImpl extends GroupRepo {
     }
   }
 
-  GroupEntity _updateMap(GroupEntity group) => _groupsMap[group.id] = group;
-
-
   @override
-  Future<DomainResponse<void>> deleteGroup({required String groupId}) {
-    // TODO: implement deleteGroup
-    throw UnimplementedError();
+  Future<DomainResponse<void>> deleteGroup({required String groupId}) async{
+    try {
+      await groupLocalSource.deleteGroup(groupId: groupId);
+      _removeFromMap(groupId);
+      _updateStream();
+      return Success(null);
+    } on Exception catch (e){
+      return Failure(error: DatabaseError(message: e.toString()));
+    }
+
   }
+
 
   @override
   Future<DomainResponse<void>> removeHabitFromGroup({
@@ -73,6 +78,10 @@ class GroupRepoImpl extends GroupRepo {
     // TODO: implement removeHabitFromGroup
     throw UnimplementedError();
   }
+
+  GroupEntity _addToMap(GroupEntity group) => _groupsMap[group.id] = group;
+
+  void _removeFromMap(String groupId) =>_groupsMap.remove(groupId);
 
   void _updateStream() => _groupsSubject.add(Map.unmodifiable(_groupsMap));
 

@@ -6,5 +6,7 @@ abstract class GroupLocalSource {
     required int weight,
     required String colorHex,
   });
+
+  Future<void> deleteGroup({required String groupId}) ;
 }
 
