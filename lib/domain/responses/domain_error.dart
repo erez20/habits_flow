@@ -11,6 +11,14 @@ final class NetworkError extends DomainError {
   String toString() => 'NetworkError(httpCode: $httpCode)';
 }
 
+final class DatabaseError extends DomainError {
+  final String? message;
+  const DatabaseError({this.message});
+
+  @override
+  String toString() => 'DatabaseError (message: $message)';
+}
+
 final class UnknownError extends DomainError {
   final String message;
   const UnknownError(this.message);

@@ -1,6 +1,14 @@
+
+
 import 'package:flutter/material.dart';
+import 'package:habits_flow/injection.dart';
+
+import 'domain/use_cases/group/add_group_use_case.dart';
+
+
 
 void main() {
+  configureDependencies();
   runApp(const MyApp());
 }
 
@@ -56,7 +64,12 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
 
-  void _incrementCounter() {
+  void _incrementCounter() async{
+    final useCase = getIt<AddGroupUseCase>();
+    final result = await useCase.exec(AddGroupUseCaseParams(title: "hello world", weight: 2, colorHex: "#ddd"));
+    print("---> ${result.data}");
+
+
     setState(() {
       // This call to setState tells the Flutter framework that something has
       // changed in this State, which causes it to rerun the build method below

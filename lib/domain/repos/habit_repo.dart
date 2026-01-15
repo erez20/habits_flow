@@ -5,11 +5,12 @@ abstract class HabitsRepo {
   Stream<DomainResponse<HabitEntity>> habitStream({required int id});
 
   Future<DomainResponse<HabitEntity>> createHabit({
-    required HabitEntity habit,
+    required String title,
+    required int weight,
   });
 
   Future<DomainResponse<void>> deleteHabit({
-    required HabitEntity habit,
+    required String habitId,
   });
 
   Future<DomainResponse<void>> incHabitCount({
