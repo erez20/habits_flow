@@ -17,6 +17,7 @@ class MockHabitLocalSource extends HabitLocalSource {
         title: title,
         weight: weight,
         completionCount: 0,
+        info: '',
       ),
     );
   }

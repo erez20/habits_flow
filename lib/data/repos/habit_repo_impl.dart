@@ -1,6 +1,7 @@
 import 'package:habits_flow/data/sources/habits/habit_local_source.dart';
 import 'package:habits_flow/domain/entities/habit_entity.dart';
 import 'package:habits_flow/domain/repos/habit_repo.dart';
+import 'package:habits_flow/domain/responses/domain_error.dart';
 import 'package:habits_flow/domain/responses/domain_response.dart';
 import 'package:injectable/injectable.dart';
 
@@ -11,9 +12,19 @@ class HabitRepoImpl extends HabitRepo {
   HabitRepoImpl({required this.habitsLocalSource});
 
   @override
-  Future<DomainResponse<HabitEntity>> createHabit({required String title, required int weight}) {
-    // TODO: implement createHabit
-    throw UnimplementedError();
+  Future<DomainResponse<HabitEntity>> createHabit({
+    required String title,
+    required int weight,
+  }) async {
+    try {
+      final habit = await habitsLocalSource.createHabit(
+        title: title,
+        weight: weight,
+      );
+      return Success(habit);
+    } on Exception catch (e) {
+      return Failure(error: DatabaseError(message: e.toString()));
+    }
   }
 
   @override
@@ -39,5 +50,4 @@ class HabitRepoImpl extends HabitRepo {
     // TODO: implement resetHabitCount
     throw UnimplementedError();
   }
-
 }
