@@ -10,16 +10,17 @@
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:get_it/get_it.dart' as _i174;
+import 'package:habits_flow/data/db/database.dart' as _i118;
 import 'package:habits_flow/data/repos/group_repo_impl.dart' as _i38;
 import 'package:habits_flow/data/repos/habit_repo_impl.dart' as _i375;
 import 'package:habits_flow/data/sources/groups/group_local_source.dart'
     as _i25;
-import 'package:habits_flow/data/sources/groups/mock_group_local_source.dart'
-    as _i465;
+import 'package:habits_flow/data/sources/groups/group_local_source_impl.dart'
+    as _i646;
 import 'package:habits_flow/data/sources/habits/habit_local_source.dart'
     as _i545;
-import 'package:habits_flow/data/sources/habits/mock_habit_local_source.dart'
-    as _i866;
+import 'package:habits_flow/data/sources/habits/habit_local_source_impl.dart'
+    as _i995;
 import 'package:habits_flow/domain/repos/group_repo.dart' as _i136;
 import 'package:habits_flow/domain/repos/habit_repo.dart' as _i877;
 import 'package:habits_flow/domain/use_cases/group/add_group_use_case.dart'
@@ -37,14 +38,17 @@ extension GetItInjectableX on _i174.GetIt {
     _i526.EnvironmentFilter? environmentFilter,
   }) {
     final gh = _i526.GetItHelper(this, environment, environmentFilter);
+    gh.singleton<_i118.AppDatabase>(() => _i118.AppDatabase());
     gh.lazySingleton<_i545.HabitLocalSource>(
-      () => _i866.MockHabitLocalSource(),
+      () => _i995.HabitLocalSourceImpl(gh<_i118.AppDatabase>()),
     );
     gh.lazySingleton<_i877.HabitRepo>(
       () =>
           _i375.HabitRepoImpl(habitsLocalSource: gh<_i545.HabitLocalSource>()),
     );
-    gh.factory<_i25.GroupLocalSource>(() => _i465.GroupLocalSourceMock());
+    gh.lazySingleton<_i25.GroupLocalSource>(
+      () => _i646.GroupLocalSourceImpl(gh<_i118.AppDatabase>()),
+    );
     gh.lazySingleton<_i136.GroupRepo>(
       () => _i38.GroupRepoImpl(groupLocalSource: gh<_i25.GroupLocalSource>()),
     );
