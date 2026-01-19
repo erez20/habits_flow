@@ -8,5 +8,12 @@ abstract class GroupLocalSource {
   });
 
   Future<void> deleteGroup({required String groupId}) ;
+
+  Future<void> addHabitToGroup({
+    required String groupId,
+    required String habitId,
+  });
+
+  Future<GroupEntity> getGroupWithHabits({required String groupId});
 }
 

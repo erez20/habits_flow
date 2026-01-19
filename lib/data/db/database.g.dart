@@ -397,7 +397,7 @@ class $HabitsTable extends Habits with TableInfo<$HabitsTable, Habit> {
     false,
     type: DriftSqlType.int,
     requiredDuringInsert: false,
-    defaultValue: const Constant(0),
+    defaultValue: const Constant(1),
   );
   static const VerificationMeta _createdAtMeta = const VerificationMeta(
     'createdAt',
@@ -756,12 +756,21 @@ class HabitsCompanion extends UpdateCompanion<Habit> {
   }
 }
 
-class $DailyHabitCompletionsTable extends DailyHabitCompletions
-    with TableInfo<$DailyHabitCompletionsTable, DailyHabitCompletion> {
+class $HabitPerformancesTable extends HabitPerformances
+    with TableInfo<$HabitPerformancesTable, HabitPerformance> {
   @override
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
-  $DailyHabitCompletionsTable(this.attachedDatabase, [this._alias]);
+  $HabitPerformancesTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
   static const VerificationMeta _habitIdMeta = const VerificationMeta(
     'habitId',
   );
@@ -776,39 +785,36 @@ class $DailyHabitCompletionsTable extends DailyHabitCompletions
       'REFERENCES habits (id)',
     ),
   );
-  static const VerificationMeta _dateMeta = const VerificationMeta('date');
+  static const VerificationMeta _performTimeMeta = const VerificationMeta(
+    'performTime',
+  );
   @override
-  late final GeneratedColumn<DateTime> date = GeneratedColumn<DateTime>(
-    'date',
+  late final GeneratedColumn<DateTime> performTime = GeneratedColumn<DateTime>(
+    'perform_time',
     aliasedName,
     false,
     type: DriftSqlType.dateTime,
     requiredDuringInsert: true,
   );
-  static const VerificationMeta _countMeta = const VerificationMeta('count');
   @override
-  late final GeneratedColumn<int> count = GeneratedColumn<int>(
-    'count',
-    aliasedName,
-    false,
-    type: DriftSqlType.int,
-    requiredDuringInsert: false,
-    defaultValue: const Constant(1),
-  );
-  @override
-  List<GeneratedColumn> get $columns => [habitId, date, count];
+  List<GeneratedColumn> get $columns => [id, habitId, performTime];
   @override
   String get aliasedName => _alias ?? actualTableName;
   @override
   String get actualTableName => $name;
-  static const String $name = 'daily_habit_completions';
+  static const String $name = 'habit_performances';
   @override
   VerificationContext validateIntegrity(
-    Insertable<DailyHabitCompletion> instance, {
+    Insertable<HabitPerformance> instance, {
     bool isInserting = false,
   }) {
     final context = VerificationContext();
     final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    } else if (isInserting) {
+      context.missing(_idMeta);
+    }
     if (data.containsKey('habit_id')) {
       context.handle(
         _habitIdMeta,
@@ -817,179 +823,178 @@ class $DailyHabitCompletionsTable extends DailyHabitCompletions
     } else if (isInserting) {
       context.missing(_habitIdMeta);
     }
-    if (data.containsKey('date')) {
+    if (data.containsKey('perform_time')) {
       context.handle(
-        _dateMeta,
-        date.isAcceptableOrUnknown(data['date']!, _dateMeta),
+        _performTimeMeta,
+        performTime.isAcceptableOrUnknown(
+          data['perform_time']!,
+          _performTimeMeta,
+        ),
       );
     } else if (isInserting) {
-      context.missing(_dateMeta);
-    }
-    if (data.containsKey('count')) {
-      context.handle(
-        _countMeta,
-        count.isAcceptableOrUnknown(data['count']!, _countMeta),
-      );
+      context.missing(_performTimeMeta);
     }
     return context;
   }
 
   @override
-  Set<GeneratedColumn> get $primaryKey => {habitId, date};
+  Set<GeneratedColumn> get $primaryKey => {id};
   @override
-  DailyHabitCompletion map(Map<String, dynamic> data, {String? tablePrefix}) {
+  HabitPerformance map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
-    return DailyHabitCompletion(
+    return HabitPerformance(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
       habitId: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}habit_id'],
       )!,
-      date: attachedDatabase.typeMapping.read(
+      performTime: attachedDatabase.typeMapping.read(
         DriftSqlType.dateTime,
-        data['${effectivePrefix}date'],
-      )!,
-      count: attachedDatabase.typeMapping.read(
-        DriftSqlType.int,
-        data['${effectivePrefix}count'],
+        data['${effectivePrefix}perform_time'],
       )!,
     );
   }
 
   @override
-  $DailyHabitCompletionsTable createAlias(String alias) {
-    return $DailyHabitCompletionsTable(attachedDatabase, alias);
+  $HabitPerformancesTable createAlias(String alias) {
+    return $HabitPerformancesTable(attachedDatabase, alias);
   }
 }
 
-class DailyHabitCompletion extends DataClass
-    implements Insertable<DailyHabitCompletion> {
+class HabitPerformance extends DataClass
+    implements Insertable<HabitPerformance> {
+  final String id;
   final String habitId;
-  final DateTime date;
-  final int count;
-  const DailyHabitCompletion({
+  final DateTime performTime;
+  const HabitPerformance({
+    required this.id,
     required this.habitId,
-    required this.date,
-    required this.count,
+    required this.performTime,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
     map['habit_id'] = Variable<String>(habitId);
-    map['date'] = Variable<DateTime>(date);
-    map['count'] = Variable<int>(count);
+    map['perform_time'] = Variable<DateTime>(performTime);
     return map;
   }
 
-  DailyHabitCompletionsCompanion toCompanion(bool nullToAbsent) {
-    return DailyHabitCompletionsCompanion(
+  HabitPerformancesCompanion toCompanion(bool nullToAbsent) {
+    return HabitPerformancesCompanion(
+      id: Value(id),
       habitId: Value(habitId),
-      date: Value(date),
-      count: Value(count),
+      performTime: Value(performTime),
     );
   }
 
-  factory DailyHabitCompletion.fromJson(
+  factory HabitPerformance.fromJson(
     Map<String, dynamic> json, {
     ValueSerializer? serializer,
   }) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
-    return DailyHabitCompletion(
+    return HabitPerformance(
+      id: serializer.fromJson<String>(json['id']),
       habitId: serializer.fromJson<String>(json['habitId']),
-      date: serializer.fromJson<DateTime>(json['date']),
-      count: serializer.fromJson<int>(json['count']),
+      performTime: serializer.fromJson<DateTime>(json['performTime']),
     );
   }
   @override
   Map<String, dynamic> toJson({ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
       'habitId': serializer.toJson<String>(habitId),
-      'date': serializer.toJson<DateTime>(date),
-      'count': serializer.toJson<int>(count),
+      'performTime': serializer.toJson<DateTime>(performTime),
     };
   }
 
-  DailyHabitCompletion copyWith({
+  HabitPerformance copyWith({
+    String? id,
     String? habitId,
-    DateTime? date,
-    int? count,
-  }) => DailyHabitCompletion(
+    DateTime? performTime,
+  }) => HabitPerformance(
+    id: id ?? this.id,
     habitId: habitId ?? this.habitId,
-    date: date ?? this.date,
-    count: count ?? this.count,
+    performTime: performTime ?? this.performTime,
   );
-  DailyHabitCompletion copyWithCompanion(DailyHabitCompletionsCompanion data) {
-    return DailyHabitCompletion(
+  HabitPerformance copyWithCompanion(HabitPerformancesCompanion data) {
+    return HabitPerformance(
+      id: data.id.present ? data.id.value : this.id,
       habitId: data.habitId.present ? data.habitId.value : this.habitId,
-      date: data.date.present ? data.date.value : this.date,
-      count: data.count.present ? data.count.value : this.count,
+      performTime: data.performTime.present
+          ? data.performTime.value
+          : this.performTime,
     );
   }
 
   @override
   String toString() {
-    return (StringBuffer('DailyHabitCompletion(')
+    return (StringBuffer('HabitPerformance(')
+          ..write('id: $id, ')
           ..write('habitId: $habitId, ')
-          ..write('date: $date, ')
-          ..write('count: $count')
+          ..write('performTime: $performTime')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode => Object.hash(habitId, date, count);
+  int get hashCode => Object.hash(id, habitId, performTime);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      (other is DailyHabitCompletion &&
+      (other is HabitPerformance &&
+          other.id == this.id &&
           other.habitId == this.habitId &&
-          other.date == this.date &&
-          other.count == this.count);
+          other.performTime == this.performTime);
 }
 
-class DailyHabitCompletionsCompanion
-    extends UpdateCompanion<DailyHabitCompletion> {
+class HabitPerformancesCompanion extends UpdateCompanion<HabitPerformance> {
+  final Value<String> id;
   final Value<String> habitId;
-  final Value<DateTime> date;
-  final Value<int> count;
+  final Value<DateTime> performTime;
   final Value<int> rowid;
-  const DailyHabitCompletionsCompanion({
+  const HabitPerformancesCompanion({
+    this.id = const Value.absent(),
     this.habitId = const Value.absent(),
-    this.date = const Value.absent(),
-    this.count = const Value.absent(),
+    this.performTime = const Value.absent(),
     this.rowid = const Value.absent(),
   });
-  DailyHabitCompletionsCompanion.insert({
+  HabitPerformancesCompanion.insert({
+    required String id,
     required String habitId,
-    required DateTime date,
-    this.count = const Value.absent(),
+    required DateTime performTime,
     this.rowid = const Value.absent(),
-  }) : habitId = Value(habitId),
-       date = Value(date);
-  static Insertable<DailyHabitCompletion> custom({
+  }) : id = Value(id),
+       habitId = Value(habitId),
+       performTime = Value(performTime);
+  static Insertable<HabitPerformance> custom({
+    Expression<String>? id,
     Expression<String>? habitId,
-    Expression<DateTime>? date,
-    Expression<int>? count,
+    Expression<DateTime>? performTime,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
+      if (id != null) 'id': id,
       if (habitId != null) 'habit_id': habitId,
-      if (date != null) 'date': date,
-      if (count != null) 'count': count,
+      if (performTime != null) 'perform_time': performTime,
       if (rowid != null) 'rowid': rowid,
     });
   }
 
-  DailyHabitCompletionsCompanion copyWith({
+  HabitPerformancesCompanion copyWith({
+    Value<String>? id,
     Value<String>? habitId,
-    Value<DateTime>? date,
-    Value<int>? count,
+    Value<DateTime>? performTime,
     Value<int>? rowid,
   }) {
-    return DailyHabitCompletionsCompanion(
+    return HabitPerformancesCompanion(
+      id: id ?? this.id,
       habitId: habitId ?? this.habitId,
-      date: date ?? this.date,
-      count: count ?? this.count,
+      performTime: performTime ?? this.performTime,
       rowid: rowid ?? this.rowid,
     );
   }
@@ -997,14 +1002,14 @@ class DailyHabitCompletionsCompanion
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
     if (habitId.present) {
       map['habit_id'] = Variable<String>(habitId.value);
     }
-    if (date.present) {
-      map['date'] = Variable<DateTime>(date.value);
-    }
-    if (count.present) {
-      map['count'] = Variable<int>(count.value);
+    if (performTime.present) {
+      map['perform_time'] = Variable<DateTime>(performTime.value);
     }
     if (rowid.present) {
       map['rowid'] = Variable<int>(rowid.value);
@@ -1014,10 +1019,10 @@ class DailyHabitCompletionsCompanion
 
   @override
   String toString() {
-    return (StringBuffer('DailyHabitCompletionsCompanion(')
+    return (StringBuffer('HabitPerformancesCompanion(')
+          ..write('id: $id, ')
           ..write('habitId: $habitId, ')
-          ..write('date: $date, ')
-          ..write('count: $count, ')
+          ..write('performTime: $performTime, ')
           ..write('rowid: $rowid')
           ..write(')'))
         .toString();
@@ -1029,8 +1034,8 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
   late final $GroupsTable groups = $GroupsTable(this);
   late final $HabitsTable habits = $HabitsTable(this);
-  late final $DailyHabitCompletionsTable dailyHabitCompletions =
-      $DailyHabitCompletionsTable(this);
+  late final $HabitPerformancesTable habitPerformances =
+      $HabitPerformancesTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -1038,7 +1043,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   List<DatabaseSchemaEntity> get allSchemaEntities => [
     groups,
     habits,
-    dailyHabitCompletions,
+    habitPerformances,
   ];
 }
 
@@ -1378,28 +1383,24 @@ final class $$HabitsTableReferences
     );
   }
 
-  static MultiTypedResultKey<
-    $DailyHabitCompletionsTable,
-    List<DailyHabitCompletion>
-  >
-  _dailyHabitCompletionsRefsTable(_$AppDatabase db) =>
+  static MultiTypedResultKey<$HabitPerformancesTable, List<HabitPerformance>>
+  _habitPerformancesRefsTable(_$AppDatabase db) =>
       MultiTypedResultKey.fromTable(
-        db.dailyHabitCompletions,
+        db.habitPerformances,
         aliasName: $_aliasNameGenerator(
           db.habits.id,
-          db.dailyHabitCompletions.habitId,
+          db.habitPerformances.habitId,
         ),
       );
 
-  $$DailyHabitCompletionsTableProcessedTableManager
-  get dailyHabitCompletionsRefs {
-    final manager = $$DailyHabitCompletionsTableTableManager(
+  $$HabitPerformancesTableProcessedTableManager get habitPerformancesRefs {
+    final manager = $$HabitPerformancesTableTableManager(
       $_db,
-      $_db.dailyHabitCompletions,
+      $_db.habitPerformances,
     ).filter((f) => f.habitId.id.sqlEquals($_itemColumn<String>('id')!));
 
     final cache = $_typedResult.readTableOrNull(
-      _dailyHabitCompletionsRefsTable($_db),
+      _habitPerformancesRefsTable($_db),
     );
     return ProcessedTableManager(
       manager.$state.copyWith(prefetchedData: cache),
@@ -1464,29 +1465,28 @@ class $$HabitsTableFilterComposer
     return composer;
   }
 
-  Expression<bool> dailyHabitCompletionsRefs(
-    Expression<bool> Function($$DailyHabitCompletionsTableFilterComposer f) f,
+  Expression<bool> habitPerformancesRefs(
+    Expression<bool> Function($$HabitPerformancesTableFilterComposer f) f,
   ) {
-    final $$DailyHabitCompletionsTableFilterComposer composer =
-        $composerBuilder(
-          composer: this,
-          getCurrentColumn: (t) => t.id,
-          referencedTable: $db.dailyHabitCompletions,
-          getReferencedColumn: (t) => t.habitId,
-          builder:
-              (
-                joinBuilder, {
-                $addJoinBuilderToRootComposer,
+    final $$HabitPerformancesTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.habitPerformances,
+      getReferencedColumn: (t) => t.habitId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$HabitPerformancesTableFilterComposer(
+            $db: $db,
+            $table: $db.habitPerformances,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
                 $removeJoinBuilderFromRootComposer,
-              }) => $$DailyHabitCompletionsTableFilterComposer(
-                $db: $db,
-                $table: $db.dailyHabitCompletions,
-                $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-                joinBuilder: joinBuilder,
-                $removeJoinBuilderFromRootComposer:
-                    $removeJoinBuilderFromRootComposer,
-              ),
-        );
+          ),
+    );
     return f(composer);
   }
 }
@@ -1596,23 +1596,23 @@ class $$HabitsTableAnnotationComposer
     return composer;
   }
 
-  Expression<T> dailyHabitCompletionsRefs<T extends Object>(
-    Expression<T> Function($$DailyHabitCompletionsTableAnnotationComposer a) f,
+  Expression<T> habitPerformancesRefs<T extends Object>(
+    Expression<T> Function($$HabitPerformancesTableAnnotationComposer a) f,
   ) {
-    final $$DailyHabitCompletionsTableAnnotationComposer composer =
+    final $$HabitPerformancesTableAnnotationComposer composer =
         $composerBuilder(
           composer: this,
           getCurrentColumn: (t) => t.id,
-          referencedTable: $db.dailyHabitCompletions,
+          referencedTable: $db.habitPerformances,
           getReferencedColumn: (t) => t.habitId,
           builder:
               (
                 joinBuilder, {
                 $addJoinBuilderToRootComposer,
                 $removeJoinBuilderFromRootComposer,
-              }) => $$DailyHabitCompletionsTableAnnotationComposer(
+              }) => $$HabitPerformancesTableAnnotationComposer(
                 $db: $db,
-                $table: $db.dailyHabitCompletions,
+                $table: $db.habitPerformances,
                 $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
                 joinBuilder: joinBuilder,
                 $removeJoinBuilderFromRootComposer:
@@ -1636,7 +1636,7 @@ class $$HabitsTableTableManager
           $$HabitsTableUpdateCompanionBuilder,
           (Habit, $$HabitsTableReferences),
           Habit,
-          PrefetchHooks Function({bool groupId, bool dailyHabitCompletionsRefs})
+          PrefetchHooks Function({bool groupId, bool habitPerformancesRefs})
         > {
   $$HabitsTableTableManager(_$AppDatabase db, $HabitsTable table)
     : super(
@@ -1692,11 +1692,11 @@ class $$HabitsTableTableManager
               )
               .toList(),
           prefetchHooksCallback:
-              ({groupId = false, dailyHabitCompletionsRefs = false}) {
+              ({groupId = false, habitPerformancesRefs = false}) {
                 return PrefetchHooks(
                   db: db,
                   explicitlyWatchedTables: [
-                    if (dailyHabitCompletionsRefs) db.dailyHabitCompletions,
+                    if (habitPerformancesRefs) db.habitPerformances,
                   ],
                   addJoins:
                       <
@@ -1732,21 +1732,21 @@ class $$HabitsTableTableManager
                       },
                   getPrefetchedDataCallback: (items) async {
                     return [
-                      if (dailyHabitCompletionsRefs)
+                      if (habitPerformancesRefs)
                         await $_getPrefetchedData<
                           Habit,
                           $HabitsTable,
-                          DailyHabitCompletion
+                          HabitPerformance
                         >(
                           currentTable: table,
                           referencedTable: $$HabitsTableReferences
-                              ._dailyHabitCompletionsRefsTable(db),
+                              ._habitPerformancesRefsTable(db),
                           managerFromTypedResult: (p0) =>
                               $$HabitsTableReferences(
                                 db,
                                 table,
                                 p0,
-                              ).dailyHabitCompletionsRefs,
+                              ).habitPerformancesRefs,
                           referencedItemsForCurrentItem:
                               (item, referencedItems) => referencedItems.where(
                                 (e) => e.habitId == item.id,
@@ -1773,38 +1773,38 @@ typedef $$HabitsTableProcessedTableManager =
       $$HabitsTableUpdateCompanionBuilder,
       (Habit, $$HabitsTableReferences),
       Habit,
-      PrefetchHooks Function({bool groupId, bool dailyHabitCompletionsRefs})
+      PrefetchHooks Function({bool groupId, bool habitPerformancesRefs})
     >;
-typedef $$DailyHabitCompletionsTableCreateCompanionBuilder =
-    DailyHabitCompletionsCompanion Function({
+typedef $$HabitPerformancesTableCreateCompanionBuilder =
+    HabitPerformancesCompanion Function({
+      required String id,
       required String habitId,
-      required DateTime date,
-      Value<int> count,
+      required DateTime performTime,
       Value<int> rowid,
     });
-typedef $$DailyHabitCompletionsTableUpdateCompanionBuilder =
-    DailyHabitCompletionsCompanion Function({
+typedef $$HabitPerformancesTableUpdateCompanionBuilder =
+    HabitPerformancesCompanion Function({
+      Value<String> id,
       Value<String> habitId,
-      Value<DateTime> date,
-      Value<int> count,
+      Value<DateTime> performTime,
       Value<int> rowid,
     });
 
-final class $$DailyHabitCompletionsTableReferences
+final class $$HabitPerformancesTableReferences
     extends
         BaseReferences<
           _$AppDatabase,
-          $DailyHabitCompletionsTable,
-          DailyHabitCompletion
+          $HabitPerformancesTable,
+          HabitPerformance
         > {
-  $$DailyHabitCompletionsTableReferences(
+  $$HabitPerformancesTableReferences(
     super.$_db,
     super.$_table,
     super.$_typedResult,
   );
 
   static $HabitsTable _habitIdTable(_$AppDatabase db) => db.habits.createAlias(
-    $_aliasNameGenerator(db.dailyHabitCompletions.habitId, db.habits.id),
+    $_aliasNameGenerator(db.habitPerformances.habitId, db.habits.id),
   );
 
   $$HabitsTableProcessedTableManager get habitId {
@@ -1822,22 +1822,22 @@ final class $$DailyHabitCompletionsTableReferences
   }
 }
 
-class $$DailyHabitCompletionsTableFilterComposer
-    extends Composer<_$AppDatabase, $DailyHabitCompletionsTable> {
-  $$DailyHabitCompletionsTableFilterComposer({
+class $$HabitPerformancesTableFilterComposer
+    extends Composer<_$AppDatabase, $HabitPerformancesTable> {
+  $$HabitPerformancesTableFilterComposer({
     required super.$db,
     required super.$table,
     super.joinBuilder,
     super.$addJoinBuilderToRootComposer,
     super.$removeJoinBuilderFromRootComposer,
   });
-  ColumnFilters<DateTime> get date => $composableBuilder(
-    column: $table.date,
+  ColumnFilters<String> get id => $composableBuilder(
+    column: $table.id,
     builder: (column) => ColumnFilters(column),
   );
 
-  ColumnFilters<int> get count => $composableBuilder(
-    column: $table.count,
+  ColumnFilters<DateTime> get performTime => $composableBuilder(
+    column: $table.performTime,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -1865,22 +1865,22 @@ class $$DailyHabitCompletionsTableFilterComposer
   }
 }
 
-class $$DailyHabitCompletionsTableOrderingComposer
-    extends Composer<_$AppDatabase, $DailyHabitCompletionsTable> {
-  $$DailyHabitCompletionsTableOrderingComposer({
+class $$HabitPerformancesTableOrderingComposer
+    extends Composer<_$AppDatabase, $HabitPerformancesTable> {
+  $$HabitPerformancesTableOrderingComposer({
     required super.$db,
     required super.$table,
     super.joinBuilder,
     super.$addJoinBuilderToRootComposer,
     super.$removeJoinBuilderFromRootComposer,
   });
-  ColumnOrderings<DateTime> get date => $composableBuilder(
-    column: $table.date,
+  ColumnOrderings<String> get id => $composableBuilder(
+    column: $table.id,
     builder: (column) => ColumnOrderings(column),
   );
 
-  ColumnOrderings<int> get count => $composableBuilder(
-    column: $table.count,
+  ColumnOrderings<DateTime> get performTime => $composableBuilder(
+    column: $table.performTime,
     builder: (column) => ColumnOrderings(column),
   );
 
@@ -1908,20 +1908,22 @@ class $$DailyHabitCompletionsTableOrderingComposer
   }
 }
 
-class $$DailyHabitCompletionsTableAnnotationComposer
-    extends Composer<_$AppDatabase, $DailyHabitCompletionsTable> {
-  $$DailyHabitCompletionsTableAnnotationComposer({
+class $$HabitPerformancesTableAnnotationComposer
+    extends Composer<_$AppDatabase, $HabitPerformancesTable> {
+  $$HabitPerformancesTableAnnotationComposer({
     required super.$db,
     required super.$table,
     super.joinBuilder,
     super.$addJoinBuilderToRootComposer,
     super.$removeJoinBuilderFromRootComposer,
   });
-  GeneratedColumn<DateTime> get date =>
-      $composableBuilder(column: $table.date, builder: (column) => column);
+  GeneratedColumn<String> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
 
-  GeneratedColumn<int> get count =>
-      $composableBuilder(column: $table.count, builder: (column) => column);
+  GeneratedColumn<DateTime> get performTime => $composableBuilder(
+    column: $table.performTime,
+    builder: (column) => column,
+  );
 
   $$HabitsTableAnnotationComposer get habitId {
     final $$HabitsTableAnnotationComposer composer = $composerBuilder(
@@ -1947,72 +1949,66 @@ class $$DailyHabitCompletionsTableAnnotationComposer
   }
 }
 
-class $$DailyHabitCompletionsTableTableManager
+class $$HabitPerformancesTableTableManager
     extends
         RootTableManager<
           _$AppDatabase,
-          $DailyHabitCompletionsTable,
-          DailyHabitCompletion,
-          $$DailyHabitCompletionsTableFilterComposer,
-          $$DailyHabitCompletionsTableOrderingComposer,
-          $$DailyHabitCompletionsTableAnnotationComposer,
-          $$DailyHabitCompletionsTableCreateCompanionBuilder,
-          $$DailyHabitCompletionsTableUpdateCompanionBuilder,
-          (DailyHabitCompletion, $$DailyHabitCompletionsTableReferences),
-          DailyHabitCompletion,
+          $HabitPerformancesTable,
+          HabitPerformance,
+          $$HabitPerformancesTableFilterComposer,
+          $$HabitPerformancesTableOrderingComposer,
+          $$HabitPerformancesTableAnnotationComposer,
+          $$HabitPerformancesTableCreateCompanionBuilder,
+          $$HabitPerformancesTableUpdateCompanionBuilder,
+          (HabitPerformance, $$HabitPerformancesTableReferences),
+          HabitPerformance,
           PrefetchHooks Function({bool habitId})
         > {
-  $$DailyHabitCompletionsTableTableManager(
+  $$HabitPerformancesTableTableManager(
     _$AppDatabase db,
-    $DailyHabitCompletionsTable table,
+    $HabitPerformancesTable table,
   ) : super(
         TableManagerState(
           db: db,
           table: table,
           createFilteringComposer: () =>
-              $$DailyHabitCompletionsTableFilterComposer(
-                $db: db,
-                $table: table,
-              ),
+              $$HabitPerformancesTableFilterComposer($db: db, $table: table),
           createOrderingComposer: () =>
-              $$DailyHabitCompletionsTableOrderingComposer(
-                $db: db,
-                $table: table,
-              ),
+              $$HabitPerformancesTableOrderingComposer($db: db, $table: table),
           createComputedFieldComposer: () =>
-              $$DailyHabitCompletionsTableAnnotationComposer(
+              $$HabitPerformancesTableAnnotationComposer(
                 $db: db,
                 $table: table,
               ),
           updateCompanionCallback:
               ({
+                Value<String> id = const Value.absent(),
                 Value<String> habitId = const Value.absent(),
-                Value<DateTime> date = const Value.absent(),
-                Value<int> count = const Value.absent(),
+                Value<DateTime> performTime = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
-              }) => DailyHabitCompletionsCompanion(
+              }) => HabitPerformancesCompanion(
+                id: id,
                 habitId: habitId,
-                date: date,
-                count: count,
+                performTime: performTime,
                 rowid: rowid,
               ),
           createCompanionCallback:
               ({
+                required String id,
                 required String habitId,
-                required DateTime date,
-                Value<int> count = const Value.absent(),
+                required DateTime performTime,
                 Value<int> rowid = const Value.absent(),
-              }) => DailyHabitCompletionsCompanion.insert(
+              }) => HabitPerformancesCompanion.insert(
+                id: id,
                 habitId: habitId,
-                date: date,
-                count: count,
+                performTime: performTime,
                 rowid: rowid,
               ),
           withReferenceMapper: (p0) => p0
               .map(
                 (e) => (
                   e.readTable(table),
-                  $$DailyHabitCompletionsTableReferences(db, table, e),
+                  $$HabitPerformancesTableReferences(db, table, e),
                 ),
               )
               .toList(),
@@ -2042,10 +2038,10 @@ class $$DailyHabitCompletionsTableTableManager
                                 currentTable: table,
                                 currentColumn: table.habitId,
                                 referencedTable:
-                                    $$DailyHabitCompletionsTableReferences
+                                    $$HabitPerformancesTableReferences
                                         ._habitIdTable(db),
                                 referencedColumn:
-                                    $$DailyHabitCompletionsTableReferences
+                                    $$HabitPerformancesTableReferences
                                         ._habitIdTable(db)
                                         .id,
                               )
@@ -2063,18 +2059,18 @@ class $$DailyHabitCompletionsTableTableManager
       );
 }
 
-typedef $$DailyHabitCompletionsTableProcessedTableManager =
+typedef $$HabitPerformancesTableProcessedTableManager =
     ProcessedTableManager<
       _$AppDatabase,
-      $DailyHabitCompletionsTable,
-      DailyHabitCompletion,
-      $$DailyHabitCompletionsTableFilterComposer,
-      $$DailyHabitCompletionsTableOrderingComposer,
-      $$DailyHabitCompletionsTableAnnotationComposer,
-      $$DailyHabitCompletionsTableCreateCompanionBuilder,
-      $$DailyHabitCompletionsTableUpdateCompanionBuilder,
-      (DailyHabitCompletion, $$DailyHabitCompletionsTableReferences),
-      DailyHabitCompletion,
+      $HabitPerformancesTable,
+      HabitPerformance,
+      $$HabitPerformancesTableFilterComposer,
+      $$HabitPerformancesTableOrderingComposer,
+      $$HabitPerformancesTableAnnotationComposer,
+      $$HabitPerformancesTableCreateCompanionBuilder,
+      $$HabitPerformancesTableUpdateCompanionBuilder,
+      (HabitPerformance, $$HabitPerformancesTableReferences),
+      HabitPerformance,
       PrefetchHooks Function({bool habitId})
     >;
 
@@ -2085,6 +2081,6 @@ class $AppDatabaseManager {
       $$GroupsTableTableManager(_db, _db.groups);
   $$HabitsTableTableManager get habits =>
       $$HabitsTableTableManager(_db, _db.habits);
-  $$DailyHabitCompletionsTableTableManager get dailyHabitCompletions =>
-      $$DailyHabitCompletionsTableTableManager(_db, _db.dailyHabitCompletions);
+  $$HabitPerformancesTableTableManager get habitPerformances =>
+      $$HabitPerformancesTableTableManager(_db, _db.habitPerformances);
 }

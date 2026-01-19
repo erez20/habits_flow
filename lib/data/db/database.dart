@@ -4,6 +4,20 @@ import 'package:injectable/injectable.dart';
 
 part 'database.g.dart';
 
+class Habits extends Table {
+  TextColumn get id => text()();
+  TextColumn get title => text()();
+  TextColumn get info => text().withDefault(const Constant(''))();
+  IntColumn get weight => integer().withDefault(const Constant(1))();
+  DateTimeColumn get createdAt => dateTime().withDefault(currentDateAndTime)();
+
+  // Foreign key to Groups table
+  TextColumn get groupId => text().nullable().references(Groups, #id)();
+
+  @override
+  Set<Column> get primaryKey => {id};
+}
+
 class Groups extends Table {
   TextColumn get id => text()();
   TextColumn get title => text()();
@@ -15,33 +29,20 @@ class Groups extends Table {
   Set<Column> get primaryKey => {id};
 }
 
-class Habits extends Table {
+class HabitPerformances extends Table {
   TextColumn get id => text()();
-  TextColumn get title => text()();
-  TextColumn get info => text().withDefault(const Constant(''))();
-  IntColumn get weight => integer().withDefault(const Constant(0))();
-  DateTimeColumn get createdAt => dateTime().withDefault(currentDateAndTime)();
-  
-  // Foreign key to Groups table
-  TextColumn get groupId => text().nullable().references(Groups, #id)();
+  TextColumn get habitId => text().references(Habits, #id)();
+  DateTimeColumn get performTime => dateTime()(); // Specific time of performance
 
   @override
   Set<Column> get primaryKey => {id};
 }
 
-class DailyHabitCompletions extends Table {
-  TextColumn get habitId => text().references(Habits, #id)();
-  DateTimeColumn get date => dateTime()(); // The date the habit was performed, truncated to day
-  IntColumn get count => integer().withDefault(const Constant(0))(); // How many times done on this date
-
-  @override
-  Set<Column> get primaryKey => {habitId, date};
-}
-
 @singleton
-@DriftDatabase(tables: [Habits, Groups, DailyHabitCompletions])
+@DriftDatabase(tables: [Habits, Groups, HabitPerformances])
 class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());
+
 
   @override
   int get schemaVersion => 1;

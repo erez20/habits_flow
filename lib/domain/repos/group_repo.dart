@@ -21,9 +21,4 @@ abstract class GroupRepo {
     required HabitEntity habit,
   });
 
-  Future<DomainResponse<void>>  removeHabitFromGroup({
-    required String groupId,
-    required HabitEntity habit,
-  });
-
 }

@@ -31,9 +31,20 @@ class GroupRepoImpl extends GroupRepo {
   Future<DomainResponse<GroupEntity>> addHabitToGroup({
     required String groupId,
     required HabitEntity habit,
-  }) {
-    // TODO: implement addHabitToGroup
-    throw UnimplementedError();
+  }) async {
+    try {
+      await groupLocalSource.addHabitToGroup(
+        groupId: groupId,
+        habitId: habit.id,
+      );
+      final updatedGroup =
+          await groupLocalSource.getGroupWithHabits(groupId: groupId);
+      _addToMap(updatedGroup);
+      _updateStream();
+      return Success(updatedGroup);
+    } on Exception catch (e) {
+      return Failure(error: DatabaseError(message: e.toString()));
+    }
   }
 
   @override
@@ -70,16 +81,8 @@ class GroupRepoImpl extends GroupRepo {
   }
 
 
-  @override
-  Future<DomainResponse<void>> removeHabitFromGroup({
-    required String groupId,
-    required HabitEntity habit,
-  }) {
-    // TODO: implement removeHabitFromGroup
-    throw UnimplementedError();
-  }
-
   GroupEntity _addToMap(GroupEntity group) => _groupsMap[group.id] = group;
+
 
   void _removeFromMap(String groupId) =>_groupsMap.remove(groupId);
 
