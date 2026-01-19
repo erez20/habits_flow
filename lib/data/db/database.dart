@@ -12,7 +12,7 @@ class Habits extends Table {
   DateTimeColumn get createdAt => dateTime().withDefault(currentDateAndTime)();
 
   // Foreign key to Groups table
-  TextColumn get groupId => text().nullable().references(Groups, #id)();
+  TextColumn get groupId => text().nullable().references(Groups, #id, onDelete: KeyAction.cascade)();
 
   @override
   Set<Column> get primaryKey => {id};
