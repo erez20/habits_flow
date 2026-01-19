@@ -192,26 +192,4 @@ class MockGroupRepo extends _i1.Mock implements _i7.GroupRepo {
             ),
           )
           as _i3.Future<_i4.DomainResponse<_i8.GroupEntity>>);
-
-  @override
-  _i3.Future<_i4.DomainResponse<void>> changeHabitsGroup({
-    required String? groupId,
-    required _i5.HabitEntity? habit,
-  }) =>
-      (super.noSuchMethod(
-            Invocation.method(#removeHabitFromGroup, [], {
-              #groupId: groupId,
-              #habit: habit,
-            }),
-            returnValue: _i3.Future<_i4.DomainResponse<void>>.value(
-              _i6.dummyValue<_i4.DomainResponse<void>>(
-                this,
-                Invocation.method(#removeHabitFromGroup, [], {
-                  #groupId: groupId,
-                  #habit: habit,
-                }),
-              ),
-            ),
-          )
-          as _i3.Future<_i4.DomainResponse<void>>);
 }

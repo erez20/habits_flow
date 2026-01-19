@@ -31,7 +31,8 @@ class Groups extends Table {
 
 class HabitPerformances extends Table {
   TextColumn get id => text()();
-  TextColumn get habitId => text().references(Habits, #id)();
+  TextColumn get habitId =>
+      text().references(Habits, #id, onDelete: KeyAction.cascade)();
   DateTimeColumn get performTime => dateTime()(); // Specific time of performance
 
   @override

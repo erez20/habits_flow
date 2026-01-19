@@ -782,7 +782,7 @@ class $HabitPerformancesTable extends HabitPerformances
     type: DriftSqlType.string,
     requiredDuringInsert: true,
     defaultConstraints: GeneratedColumn.constraintIsAlways(
-      'REFERENCES habits (id)',
+      'REFERENCES habits (id) ON DELETE CASCADE',
     ),
   );
   static const VerificationMeta _performTimeMeta = const VerificationMeta(
@@ -1045,6 +1045,16 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     habits,
     habitPerformances,
   ];
+  @override
+  StreamQueryUpdateRules get streamUpdateRules => const StreamQueryUpdateRules([
+    WritePropagation(
+      on: TableUpdateQuery.onTableName(
+        'habits',
+        limitUpdateKind: UpdateKind.delete,
+      ),
+      result: [TableUpdate('habit_performances', kind: UpdateKind.delete)],
+    ),
+  ]);
 }
 
 typedef $$GroupsTableCreateCompanionBuilder =
