@@ -86,4 +86,13 @@ class GroupLocalSourceImpl implements GroupLocalSource {
       habits: habitEntities,
     );
   }
+
+  @override
+  Future<List<String>> getGroupIdsList() async {
+    final result = await (db.selectOnly(db.groups)..addColumns([db.groups.id]))
+        .map((row) => row.read(db.groups.id))
+        .get();
+    
+    return result.whereType<String>().toList();
+  }
 }

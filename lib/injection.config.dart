@@ -29,6 +29,8 @@ import 'package:habits_flow/domain/use_cases/group/delete_group_use_case.dart'
     as _i227;
 import 'package:habits_flow/domain/use_cases/habit/add_habit_use_case.dart'
     as _i262;
+import 'package:habits_flow/ui/widgets/test_dashboard/test_dashboard_cubit.dart'
+    as _i312;
 import 'package:injectable/injectable.dart' as _i526;
 
 extension GetItInjectableX on _i174.GetIt {
@@ -39,14 +41,14 @@ extension GetItInjectableX on _i174.GetIt {
   }) {
     final gh = _i526.GetItHelper(this, environment, environmentFilter);
     gh.singleton<_i118.AppDatabase>(() => _i118.AppDatabase());
-    gh.lazySingleton<_i545.HabitLocalSource>(
+    gh.factory<_i545.HabitLocalSource>(
       () => _i995.HabitLocalSourceImpl(gh<_i118.AppDatabase>()),
     );
     gh.lazySingleton<_i877.HabitRepo>(
       () =>
           _i375.HabitRepoImpl(habitsLocalSource: gh<_i545.HabitLocalSource>()),
     );
-    gh.lazySingleton<_i25.GroupLocalSource>(
+    gh.factory<_i25.GroupLocalSource>(
       () => _i646.GroupLocalSourceImpl(gh<_i118.AppDatabase>()),
     );
     gh.lazySingleton<_i136.GroupRepo>(
@@ -63,6 +65,12 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.factory<_i227.DeleteGroupUseCase>(
       () => _i227.DeleteGroupUseCase(groupRepo: gh<_i136.GroupRepo>()),
+    );
+    gh.factory<_i312.TestDashboardCubit>(
+      () => _i312.TestDashboardCubit(
+        addHabitUseCase: gh<_i262.AddHabitUseCase>(),
+        addGroupUseCase: gh<_i655.AddGroupUseCase>(),
+      ),
     );
     return this;
   }

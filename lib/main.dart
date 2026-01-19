@@ -2,6 +2,8 @@
 
 import 'package:flutter/material.dart';
 import 'package:habits_flow/injection.dart';
+import 'package:habits_flow/ui/screens/main/main_screen.dart';
+import 'package:habits_flow/ui/widgets/test_dashboard/test_dashboard_provider.dart';
 
 import 'domain/use_cases/group/add_group_use_case.dart';
 
@@ -38,7 +40,7 @@ class MyApp extends StatelessWidget {
         // tested with just a hot reload.
         colorScheme: .fromSeed(seedColor: Colors.deepPurple),
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      home: const MainScreen(),
     );
   }
 }

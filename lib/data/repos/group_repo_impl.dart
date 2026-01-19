@@ -80,6 +80,16 @@ class GroupRepoImpl extends GroupRepo {
 
   }
 
+  @override
+  Future<DomainResponse<List<String>>> getGroupIdsList() async {
+    try {
+      final ids = await groupLocalSource.getGroupIdsList();
+      return Success(ids);
+    } on Exception catch (e) {
+      return Failure(error: DatabaseError(message: e.toString()));
+
+    }
+  }
 
   GroupEntity _addToMap(GroupEntity group) => _groupsMap[group.id] = group;
 

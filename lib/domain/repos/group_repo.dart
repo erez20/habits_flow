@@ -21,4 +21,6 @@ abstract class GroupRepo {
     required HabitEntity habit,
   });
 
+  Future<DomainResponse<List<String>>> getGroupIdsList();
+
 }
