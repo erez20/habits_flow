@@ -6,7 +6,7 @@ import 'package:habits_flow/domain/entities/habit_entity.dart';
 import 'package:injectable/injectable.dart';
 import 'package:uuid/uuid.dart';
 
-@LazySingleton(as: GroupLocalSource)
+@Injectable(as: GroupLocalSource)
 class GroupLocalSourceImpl implements GroupLocalSource {
   final AppDatabase db;
 

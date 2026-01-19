@@ -5,7 +5,7 @@ import 'package:habits_flow/domain/entities/habit_entity.dart';
 import 'package:injectable/injectable.dart';
 import 'package:uuid/uuid.dart';
 
-@LazySingleton(as: HabitLocalSource)
+@Injectable(as: HabitLocalSource)
 class HabitLocalSourceImpl implements HabitLocalSource {
   final AppDatabase db;
 
@@ -45,19 +45,16 @@ class HabitLocalSourceImpl implements HabitLocalSource {
     required String habitId,
     required DateTime date,
   }) async {
-    final startOfDay = DateTime(date.year, date.month, date.day);
-    final endOfDay = startOfDay.add(const Duration(days: 1));
+    final start = DateTime(date.year, date.month, date.day);
+    final end = start.add(const Duration(days: 1));
 
-    final countExpression = db.habitPerformances.id.count();
-    final query = db.selectOnly(db.habitPerformances)
-      ..addColumns([countExpression])
-      ..where(db.habitPerformances.habitId.equals(habitId) &
-          db.habitPerformances.performTime
-              .isBetween(Variable(startOfDay), Variable(endOfDay)));
+    final dailyPerformances = await (db.select(db.habitPerformances)
+          ..where((t) =>
+              t.habitId.equals(habitId) &
+              t.performTime.isBetween(Variable(start), Variable(end))))
+        .get();
 
-    final result =
-        await query.map((row) => row.read(countExpression)).getSingle();
-    return result ?? 0;
+    return dailyPerformances.length;
   }
 
   @override
