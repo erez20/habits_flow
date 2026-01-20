@@ -1,5 +1,8 @@
+import 'dart:math';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:habits_flow/domain/use_cases/group/add_group_use_case.dart';
+import 'package:habits_flow/domain/use_cases/group/get_group_ids_list_use_case.dart';
 import 'package:habits_flow/domain/use_cases/habit/add_habit_use_case.dart';
 import 'package:injectable/injectable.dart';
 
@@ -8,18 +11,24 @@ class TestDashboardCubit extends Cubit<int> {
   TestDashboardCubit({
     required this.addHabitUseCase,
     required this.addGroupUseCase,
+    required this.getGroupIdsListUseCase,
   }) : super(1);
 
   final AddHabitUseCase addHabitUseCase;
   final AddGroupUseCase addGroupUseCase;
+  final GetGroupIdsListUseCase getGroupIdsListUseCase;
 
-  void pressOne() {
+
+  void addGroup() {
     print("Add Group");
+    final i = Random().nextInt(100);
     AddGroupUseCaseParams params = AddGroupUseCaseParams(
-      title: "Fitness", weight: 50, colorHex: '#ddd', );
+      title: "Fitness$i", weight: 50, colorHex: '#ddd', );
     addGroupUseCase.exec(params);
   }
-  void pressTwo() {
-    print("2");
+  void pressTwo() async {
+    final l = await getGroupIdsListUseCase.exec(null);;
+    print(l.data);
+
   }
 }

@@ -12,7 +12,7 @@ class TestDashboardWidget extends StatelessWidget {
 
     return Row(
       children: [
-        TextButton(onPressed: cubit.pressOne, child: Text("1")),
+        TextButton(onPressed: cubit.addGroup, child: Text("Add G")),
         TextButton(onPressed: cubit.pressTwo, child: Text("2")),
       ],
     );

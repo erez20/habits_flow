@@ -23,4 +23,6 @@ abstract class GroupRepo {
 
   Future<DomainResponse<List<String>>> getGroupIdsList();
 
+  Stream<List<String>> getGroupIdsListStream();
+
 }

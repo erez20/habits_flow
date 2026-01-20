@@ -192,4 +192,17 @@ class MockGroupRepo extends _i1.Mock implements _i7.GroupRepo {
             ),
           )
           as _i3.Future<_i4.DomainResponse<_i8.GroupEntity>>);
+
+  @override
+  _i3.Future<_i4.DomainResponse<List<String>>> getGroupIdsList() =>
+      (super.noSuchMethod(
+            Invocation.method(#getGroupIdsList, []),
+            returnValue: _i3.Future<_i4.DomainResponse<List<String>>>.value(
+              _i6.dummyValue<_i4.DomainResponse<List<String>>>(
+                this,
+                Invocation.method(#getGroupIdsList, []),
+              ),
+            ),
+          )
+          as _i3.Future<_i4.DomainResponse<List<String>>>);
 }
