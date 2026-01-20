@@ -3,7 +3,7 @@ import 'dart:math';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:habits_flow/domain/use_cases/group/add_group_use_case.dart';
-import 'package:habits_flow/domain/use_cases/group/listen_groups_list_use_case.dart';
+import 'package:habits_flow/domain/use_cases/group/groups_list_stream_use_case.dart';
 import 'package:habits_flow/domain/use_cases/habit/add_habit_use_case.dart';
 import 'package:injectable/injectable.dart';
 
@@ -17,7 +17,7 @@ class TestDashboardCubit extends Cubit<int> {
 
   final AddHabitUseCase addHabitUseCase;
   final AddGroupUseCase addGroupUseCase;
-  final ListenGroupsListUseCase listenGroupsListUseCase;
+  final GroupsListStreamUseCase listenGroupsListUseCase;
   StreamSubscription? _subscription;
 
   void addGroup() {
