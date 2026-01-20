@@ -16,6 +16,6 @@ abstract class GroupLocalSource {
 
   Future<GroupEntity> getGroupWithHabits({required String groupId});
 
-  Future<List<String>> getGroupIdsList();
+  Stream<List<GroupEntity>> getGroupsListStream();
 }
 

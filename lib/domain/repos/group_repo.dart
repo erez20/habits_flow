@@ -16,13 +16,17 @@ abstract class GroupRepo {
     required String groupId,
   });
 
-  Future<DomainResponse<GroupEntity>>  addHabitToGroup({
-    required String groupId,
-    required HabitEntity habit,
-  });
+    Future<DomainResponse<GroupEntity>>  addHabitToGroup({
+      required String groupId,
+      required HabitEntity habit,
+    });
 
-  Future<DomainResponse<List<String>>> getGroupIdsList();
+  
 
-  Stream<List<String>> getGroupIdsListStream();
+    Stream<List<GroupEntity>> getGroupsListStream();
 
-}
+  
+
+  }
+
+  

@@ -16,16 +16,10 @@ class GroupRepoImpl extends GroupRepo {
     required this.groupLocalSource,
   });
 
-  final Map<String, GroupEntity> _groupsMap = {};
-  final _groupsSubject =
-  BehaviorSubject<Map<String, GroupEntity>>.seeded({});
-
   @override
-  Stream<GroupEntity> groupStream({required String groupId}) =>
-      _groupsSubject.stream
-          .map((groups) => groups[groupId])
-          .whereNotNull()
-          .distinct();
+  Stream<List<GroupEntity>> getGroupsListStream() {
+    return groupLocalSource.getGroupsListStream();
+  }
 
   @override
   Future<DomainResponse<GroupEntity>> addHabitToGroup({
@@ -39,8 +33,6 @@ class GroupRepoImpl extends GroupRepo {
       );
       final updatedGroup =
           await groupLocalSource.getGroupWithHabits(groupId: groupId);
-      _addToMap(updatedGroup);
-      _updateStream();
       return Success(updatedGroup);
     } on Exception catch (e) {
       return Failure(error: DatabaseError(message: e.toString()));
@@ -59,45 +51,26 @@ class GroupRepoImpl extends GroupRepo {
         weight: weight,
         colorHex: colorHex,
       );
-      _addToMap(group);
-      _updateStream();
       return Success(group);
-    } on Exception catch (e){
-      return Failure(error: DatabaseError(message: e.toString()));
-    }
-  }
-
-  @override
-  Future<DomainResponse<void>> deleteGroup({required String groupId}) async{
-    try {
-      await groupLocalSource.deleteGroup(groupId: groupId);
-      _removeFromMap(groupId);
-      _updateStream();
-      return Success(null);
-    } on Exception catch (e){
-      return Failure(error: DatabaseError(message: e.toString()));
-    }
-
-  }
-
-  @override
-  Future<DomainResponse<List<String>>> getGroupIdsList() async {
-    try {
-      final ids = await groupLocalSource.getGroupIdsList();
-      return Success(ids);
     } on Exception catch (e) {
       return Failure(error: DatabaseError(message: e.toString()));
-
     }
   }
 
-  GroupEntity _addToMap(GroupEntity group) => _groupsMap[group.id] = group;
+  @override
+  Future<DomainResponse<void>> deleteGroup({required String groupId}) async {
+    try {
+      await groupLocalSource.deleteGroup(groupId: groupId);
+      return Success(null);
+    } on Exception catch (e) {
+      return Failure(error: DatabaseError(message: e.toString()));
+    }
+  }
 
-
-  void _removeFromMap(String groupId) =>_groupsMap.remove(groupId);
-
-  void _updateStream() => _groupsSubject.add(Map.unmodifiable(_groupsMap));
-
-  void dispose() => _groupsSubject.close();
-
+  @override
+  Stream<GroupEntity> groupStream({required String groupId}) {
+    return getGroupsListStream().map((groups) {
+      return groups.firstWhere((group) => group.id == groupId);
+    });
+  }
 }
