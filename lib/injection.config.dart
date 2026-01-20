@@ -28,7 +28,7 @@ import 'package:habits_flow/domain/use_cases/group/add_group_use_case.dart'
 import 'package:habits_flow/domain/use_cases/group/delete_group_use_case.dart'
     as _i227;
 import 'package:habits_flow/domain/use_cases/group/groups_list_stream_use_case.dart'
-    as _i978;
+    as _i779;
 import 'package:habits_flow/domain/use_cases/habit/add_habit_use_case.dart'
     as _i262;
 import 'package:habits_flow/ui/widgets/test_dashboard/test_dashboard_cubit.dart'
@@ -68,14 +68,13 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i227.DeleteGroupUseCase>(
       () => _i227.DeleteGroupUseCase(groupRepo: gh<_i136.GroupRepo>()),
     );
-    gh.factory<_i978.GroupsListStreamUseCase>(
-      () => _i978.GroupsListStreamUseCase(groupRepo: gh<_i136.GroupRepo>()),
+    gh.factory<_i779.GroupsListStreamUseCase>(
+      () => _i779.GroupsListStreamUseCase(groupRepo: gh<_i136.GroupRepo>()),
     );
     gh.factory<_i312.TestDashboardCubit>(
       () => _i312.TestDashboardCubit(
         addHabitUseCase: gh<_i262.AddHabitUseCase>(),
         addGroupUseCase: gh<_i655.AddGroupUseCase>(),
-        listenGroupsListUseCase: gh<_i978.GroupsListStreamUseCase>(),
       ),
     );
     return this;

@@ -1,9 +1,7 @@
-import 'dart:async';
 import 'dart:math';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:habits_flow/domain/use_cases/group/add_group_use_case.dart';
-import 'package:habits_flow/domain/use_cases/group/groups_list_stream_use_case.dart';
 import 'package:habits_flow/domain/use_cases/habit/add_habit_use_case.dart';
 import 'package:injectable/injectable.dart';
 
@@ -12,13 +10,10 @@ class TestDashboardCubit extends Cubit<int> {
   TestDashboardCubit({
     required this.addHabitUseCase,
     required this.addGroupUseCase,
-    required this.listenGroupsListUseCase,
   }) : super(1);
 
   final AddHabitUseCase addHabitUseCase;
   final AddGroupUseCase addGroupUseCase;
-  final GroupsListStreamUseCase listenGroupsListUseCase;
-  StreamSubscription? _subscription;
 
   void addGroup() {
     print("Add Group");
@@ -29,18 +24,5 @@ class TestDashboardCubit extends Cubit<int> {
       colorHex: '#ddd',
     );
     addGroupUseCase.exec(params);
-  }
-
-  void pressTwo() async {
-    _subscription?.cancel();
-    _subscription = listenGroupsListUseCase.stream.listen((event) {
-      print(event);
-    });
-  }
-
-  @override
-  Future<void> close() {
-    _subscription?.cancel();
-    return super.close();
   }
 }

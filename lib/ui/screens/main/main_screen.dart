@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:habits_flow/ui/widgets/all_groups/all_groups_provider.dart';
 import 'package:habits_flow/ui/widgets/test_dashboard/test_dashboard_provider.dart';
 
 class MainScreen extends StatelessWidget {
@@ -10,7 +11,18 @@ class MainScreen extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Main Screen'),
       ),
-      body: TestDashboardProvider(),
+      body: Column(
+        children: [
+          Container(
+            height: 200,
+            color: Colors.red[100],
+            child: TestDashboardProvider(),
+          ),
+
+             AllGroupsProvider(),
+
+        ],
+      ),
     );
   }
 }

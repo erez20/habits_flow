@@ -26,4 +26,9 @@ class GroupEntity extends Equatable {
   void removeHabit(HabitEntity habit) {
     habits.remove(habit);
   }
+
+  @override
+  String toString() {
+    return 'GroupEntity(id: ${id.substring(id.length - 6)}, title: $title)';
+  }
 }
