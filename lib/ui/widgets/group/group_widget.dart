@@ -1,5 +1,4 @@
-import 'dart:math';
-
+import 'package:fimber/fimber.dart';
 import 'package:flutter/material.dart';
 import 'package:habits_flow/domain/entities/group_entity.dart';
 
@@ -10,7 +9,8 @@ class GroupWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final randoinInt = Random().nextInt(1000);
-    return Text ("$randoinInt: $entity");
+    Fimber.d("build group widget ${entity.toString()}");
+
+    return Text ("$entity\n");
   }
 }

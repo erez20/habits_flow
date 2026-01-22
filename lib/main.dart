@@ -1,15 +1,17 @@
 
 
 import 'package:flutter/material.dart';
+import 'package:habits_flow/core/logger/app_logger.dart';
 import 'package:habits_flow/injection.dart';
 import 'package:habits_flow/ui/screens/main/main_screen.dart';
 import 'package:habits_flow/ui/widgets/test_dashboard/test_dashboard_provider.dart';
+import 'package:fimber/fimber.dart';
 
 import 'domain/use_cases/group/add_group_use_case.dart';
 
-
-
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+  AppLogger.init();
   configureDependencies();
   runApp(const MyApp());
 }
@@ -69,7 +71,7 @@ class _MyHomePageState extends State<MyHomePage> {
   void _incrementCounter() async{
     final useCase = getIt<AddGroupUseCase>();
     final result = await useCase.exec(AddGroupUseCaseParams(title: "hello world", weight: 2, colorHex: "#ddd"));
-    print("---> ${result.data}");
+    Fimber.d("---> ${result.data}");
 
 
     setState(() {

@@ -1,3 +1,4 @@
+import 'package:fimber/fimber.dart' show Fimber;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:habits_flow/domain/entities/group_entity.dart';
@@ -15,6 +16,7 @@ class GroupProvider extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Fimber.d("build group Provider widget ${entity.toString()}");
     return BlocProvider(
       create: (context) => GroupCubit(entity: entity),
       child: GroupWidget(entity: entity),

@@ -27,10 +27,14 @@ import 'package:habits_flow/domain/use_cases/group/add_group_use_case.dart'
     as _i655;
 import 'package:habits_flow/domain/use_cases/group/delete_group_use_case.dart'
     as _i227;
+import 'package:habits_flow/domain/use_cases/group/generate_dummy_group_name_use_case.dart'
+    as _i715;
 import 'package:habits_flow/domain/use_cases/group/groups_list_stream_use_case.dart'
     as _i779;
 import 'package:habits_flow/domain/use_cases/habit/add_habit_use_case.dart'
     as _i262;
+import 'package:habits_flow/ui/widgets/all_groups/all_groups_cubit.dart'
+    as _i967;
 import 'package:habits_flow/ui/widgets/test_dashboard/test_dashboard_cubit.dart'
     as _i312;
 import 'package:injectable/injectable.dart' as _i526;
@@ -68,13 +72,24 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i227.DeleteGroupUseCase>(
       () => _i227.DeleteGroupUseCase(groupRepo: gh<_i136.GroupRepo>()),
     );
+    gh.factory<_i715.GenerateDummyGroupNameUseCase>(
+      () =>
+          _i715.GenerateDummyGroupNameUseCase(groupRepo: gh<_i136.GroupRepo>()),
+    );
     gh.factory<_i779.GroupsListStreamUseCase>(
       () => _i779.GroupsListStreamUseCase(groupRepo: gh<_i136.GroupRepo>()),
+    );
+    gh.factory<_i967.AllGroupsCubit>(
+      () => _i967.AllGroupsCubit(
+        groupsListStreamUseCase: gh<_i779.GroupsListStreamUseCase>(),
+      ),
     );
     gh.factory<_i312.TestDashboardCubit>(
       () => _i312.TestDashboardCubit(
         addHabitUseCase: gh<_i262.AddHabitUseCase>(),
         addGroupUseCase: gh<_i655.AddGroupUseCase>(),
+        generateDummyGroupNameUseCase:
+            gh<_i715.GenerateDummyGroupNameUseCase>(),
       ),
     );
     return this;
