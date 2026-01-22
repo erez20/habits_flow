@@ -14,6 +14,8 @@ class HabitEntity extends Equatable{
     required this.completionCount,
   });
 
+  String get hashKey => Object.hash(id, title, weight, completionCount, info).toString();
+
   @override
   List<Object?> get props => [id, title, weight, completionCount, info];
 }

@@ -6,6 +6,10 @@ class GroupCubit extends Cubit<GroupState> {
   final GroupEntity entity;
 
   GroupCubit({required this.entity}) : super(GroupState(entity: entity));
+
+  void updateEntity(GroupEntity newEntity) {
+    emit(GroupState(entity: newEntity));
+  }
 }
 
 

@@ -71,7 +71,7 @@ class _MyHomePageState extends State<MyHomePage> {
   void _incrementCounter() async{
     final useCase = getIt<AddGroupUseCase>();
     final result = await useCase.exec(AddGroupUseCaseParams(title: "hello world", weight: 2, colorHex: "#ddd"));
-    Fimber.d("---> ${result.data}");
+    //Fimber.d("---> ${result.data}");
 
 
     setState(() {

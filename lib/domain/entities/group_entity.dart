@@ -27,8 +27,12 @@ class GroupEntity extends Equatable {
     habits.remove(habit);
   }
 
+  String get hashKey => Object.hash(id, title, weight, colorHex, Object.hashAll(habits)).toString();
+
   @override
   String toString() {
     return 'GroupEntity(id: ${id.substring(id.length - 6)}, title: $title)';
   }
+
+  String get shortId=> id.substring(id.length-6);
 }

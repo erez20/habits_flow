@@ -19,7 +19,10 @@ class AllGroupsWidget extends StatelessWidget {
             itemBuilder: (context, i) {
               // Access the item directly using 'i'
               final group = state.groupList[i];
-              return GroupProvider(entity: group);
+              return GroupProvider(
+                key: ValueKey(group.hashKey),
+                entity: group,
+              );
             },
           );
         },
@@ -27,4 +30,3 @@ class AllGroupsWidget extends StatelessWidget {
     );
   }
 }
-
