@@ -25,8 +25,7 @@ abstract class GroupRepo {
 
     Stream<List<GroupEntity>> getGroupsListStream();
 
-  
-
-  }
-
-  
+  Future<DomainResponse<void>> generateDummyGroupName({
+    required String groupId,
+  });
+}

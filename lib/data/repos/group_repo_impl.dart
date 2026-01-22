@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:habits_flow/data/sources/groups/group_local_source.dart';
 import 'package:habits_flow/domain/entities/group_entity.dart';
 import 'package:habits_flow/domain/entities/habit_entity.dart';
@@ -72,5 +74,27 @@ class GroupRepoImpl extends GroupRepo {
     return getGroupsListStream().map((groups) {
       return groups.firstWhere((group) => group.id == groupId);
     });
+  }
+
+  @override
+  Future<DomainResponse<void>> generateDummyGroupName(
+      {required String groupId}) async {
+    try {
+      const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
+      final random = Random();
+      final dummyName = String.fromCharCodes(
+        Iterable.generate(
+          6,
+          (_) => chars.codeUnitAt(
+            random.nextInt(chars.length),
+          ),
+        ),
+      );
+      await groupLocalSource.updateGroupName(
+          groupId: groupId, name: dummyName);
+      return Success(null);
+    } on Exception catch (e) {
+      return Failure(error: DatabaseError(message: e.toString()));
+    }
   }
 }

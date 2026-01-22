@@ -121,4 +121,11 @@ class GroupLocalSourceImpl implements GroupLocalSource {
       return groupsWithHabits;
     });
   }
+
+  @override
+  Future<void> updateGroupName(
+      {required String groupId, required String name}) async {
+    await (db.update(db.groups)..where((tbl) => tbl.id.equals(groupId)))
+        .write(GroupsCompanion(title: Value(name)));
+  }
 }
