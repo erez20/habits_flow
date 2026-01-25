@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:habits_flow/domain/entities/group_entity.dart';
 import 'package:habits_flow/domain/entities/habit_entity.dart';
+import 'package:habits_flow/ui/common/constants.dart';
 import 'package:habits_flow/ui/widgets/all_groups/all_groups_cubit.dart';
 
 import 'all_groups_state.dart';
@@ -19,16 +20,16 @@ class AllGroupsWidget extends StatelessWidget {
             slivers: [
               for (final group in state.groupList)
                 SliverPadding(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+                  padding: EdgeInsets.symmetric(
+                    horizontal: Constants.mainPageHorizontalPadding,
+                    vertical: 8,
+                  ),
                   sliver: SliverToBoxAdapter(
                     child: Container(
                       // This is the white container
                       decoration: BoxDecoration(
                         color: Colors.white,
                         borderRadius: BorderRadius.circular(8.0),
-                        border:
-                            Border.all(color: Colors.black.withOpacity(0.1)),
                       ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -41,7 +42,7 @@ class AllGroupsWidget extends StatelessWidget {
 
                           // The Habits List (if expanded)
                           if (state.isGroupExpanded(group.id))
-                            Column(
+                            Wrap(
                               // Habits are now in a Column
                               children: group.habits.map((habit) {
                                 return HabitItemWidget(
@@ -81,8 +82,10 @@ class GroupHeaderWidget extends StatelessWidget {
       onTap: onTap,
       child: Padding(
         padding: const EdgeInsets.all(12.0),
-        child: Text(group.title,
-            style: const TextStyle(fontWeight: FontWeight.bold)),
+        child: Text(
+          group.title,
+          style: const TextStyle(fontWeight: FontWeight.bold),
+        ),
       ),
     );
   }
@@ -95,9 +98,18 @@ class HabitItemWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final habitsSep = Constants.habitsSep;
+    final size =
+        ((screenWidth - 2 * Constants.mainPageHorizontalPadding) / Constants.habitsPerRow) - 2 * habitsSep;
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
-      child: Text(habit.title),
+      padding: EdgeInsets.symmetric(horizontal: habitsSep, vertical: habitsSep),
+      child: Container(
+        color: Colors.orange,
+        width: size,
+        height: size,
+        child: Text(habit.title),
+      ),
     );
   }
 }
