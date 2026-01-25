@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:habits_flow/domain/entities/group_entity.dart';
+import 'package:habits_flow/domain/entities/habit_entity.dart';
 import 'package:habits_flow/ui/widgets/all_groups/all_groups_cubit.dart';
 import 'package:habits_flow/ui/widgets/group/group_provider.dart';
 import 'package:habits_flow/ui/widgets/group/group_widget.dart';
@@ -11,22 +13,74 @@ class AllGroupsWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final cubit = context.read<AllGroupsCubit>();
     return Expanded(
       child: BlocBuilder<AllGroupsCubit, AllGroupsState>(
         builder: (context, state) {
-          return ListView.builder(
-            itemCount: state.groupList.length,
-            itemBuilder: (context, i) {
-              // Access the item directly using 'i'
-              final group = state.groupList[i];
-              return GroupProvider(
-                key: ValueKey(group.hashKey),
-                entity: group,
-              );
-            },
+          return CustomScrollView(
+            slivers: [
+              // Iterate through your domain groups
+              for (final group in state.groupList)
+                SliverMainAxisGroup(
+                  slivers: [
+                    // The Group Header (Collapsible)
+                    SliverToBoxAdapter(
+                      child: GroupHeaderWidget(
+                        group: group,
+                        onTap: () => cubit.toggleGroup(group.id),
+                      ),
+                    ),
+                    // The Habits List (Only shown if expanded)
+                    if (cubit.isGroupExpanded(group.id))
+                      SliverList(
+                        delegate: SliverChildBuilderDelegate(
+                          (context, index) {
+                            final habit = group.habits[index];
+                            return HabitItemWidget(
+                              key: ValueKey(habit.id),
+                              habit: habit,
+                            );
+                          },
+                          childCount: group.habits.length,
+                        ),
+                      ),
+                  ],
+                ),
+            ],
           );
         },
       ),
     );
+  }
+}
+
+class GroupHeaderWidget extends StatelessWidget {
+  final GroupEntity group;
+  final VoidCallback onTap;
+
+  const GroupHeaderWidget({
+    super.key,
+    required this.group,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: onTap,
+      child: Text(group.title),
+    );
+  }
+}
+
+class HabitItemWidget extends StatelessWidget {
+  final HabitEntity habit;
+
+  const HabitItemWidget({super.key, required this.habit});
+
+  @override
+  Widget build(BuildContext context) {
+
+    return Container(height: 100, width: 100, child: Text(habit.title));
   }
 }

@@ -128,4 +128,47 @@ class GroupLocalSourceImpl implements GroupLocalSource {
     await (db.update(db.groups)..where((tbl) => tbl.id.equals(groupId)))
         .write(GroupsCompanion(title: Value(name)));
   }
+
+  @override
+  Future<void> removeLastDummy() async {
+    final query = db.select(db.groups)
+      ..orderBy([
+        (tbl) => OrderingTerm(expression: tbl.createdAt, mode: OrderingMode.desc)
+      ])
+      ..limit(1);
+
+    final groupToDelete = await query.getSingleOrNull();
+
+    if (groupToDelete != null) {
+      await (db.delete(db.groups)
+            ..where((tbl) => tbl.id.equals(groupToDelete.id)))
+          .go();
+    }
+  }
+
+  @override
+  Future<void> addDummyHabitToFirstGroup() async {
+    final query = db.select(db.groups)
+      ..orderBy([
+        (tbl) => OrderingTerm(expression: tbl.createdAt, mode: OrderingMode.asc)
+      ])
+      ..limit(1);
+
+    final firstGroup = await query.getSingleOrNull();
+
+    if (firstGroup != null) {
+      final habitId = const Uuid().v4();
+      final dummyHabitName = 'Dummy Habit ${DateTime.now().millisecondsSinceEpoch}';
+
+      final companion = HabitsCompanion.insert(
+        id: habitId,
+        title: dummyHabitName,
+        info: const Value('A dummy habit created automatically.'),
+        weight: const Value(1),
+        groupId: Value(firstGroup.id),
+      );
+
+      await db.into(db.habits).insert(companion);
+    }
+  }
 }

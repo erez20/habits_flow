@@ -13,7 +13,9 @@ class TestDashboardWidget extends StatelessWidget {
     return Row(
       children: [
         TextButton(onPressed: cubit.addGroup, child: Text("Add G")),
-        TextButton(onPressed: cubit.generateDummyGroupName, child: Text("generateDummyGroupName")),
+        TextButton(onPressed: cubit.generateDummyGroupName, child: Text("genName")),
+        TextButton(onPressed: cubit.removeLastDummyGroup, child: const Text("Remove Last ")),
+        TextButton(onPressed: cubit.addDummyHabitToFirstGroup, child: const Text("Add Dummy Habit")),
       ],
     );
   }

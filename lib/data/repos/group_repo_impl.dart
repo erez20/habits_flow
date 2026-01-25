@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:fimber/fimber.dart';
 import 'package:habits_flow/data/sources/groups/group_local_source.dart';
 import 'package:habits_flow/domain/entities/group_entity.dart';
 import 'package:habits_flow/domain/entities/habit_entity.dart';
@@ -7,7 +8,6 @@ import 'package:habits_flow/domain/repos/group_repo.dart';
 import 'package:habits_flow/domain/responses/domain_error.dart';
 import 'package:habits_flow/domain/responses/domain_response.dart';
 import 'package:injectable/injectable.dart';
-import 'package:rxdart/rxdart.dart';
 
 @LazySingleton(as: GroupRepo)
 class GroupRepoImpl extends GroupRepo {
@@ -93,6 +93,28 @@ class GroupRepoImpl extends GroupRepo {
       await groupLocalSource.updateGroupName(
           groupId: groupId, name: dummyName);
       return Success(null);
+    } on Exception catch (e) {
+      return Failure(error: DatabaseError(message: e.toString()));
+    }
+  }
+
+  @override
+  Future<DomainResponse<void>> removeLastDummy() async {
+    try {
+      await groupLocalSource.removeLastDummy();
+      Fimber.d("Last dummy group removed successfully");
+      return const Success(null);
+    } on Exception catch (e) {
+      Fimber.e("Error removing last dummy group: $e");
+      return Failure(error: DatabaseError(message: e.toString()));
+    }
+  }
+
+  @override
+  Future<DomainResponse<void>> addDummyHabitToFirstGroup() async {
+    try {
+      await groupLocalSource.addDummyHabitToFirstGroup();
+      return const Success(null);
     } on Exception catch (e) {
       return Failure(error: DatabaseError(message: e.toString()));
     }

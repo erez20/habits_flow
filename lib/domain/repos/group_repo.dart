@@ -25,6 +25,10 @@ abstract class GroupRepo {
 
     Stream<List<GroupEntity>> getGroupsListStream();
 
+  Future<DomainResponse<void>> removeLastDummy();
+
+  Future<DomainResponse<void>> addDummyHabitToFirstGroup();
+
   Future<DomainResponse<void>> generateDummyGroupName({
     required String groupId,
   });

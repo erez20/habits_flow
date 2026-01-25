@@ -23,6 +23,8 @@ import 'package:habits_flow/data/sources/habits/habit_local_source_impl.dart'
     as _i995;
 import 'package:habits_flow/domain/repos/group_repo.dart' as _i136;
 import 'package:habits_flow/domain/repos/habit_repo.dart' as _i877;
+import 'package:habits_flow/domain/use_cases/group/add_dummy_habit_to_first_group_use_case.dart'
+    as _i349;
 import 'package:habits_flow/domain/use_cases/group/add_group_use_case.dart'
     as _i655;
 import 'package:habits_flow/domain/use_cases/group/delete_group_use_case.dart'
@@ -31,6 +33,8 @@ import 'package:habits_flow/domain/use_cases/group/generate_dummy_group_name_use
     as _i715;
 import 'package:habits_flow/domain/use_cases/group/groups_list_stream_use_case.dart'
     as _i779;
+import 'package:habits_flow/domain/use_cases/group/remove_last_dummy_group_use_case.dart'
+    as _i587;
 import 'package:habits_flow/domain/use_cases/habit/add_habit_use_case.dart'
     as _i262;
 import 'package:habits_flow/ui/widgets/all_groups/all_groups_cubit.dart'
@@ -66,6 +70,12 @@ extension GetItInjectableX on _i174.GetIt {
         groupRepo: gh<_i136.GroupRepo>(),
       ),
     );
+    gh.factory<_i349.AddDummyHabitToFirstGroupUseCase>(
+      () => _i349.AddDummyHabitToFirstGroupUseCase(repo: gh<_i136.GroupRepo>()),
+    );
+    gh.factory<_i587.RemoveLastDummyGroupUseCase>(
+      () => _i587.RemoveLastDummyGroupUseCase(repo: gh<_i136.GroupRepo>()),
+    );
     gh.factory<_i655.AddGroupUseCase>(
       () => _i655.AddGroupUseCase(groupRepo: gh<_i136.GroupRepo>()),
     );
@@ -90,6 +100,9 @@ extension GetItInjectableX on _i174.GetIt {
         addGroupUseCase: gh<_i655.AddGroupUseCase>(),
         generateDummyGroupNameUseCase:
             gh<_i715.GenerateDummyGroupNameUseCase>(),
+        removeLastDummyGroupUseCase: gh<_i587.RemoveLastDummyGroupUseCase>(),
+        addDummyHabitToFirstGroupUseCase:
+            gh<_i349.AddDummyHabitToFirstGroupUseCase>(),
       ),
     );
     return this;

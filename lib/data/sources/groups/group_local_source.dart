@@ -22,4 +22,8 @@ abstract class GroupLocalSource {
     required String groupId,
     required String name,
   });
+
+  Future<void> removeLastDummy();
+
+  Future<void> addDummyHabitToFirstGroup();
 }

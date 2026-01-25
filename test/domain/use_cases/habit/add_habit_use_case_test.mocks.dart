@@ -202,6 +202,32 @@ class MockGroupRepo extends _i1.Mock implements _i7.GroupRepo {
           as _i3.Stream<List<_i8.GroupEntity>>);
 
   @override
+  _i3.Future<_i4.DomainResponse<void>> removeLastDummy() =>
+      (super.noSuchMethod(
+            Invocation.method(#removeLastDummy, []),
+            returnValue: _i3.Future<_i4.DomainResponse<void>>.value(
+              _i6.dummyValue<_i4.DomainResponse<void>>(
+                this,
+                Invocation.method(#removeLastDummy, []),
+              ),
+            ),
+          )
+          as _i3.Future<_i4.DomainResponse<void>>);
+
+  @override
+  _i3.Future<_i4.DomainResponse<void>> addDummyHabitToFirstGroup() =>
+      (super.noSuchMethod(
+            Invocation.method(#addDummyHabitToFirstGroup, []),
+            returnValue: _i3.Future<_i4.DomainResponse<void>>.value(
+              _i6.dummyValue<_i4.DomainResponse<void>>(
+                this,
+                Invocation.method(#addDummyHabitToFirstGroup, []),
+              ),
+            ),
+          )
+          as _i3.Future<_i4.DomainResponse<void>>);
+
+  @override
   _i3.Future<_i4.DomainResponse<void>> generateDummyGroupName({
     required String? groupId,
   }) =>

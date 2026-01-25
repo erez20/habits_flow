@@ -25,6 +25,7 @@ class _GroupProviderState extends State<GroupProvider> {
   void initState() {
     super.initState();
     _cubit = GroupCubit(entity: widget.entity);
+    Fimber.d("initState: GroupProvider ${widget.entity.toString()}");
   }
 
   @override
