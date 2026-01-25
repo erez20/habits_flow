@@ -21,30 +21,38 @@ class AllGroupsWidget extends StatelessWidget {
                 SliverPadding(
                   padding:
                       const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-                  sliver: SliverMainAxisGroup(
-                    slivers: [
-                      // The Group Header (Collapsible)
-                      SliverToBoxAdapter(
-                        child: GroupHeaderWidget(
-                          group: group,
-                          onTap: () => cubit.toggleGroup(group.id),
-                        ),
+                  sliver: SliverToBoxAdapter(
+                    child: Container(
+                      // This is the white container
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(8.0),
+                        border:
+                            Border.all(color: Colors.black.withOpacity(0.1)),
                       ),
-                      // The Habits List (Only shown if expanded)
-                      if (state.isGroupExpanded(group.id))
-                        SliverList(
-                          delegate: SliverChildBuilderDelegate(
-                            (context, index) {
-                              final habit = group.habits[index];
-                              return HabitItemWidget(
-                                key: ValueKey(habit.id),
-                                habit: habit,
-                              );
-                            },
-                            childCount: group.habits.length,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          // The Group Header
+                          GroupHeaderWidget(
+                            group: group,
+                            onTap: () => cubit.toggleGroup(group.id),
                           ),
-                        ),
-                    ],
+
+                          // The Habits List (if expanded)
+                          if (state.isGroupExpanded(group.id))
+                            Column(
+                              // Habits are now in a Column
+                              children: group.habits.map((habit) {
+                                return HabitItemWidget(
+                                  key: ValueKey(habit.id),
+                                  habit: habit,
+                                );
+                              }).toList(),
+                            ),
+                        ],
+                      ),
+                    ),
                   ),
                 ),
             ],
@@ -72,8 +80,9 @@ class GroupHeaderWidget extends StatelessWidget {
       highlightColor: Colors.transparent,
       onTap: onTap,
       child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 8),
-        child: Text(group.title),
+        padding: const EdgeInsets.all(12.0),
+        child: Text(group.title,
+            style: const TextStyle(fontWeight: FontWeight.bold)),
       ),
     );
   }
@@ -86,6 +95,9 @@ class HabitItemWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(height: 20, width: 100, child: Text(habit.title));
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
+      child: Text(habit.title),
+    );
   }
 }
