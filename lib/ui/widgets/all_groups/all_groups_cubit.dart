@@ -30,7 +30,7 @@ class AllGroupsCubit extends Cubit<AllGroupsState> {
     return super.close();
   }
 
-  bool isGroupExpanded(String id) => state.expandedGroupIds.contains(id);
+
 
   void toggleGroup(String id) {
     final expandedGroupIds = List<String>.from(state.expandedGroupIds);

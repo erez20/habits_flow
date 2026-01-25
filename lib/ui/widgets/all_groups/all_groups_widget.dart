@@ -3,8 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:habits_flow/domain/entities/group_entity.dart';
 import 'package:habits_flow/domain/entities/habit_entity.dart';
 import 'package:habits_flow/ui/widgets/all_groups/all_groups_cubit.dart';
-import 'package:habits_flow/ui/widgets/group/group_provider.dart';
-import 'package:habits_flow/ui/widgets/group/group_widget.dart';
 
 import 'all_groups_state.dart';
 
@@ -19,32 +17,35 @@ class AllGroupsWidget extends StatelessWidget {
         builder: (context, state) {
           return CustomScrollView(
             slivers: [
-              // Iterate through your domain groups
               for (final group in state.groupList)
-                SliverMainAxisGroup(
-                  slivers: [
-                    // The Group Header (Collapsible)
-                    SliverToBoxAdapter(
-                      child: GroupHeaderWidget(
-                        group: group,
-                        onTap: () => cubit.toggleGroup(group.id),
-                      ),
-                    ),
-                    // The Habits List (Only shown if expanded)
-                    if (cubit.isGroupExpanded(group.id))
-                      SliverList(
-                        delegate: SliverChildBuilderDelegate(
-                          (context, index) {
-                            final habit = group.habits[index];
-                            return HabitItemWidget(
-                              key: ValueKey(habit.id),
-                              habit: habit,
-                            );
-                          },
-                          childCount: group.habits.length,
+                SliverPadding(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+                  sliver: SliverMainAxisGroup(
+                    slivers: [
+                      // The Group Header (Collapsible)
+                      SliverToBoxAdapter(
+                        child: GroupHeaderWidget(
+                          group: group,
+                          onTap: () => cubit.toggleGroup(group.id),
                         ),
                       ),
-                  ],
+                      // The Habits List (Only shown if expanded)
+                      if (state.isGroupExpanded(group.id))
+                        SliverList(
+                          delegate: SliverChildBuilderDelegate(
+                            (context, index) {
+                              final habit = group.habits[index];
+                              return HabitItemWidget(
+                                key: ValueKey(habit.id),
+                                habit: habit,
+                              );
+                            },
+                            childCount: group.habits.length,
+                          ),
+                        ),
+                    ],
+                  ),
                 ),
             ],
           );
@@ -67,8 +68,13 @@ class GroupHeaderWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InkWell(
+      splashColor: Colors.transparent,
+      highlightColor: Colors.transparent,
       onTap: onTap,
-      child: Text(group.title),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 8),
+        child: Text(group.title),
+      ),
     );
   }
 }
@@ -80,7 +86,6 @@ class HabitItemWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     return Container(height: 20, width: 100, child: Text(habit.title));
   }
 }

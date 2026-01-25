@@ -14,8 +14,6 @@ class AllGroupsState extends Equatable{
   @override
   List<Object?> get props => [groupList, expandedGroupIds];
 
-
-
   AllGroupsState copyWith({
     List<GroupEntity>? groupList,
     List<String>? expandedGroupIds,
@@ -25,4 +23,6 @@ class AllGroupsState extends Equatable{
       expandedGroupIds: expandedGroupIds ?? this.expandedGroupIds,
     );
   }
+
+  bool isGroupExpanded(String id) => expandedGroupIds.contains(id);
 }
