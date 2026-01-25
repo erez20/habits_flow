@@ -9,20 +9,18 @@ import 'all_groups_state.dart';
 @injectable
 class AllGroupsCubit extends Cubit<AllGroupsState> {
   StreamSubscription? _subscription;
-  final List<String> _expandedGroupIds = [];
 
   final GroupsListStreamUseCase groupsListStreamUseCase;
 
-  AllGroupsCubit({ required this.groupsListStreamUseCase,})
-      : super(AllGroupsState.initial()) {
+  AllGroupsCubit({
+    required this.groupsListStreamUseCase,
+  }) : super(AllGroupsState.initial()) {
     init();
   }
 
-
-
   void init() {
     _subscription = groupsListStreamUseCase.stream.listen((event) {
-      emit(state.copyWith(list: event));
+      emit(state.copyWith(groupList: event));
     });
   }
 
@@ -32,13 +30,17 @@ class AllGroupsCubit extends Cubit<AllGroupsState> {
     return super.close();
   }
 
-  bool isGroupExpanded(String id) =>
-    _expandedGroupIds.contains(id);
+  bool isGroupExpanded(String id) => state.expandedGroupIds.contains(id);
 
-  void toggleGroup(String id) => isGroupExpanded(id)?_expandedGroupIds.remove(id):_expandedGroupIds.add(id);
+  void toggleGroup(String id) {
+    final expandedGroupIds = List<String>.from(state.expandedGroupIds);
+    if (expandedGroupIds.contains(id)) {
+      expandedGroupIds.remove(id);
+    } else {
+      expandedGroupIds.add(id);
+    }
+    emit(
+      state.copyWith(expandedGroupIds: expandedGroupIds)
+    );
+  }
 }
-
-
-
-
-

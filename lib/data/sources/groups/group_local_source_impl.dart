@@ -89,36 +89,44 @@ class GroupLocalSourceImpl implements GroupLocalSource {
 
   @override
   Stream<List<GroupEntity>> getGroupsListStream() {
-    final query = db.select(db.groups);
+    final query = db.select(db.groups).join([
+      leftOuterJoin(db.habits, db.habits.groupId.equalsExp(db.groups.id)),
+    ]);
 
-    return query.watch().asyncMap((groups) async {
-      final groupsWithHabits = <GroupEntity>[];
-      for (final group in groups) {
-        final habits = await (db.select(db.habits)
-              ..where((tbl) => tbl.groupId.equals(group.id)))
-            .get();
-        final habitEntities = habits
-            .map(
-              (h) => HabitEntity(
-                id: h.id,
-                title: h.title,
-                info: h.info,
-                weight: h.weight,
-                completionCount: 0,
-              ),
-            )
-            .toList();
-        groupsWithHabits.add(
-          GroupEntity(
-            id: group.id,
-            title: group.title,
-            weight: group.weight,
-            colorHex: group.colorHex,
-            habits: habitEntities,
-          ),
-        );
+    return query.watch().map((rows) {
+      final groupHabits = <Group, List<Habit>>{};
+
+      for (final row in rows) {
+        final group = row.readTable(db.groups);
+        final habit = row.readTableOrNull(db.habits);
+
+        final habits = groupHabits.putIfAbsent(group, () => []);
+        if (habit != null) {
+          habits.add(habit);
+        }
       }
-      return groupsWithHabits;
+
+      return groupHabits.entries.map((entry) {
+        final group = entry.key;
+        final habits = entry.value;
+        return GroupEntity(
+          id: group.id,
+          title: group.title,
+          weight: group.weight,
+          colorHex: group.colorHex,
+          habits: habits
+              .map(
+                (h) => HabitEntity(
+                  id: h.id,
+                  title: h.title,
+                  info: h.info,
+                  weight: h.weight,
+                  completionCount: 0,
+                ),
+              )
+              .toList(),
+        );
+      }).toList();
     });
   }
 
