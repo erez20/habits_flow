@@ -10,13 +10,16 @@ class TestDashboardWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final cubit = context.read<TestDashboardCubit>();
 
-    return Row(
-      children: [
-        TextButton(onPressed: cubit.addGroup, child: Text("Add G")),
-        TextButton(onPressed: cubit.generateDummyGroupName, child: Text("genName")),
-        TextButton(onPressed: cubit.removeLastDummyGroup, child: const Text("Remove Last ")),
-        TextButton(onPressed: cubit.addDummyHabitToFirstGroup, child: const Text("Add Dummy Habit")),
-      ],
+    return SingleChildScrollView(
+    scrollDirection: Axis.horizontal,
+      child: Row(
+        children: [
+          TextButton(onPressed: cubit.addGroup, child: Text("Add G")),
+          TextButton(onPressed: cubit.generateDummyGroupName, child: Text("genName")),
+          TextButton(onPressed: cubit.removeLastDummyGroup, child: const Text("Remove Last ")),
+          TextButton(onPressed: cubit.addDummyHabitToFirstGroup, child: const Text("Add Dummy Habit")),
+        ],
+      ),
     );
   }
 }

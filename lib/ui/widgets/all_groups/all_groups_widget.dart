@@ -41,16 +41,27 @@ class AllGroupsWidget extends StatelessWidget {
                           ),
 
                           // The Habits List (if expanded)
-                          if (state.isGroupExpanded(group.id))
-                            Wrap(
-                              // Habits are now in a Column
-                              children: group.habits.map((habit) {
-                                return HabitItemWidget(
-                                  key: ValueKey(habit.id),
-                                  habit: habit,
-                                );
-                              }).toList(),
-                            ),
+                          AnimatedSwitcher(
+                            duration: const Duration(milliseconds: 150),
+                            transitionBuilder:
+                                (Widget child, Animation<double> animation) {
+                              return SizeTransition(
+                                sizeFactor: animation,
+                                child: child,
+                              );
+                            },
+                            child: state.expandedGroupIds.contains(group.id)
+                                ? Wrap(
+                                    key: ValueKey(group.id),
+                                    children: [...group.habits.map((habit) {
+                                      return HabitItemWidget(
+                                        key: ValueKey(habit.id),
+                                        habit: habit,
+                                      );
+                                    }), (Container(height: 100, width: 100, color: Colors.orange,))],
+                                  )
+                                : const SizedBox.shrink(),
+                          ),
                         ],
                       ),
                     ),
