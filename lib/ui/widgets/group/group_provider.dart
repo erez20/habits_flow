@@ -7,10 +7,12 @@ import 'group_cubit.dart';
 import 'group_widget.dart';
 
 class GroupProvider extends StatefulWidget {
-  final GroupEntity entity;
+  final GroupEntity group;
+  final VoidCallback onTap;
 
   const GroupProvider({
-    required this.entity,
+    required this.group,
+    required this.onTap,
     super.key,
   });
 
@@ -24,24 +26,24 @@ class _GroupProviderState extends State<GroupProvider> {
   @override
   void initState() {
     super.initState();
-    _cubit = GroupCubit(entity: widget.entity);
-    Fimber.d("initState: GroupProvider ${widget.entity.toString()}");
+    _cubit = GroupCubit(entity: widget.group);
+    Fimber.d("initState: GroupProvider ${widget.group.toString()}");
   }
 
   @override
   Widget build(BuildContext context) {
-    Fimber.d("build: GroupProvider ${widget.entity.toString()}");
+    Fimber.d("build: GroupProvider ${widget.group.toString()}");
     return BlocProvider.value(
       value: _cubit,
-      child: const GroupWidget(),
+      child: GroupWidget(onTap:widget.onTap),
     );
   }
 
   @override
   void didUpdateWidget(GroupProvider oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (widget.entity != oldWidget.entity) {
-      _cubit.updateEntity(widget.entity);
+    if (widget.group != oldWidget.group) {
+      _cubit.updateEntity(widget.group);
     }
   }
 

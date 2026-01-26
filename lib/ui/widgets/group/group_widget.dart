@@ -5,18 +5,26 @@ import 'package:habits_flow/ui/widgets/group/group_cubit.dart';
 import 'package:habits_flow/ui/widgets/group/group_state.dart';
 
 class GroupWidget extends StatelessWidget {
-  const GroupWidget({super.key});
+  final VoidCallback onTap;
+
+  const GroupWidget({
+    super.key,
+    required this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
     Fimber.d("build: GroupWidget");
-
     return BlocBuilder<GroupCubit, GroupState>(
-      //buildWhen: (previous, current) => previous != current,
       builder: (context, state) {
-
         Fimber.d("build group widget BlocBuilder: ${state.entity.shortId}");
-        return Text("${state.entity}\n");
+        return InkWell(onTap: onTap, child: Padding(
+          padding: const EdgeInsets.all(12.0),
+          child: Text(
+            state.entity.title,
+            style: const TextStyle(fontWeight: FontWeight.bold),
+          ),
+        ));
       },
     );
   }
