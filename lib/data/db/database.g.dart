@@ -391,13 +391,13 @@ class $HabitsTable extends Habits with TableInfo<$HabitsTable, Habit> {
   );
   static const VerificationMeta _weightMeta = const VerificationMeta('weight');
   @override
-  late final GeneratedColumn<int> weight = GeneratedColumn<int>(
+  late final GeneratedColumn<double> weight = GeneratedColumn<double>(
     'weight',
     aliasedName,
     false,
-    type: DriftSqlType.int,
+    type: DriftSqlType.double,
     requiredDuringInsert: false,
-    defaultValue: const Constant(1),
+    defaultValue: const Constant(1.0),
   );
   static const VerificationMeta _createdAtMeta = const VerificationMeta(
     'createdAt',
@@ -505,7 +505,7 @@ class $HabitsTable extends Habits with TableInfo<$HabitsTable, Habit> {
         data['${effectivePrefix}info'],
       )!,
       weight: attachedDatabase.typeMapping.read(
-        DriftSqlType.int,
+        DriftSqlType.double,
         data['${effectivePrefix}weight'],
       )!,
       createdAt: attachedDatabase.typeMapping.read(
@@ -529,7 +529,7 @@ class Habit extends DataClass implements Insertable<Habit> {
   final String id;
   final String title;
   final String info;
-  final int weight;
+  final double weight;
   final DateTime createdAt;
   final String? groupId;
   const Habit({
@@ -546,7 +546,7 @@ class Habit extends DataClass implements Insertable<Habit> {
     map['id'] = Variable<String>(id);
     map['title'] = Variable<String>(title);
     map['info'] = Variable<String>(info);
-    map['weight'] = Variable<int>(weight);
+    map['weight'] = Variable<double>(weight);
     map['created_at'] = Variable<DateTime>(createdAt);
     if (!nullToAbsent || groupId != null) {
       map['group_id'] = Variable<String>(groupId);
@@ -576,7 +576,7 @@ class Habit extends DataClass implements Insertable<Habit> {
       id: serializer.fromJson<String>(json['id']),
       title: serializer.fromJson<String>(json['title']),
       info: serializer.fromJson<String>(json['info']),
-      weight: serializer.fromJson<int>(json['weight']),
+      weight: serializer.fromJson<double>(json['weight']),
       createdAt: serializer.fromJson<DateTime>(json['createdAt']),
       groupId: serializer.fromJson<String?>(json['groupId']),
     );
@@ -588,7 +588,7 @@ class Habit extends DataClass implements Insertable<Habit> {
       'id': serializer.toJson<String>(id),
       'title': serializer.toJson<String>(title),
       'info': serializer.toJson<String>(info),
-      'weight': serializer.toJson<int>(weight),
+      'weight': serializer.toJson<double>(weight),
       'createdAt': serializer.toJson<DateTime>(createdAt),
       'groupId': serializer.toJson<String?>(groupId),
     };
@@ -598,7 +598,7 @@ class Habit extends DataClass implements Insertable<Habit> {
     String? id,
     String? title,
     String? info,
-    int? weight,
+    double? weight,
     DateTime? createdAt,
     Value<String?> groupId = const Value.absent(),
   }) => Habit(
@@ -651,7 +651,7 @@ class HabitsCompanion extends UpdateCompanion<Habit> {
   final Value<String> id;
   final Value<String> title;
   final Value<String> info;
-  final Value<int> weight;
+  final Value<double> weight;
   final Value<DateTime> createdAt;
   final Value<String?> groupId;
   final Value<int> rowid;
@@ -678,7 +678,7 @@ class HabitsCompanion extends UpdateCompanion<Habit> {
     Expression<String>? id,
     Expression<String>? title,
     Expression<String>? info,
-    Expression<int>? weight,
+    Expression<double>? weight,
     Expression<DateTime>? createdAt,
     Expression<String>? groupId,
     Expression<int>? rowid,
@@ -698,7 +698,7 @@ class HabitsCompanion extends UpdateCompanion<Habit> {
     Value<String>? id,
     Value<String>? title,
     Value<String>? info,
-    Value<int>? weight,
+    Value<double>? weight,
     Value<DateTime>? createdAt,
     Value<String?>? groupId,
     Value<int>? rowid,
@@ -727,7 +727,7 @@ class HabitsCompanion extends UpdateCompanion<Habit> {
       map['info'] = Variable<String>(info.value);
     }
     if (weight.present) {
-      map['weight'] = Variable<int>(weight.value);
+      map['weight'] = Variable<double>(weight.value);
     }
     if (createdAt.present) {
       map['created_at'] = Variable<DateTime>(createdAt.value);
@@ -1362,7 +1362,7 @@ typedef $$HabitsTableCreateCompanionBuilder =
       required String id,
       required String title,
       Value<String> info,
-      Value<int> weight,
+      Value<double> weight,
       Value<DateTime> createdAt,
       Value<String?> groupId,
       Value<int> rowid,
@@ -1372,7 +1372,7 @@ typedef $$HabitsTableUpdateCompanionBuilder =
       Value<String> id,
       Value<String> title,
       Value<String> info,
-      Value<int> weight,
+      Value<double> weight,
       Value<DateTime> createdAt,
       Value<String?> groupId,
       Value<int> rowid,
@@ -1449,7 +1449,7 @@ class $$HabitsTableFilterComposer
     builder: (column) => ColumnFilters(column),
   );
 
-  ColumnFilters<int> get weight => $composableBuilder(
+  ColumnFilters<double> get weight => $composableBuilder(
     column: $table.weight,
     builder: (column) => ColumnFilters(column),
   );
@@ -1532,7 +1532,7 @@ class $$HabitsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
-  ColumnOrderings<int> get weight => $composableBuilder(
+  ColumnOrderings<double> get weight => $composableBuilder(
     column: $table.weight,
     builder: (column) => ColumnOrderings(column),
   );
@@ -1584,7 +1584,7 @@ class $$HabitsTableAnnotationComposer
   GeneratedColumn<String> get info =>
       $composableBuilder(column: $table.info, builder: (column) => column);
 
-  GeneratedColumn<int> get weight =>
+  GeneratedColumn<double> get weight =>
       $composableBuilder(column: $table.weight, builder: (column) => column);
 
   GeneratedColumn<DateTime> get createdAt =>
@@ -1671,7 +1671,7 @@ class $$HabitsTableTableManager
                 Value<String> id = const Value.absent(),
                 Value<String> title = const Value.absent(),
                 Value<String> info = const Value.absent(),
-                Value<int> weight = const Value.absent(),
+                Value<double> weight = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
                 Value<String?> groupId = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
@@ -1689,7 +1689,7 @@ class $$HabitsTableTableManager
                 required String id,
                 required String title,
                 Value<String> info = const Value.absent(),
-                Value<int> weight = const Value.absent(),
+                Value<double> weight = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
                 Value<String?> groupId = const Value.absent(),
                 Value<int> rowid = const Value.absent(),

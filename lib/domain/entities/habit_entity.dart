@@ -3,7 +3,7 @@ class HabitEntity extends Equatable{
   final String id;
   final String title;
   final String info;
-  final int weight;
+  final double weight;
   final int completionCount;
 
   const HabitEntity({

@@ -6,7 +6,7 @@ abstract class HabitRepo {
 
   Future<DomainResponse<HabitEntity>> createHabit({
     required String title,
-    required int weight,
+    required double weight,
   });
 
   Future<DomainResponse<void>> deleteHabit({
@@ -22,4 +22,6 @@ abstract class HabitRepo {
   });
 
   Stream<List<HabitEntity>> habitsOfGroupStream(String groupId);
+
+  Future<DomainResponse<double>> getNextHabitWeight(String groupId);
 }

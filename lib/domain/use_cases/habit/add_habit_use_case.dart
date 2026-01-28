@@ -16,9 +16,16 @@ class AddHabitUseCase extends ExecUseCase<void, AddHabitUseCaseParams> {
 
   @override
   Future<DomainResponse<void>> exec(AddHabitUseCaseParams params) async {
+    final weightResp = await habitRepo.getNextHabitWeight(params.groupId);
+
+    if (weightResp case Failure(:final error)) {
+      return Failure(error: error);
+    }
+    final newWeight = weightResp.data!;
+
     final habitResp = await habitRepo.createHabit(
       title: params.title,
-      weight: params.weight,
+      weight: newWeight,
     );
 
     if (habitResp case Failure(:final error)) {
@@ -43,13 +50,12 @@ class AddHabitUseCase extends ExecUseCase<void, AddHabitUseCaseParams> {
 class AddHabitUseCaseParams {
   final String groupId;
   final String title;
-  final int weight;
   final String info;
+
 
   AddHabitUseCaseParams({
     required this.groupId,
     required this.title,
-    required this.weight,
     required this.info,
   });
 }

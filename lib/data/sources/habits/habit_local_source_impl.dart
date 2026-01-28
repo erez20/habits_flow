@@ -14,7 +14,7 @@ class HabitLocalSourceImpl implements HabitLocalSource {
   @override
   Future<HabitEntity> createHabit({
     required String title,
-    required int weight,
+    required double weight,
   }) async {
     final id = const Uuid().v4();
     final companion = HabitsCompanion.insert(

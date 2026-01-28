@@ -14,7 +14,7 @@ class HabitRepoImpl extends HabitRepo {
   @override
   Future<DomainResponse<HabitEntity>> createHabit({
     required String title,
-    required int weight,
+    required double weight,
   }) async {
     try {
       final habit = await habitsLocalSource.createHabit(
@@ -54,5 +54,18 @@ class HabitRepoImpl extends HabitRepo {
   @override
   Stream<List<HabitEntity>> habitsOfGroupStream(String groupId) {
     return habitsLocalSource.habitsOfGroupStream(groupId);
+  }
+
+  @override
+  Future<DomainResponse<double>> getNextHabitWeight(String groupId) async {
+    try {
+      final habits = await habitsOfGroupStream(groupId).first;
+      final maxWeight = habits.fold<double>(
+          0.0, (max, habit) => habit.weight > max ? habit.weight : max);
+      final newWeight = maxWeight + 1.0;
+      return Success(newWeight);
+    } on Exception catch (e) {
+      return Failure(error: DatabaseError(message: e.toString()));
+    }
   }
 }

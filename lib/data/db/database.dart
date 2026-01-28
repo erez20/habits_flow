@@ -8,7 +8,7 @@ class Habits extends Table {
   TextColumn get id => text()();
   TextColumn get title => text()();
   TextColumn get info => text().withDefault(const Constant(''))();
-  IntColumn get weight => integer().withDefault(const Constant(1))();
+  RealColumn get weight => real().withDefault(const Constant(1.0))();
   DateTimeColumn get createdAt => dateTime().withDefault(currentDateAndTime)();
 
   // Foreign key to Groups table
