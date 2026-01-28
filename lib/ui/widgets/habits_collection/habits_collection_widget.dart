@@ -1,36 +1,41 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:habits_flow/domain/entities/habit_entity.dart';
 import 'package:habits_flow/ui/common/constants.dart';
+import 'package:habits_flow/ui/widgets/habits_collection/habits_collection_cubit.dart';
+import 'package:habits_flow/ui/widgets/habits_collection/habits_collection_state.dart';
 
 class HabitsCollectionWidget extends StatelessWidget {
+  final double Function(BuildContext context) getHabitSize;
 
   const HabitsCollectionWidget({
     super.key,
-
-
+    required this.getHabitSize,
   });
-
-
 
   @override
   Widget build(BuildContext context) {
-    return const SizedBox.shrink();
-    // return Wrap(
-    //   key: ValueKey(group.id),
-    //   children: [
-    //     ...group.habits.map((habit) {
-    //       return HabitItemWidget(
-    //         key: ValueKey(habit.id),
-    //         habit: habit,
-    //       );
-    //     }),
-    //     (Container(
-    //       height: 100,
-    //       width: 100,
-    //       color: Colors.orange,
-    //     )),
-    //   ],
-    // );
+    return BlocBuilder<HabitsCollectionCubit, HabitCollectionState>(
+
+      builder: (context, state) {
+        final habitSize = getHabitSize(context);
+        return Wrap(
+          children: [
+            ...state.habits.map((habit) {
+              return HabitItemWidget(
+                key: ValueKey(habit.id),
+                habit: habit,
+              );
+            }),
+            (Container(
+              height: habitSize,
+              width: habitSize,
+              color: Colors.orange,
+            )),
+          ],
+        );
+      },
+    );
   }
 }
 
@@ -55,4 +60,3 @@ class HabitItemWidget extends StatelessWidget {
     );
   }
 }
-

@@ -113,6 +113,14 @@ class MockHabitRepo extends _i1.Mock implements _i2.HabitRepo {
             ),
           )
           as _i3.Future<_i4.DomainResponse<void>>);
+
+  @override
+  _i3.Stream<List<_i5.HabitEntity>> habitsOfGroupStream(String? groupId) =>
+      (super.noSuchMethod(
+            Invocation.method(#habitsOfGroupStream, [groupId]),
+            returnValue: _i3.Stream<List<_i5.HabitEntity>>.empty(),
+          )
+          as _i3.Stream<List<_i5.HabitEntity>>);
 }
 
 /// A class which mocks [GroupRepo].

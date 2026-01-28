@@ -96,4 +96,20 @@ class HabitLocalSourceImpl implements HabitLocalSource {
           .go();
     }
   }
+
+  @override
+  Stream<List<HabitEntity>> habitsOfGroupStream(String groupId) {
+    final query = db.select(db.habits)..where((tbl) => tbl.groupId.equals(groupId));
+    return query.watch().map((rows) {
+      return rows.map((row) {
+        return HabitEntity(
+          id: row.id,
+          title: row.title,
+          weight: row.weight,
+          info: row.info,
+          completionCount: 0,
+        );
+      }).toList();
+    });
+  }
 }

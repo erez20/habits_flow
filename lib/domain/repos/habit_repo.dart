@@ -21,5 +21,5 @@ abstract class HabitRepo {
     required HabitEntity habit,
   });
 
-
+  Stream<List<HabitEntity>> habitsOfGroupStream(String groupId);
 }

@@ -1,3 +1,4 @@
-abstract class StreamUseCase<T> {
-  Stream<T> get stream;
+abstract class StreamUseCase<T,Params> {
+  Stream<T> stream(Params groupId);
 }
+

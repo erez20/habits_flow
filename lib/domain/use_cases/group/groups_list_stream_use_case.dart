@@ -4,11 +4,11 @@ import 'package:habits_flow/domain/use_cases/base/stream_use_case.dart';
 import 'package:injectable/injectable.dart';
 
 @injectable
-class GroupsListStreamUseCase extends StreamUseCase<List<GroupEntity>> {
+class GroupsListStreamUseCase extends StreamUseCase<List<GroupEntity>, void> {
   final GroupRepo groupRepo;
 
   GroupsListStreamUseCase({required this.groupRepo});
 
   @override
-  Stream<List<GroupEntity>> get stream => groupRepo.getGroupsListStream();
+  Stream<List<GroupEntity>> stream(groupId) => groupRepo.getGroupsListStream();
 }

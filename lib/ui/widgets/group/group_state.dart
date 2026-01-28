@@ -6,6 +6,7 @@ class GroupState extends Equatable {
 
   const GroupState({required this.entity});
 
+
   @override
   List<Object?> get props => [entity];
 }

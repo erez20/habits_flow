@@ -22,4 +22,6 @@ abstract class HabitLocalSource {
     required String habitId,
     required DateTime date,
   });
+
+  Stream<List<HabitEntity>> habitsOfGroupStream(String groupId);
 }

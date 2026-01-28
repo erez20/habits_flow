@@ -50,4 +50,9 @@ class HabitRepoImpl extends HabitRepo {
     // TODO: implement resetHabitCount
     throw UnimplementedError();
   }
+
+  @override
+  Stream<List<HabitEntity>> habitsOfGroupStream(String groupId) {
+    return habitsLocalSource.habitsOfGroupStream(groupId);
+  }
 }

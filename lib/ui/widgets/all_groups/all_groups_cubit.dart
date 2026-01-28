@@ -19,7 +19,7 @@ class AllGroupsCubit extends Cubit<AllGroupsState> {
   }
 
   void init() {
-    _subscription = groupsListStreamUseCase.stream.listen((event) {
+    _subscription = groupsListStreamUseCase.stream(null).listen((event) {
       emit(state.copyWith(groupList: event));
     });
   }

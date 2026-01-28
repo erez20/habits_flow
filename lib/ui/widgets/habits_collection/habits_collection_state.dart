@@ -7,6 +7,13 @@ class HabitCollectionState extends Equatable {
   const HabitCollectionState({required this.habits});
 
   @override
-
   List<Object?> get props => [habits];
+
+  HabitCollectionState copyWith({
+    List<HabitEntity>? habits,
+  }) {
+    return HabitCollectionState(
+      habits: habits ?? this.habits,
+    );
+  }
 }
