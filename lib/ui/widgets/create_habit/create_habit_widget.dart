@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:habits_flow/ui/common/constants.dart';
+import 'package:habits_flow/ui/widgets/new_habit_form/new_habit_form_provider.dart';
 
 import 'create_habit_cubit.dart';
 
@@ -34,11 +35,7 @@ class CreateHabitWidget extends StatelessWidget {
       context: context,
       builder: (_) => InkWell(
         onTap: onConfirm,
-        child: Container(
-          height: 100,
-          width: 100,
-          color: Colors.green,
-        ),
+        child: NewHabitFormProvider(),
       ),
     );
   }
