@@ -22,7 +22,11 @@ class GroupWidget extends StatelessWidget {
           padding: const EdgeInsets.all(12.0),
           child: Text(
             state.entity.title,
-            style: const TextStyle(fontWeight: FontWeight.bold),
+            style: const TextStyle(
+              fontFamily: 'LondrinaOutline',
+              fontWeight: FontWeight.bold,
+              fontSize: 24,
+            ),
           ),
         ));
       },

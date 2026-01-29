@@ -141,6 +141,7 @@ class GroupLocalSourceImpl implements GroupLocalSource {
 
   @override
   Future<void> removeLastDummy() async {
+    //TODO remove should mark as deleted and not actual deletion
     final query = db.select(db.groups)
       ..orderBy([
         (tbl) => OrderingTerm(expression: tbl.createdAt, mode: OrderingMode.desc)
