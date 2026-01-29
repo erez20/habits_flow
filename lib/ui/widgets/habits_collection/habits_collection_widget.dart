@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:habits_flow/domain/entities/habit_entity.dart';
 import 'package:habits_flow/ui/common/constants.dart';
+import 'package:habits_flow/ui/widgets/create_habit/create_habit_provider.dart';
 import 'package:habits_flow/ui/widgets/habits_collection/habits_collection_cubit.dart';
 import 'package:habits_flow/ui/widgets/habits_collection/habits_collection_state.dart';
 
@@ -16,7 +17,6 @@ class HabitsCollectionWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<HabitsCollectionCubit, HabitCollectionState>(
-
       builder: (context, state) {
         final habitSize = getHabitSize(context);
         return Wrap(
@@ -27,10 +27,8 @@ class HabitsCollectionWidget extends StatelessWidget {
                 habit: habit,
               );
             }),
-            (Container(
-              height: habitSize,
-              width: habitSize,
-              color: Colors.orange,
+            (CreateHabitProvider(
+              groupId: state.groupId,
             )),
           ],
         );

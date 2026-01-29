@@ -13,7 +13,7 @@ class HabitsCollectionCubit extends Cubit<HabitCollectionState> {
   HabitsCollectionCubit({
     required this.groupId,
     required this.habitsOfGroupStreamUseCase,
-  }) : super(HabitCollectionState(habits: [])) {
+  }) : super(HabitCollectionState(habits: [], groupId: groupId)) {
     init();
   }
 
