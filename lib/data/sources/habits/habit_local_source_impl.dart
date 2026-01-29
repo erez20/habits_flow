@@ -14,12 +14,16 @@ class HabitLocalSourceImpl implements HabitLocalSource {
   @override
   Future<HabitEntity> createHabit({
     required String title,
+    required String info,
+    required String link,
     required double weight,
   }) async {
     final id = const Uuid().v4();
     final companion = HabitsCompanion.insert(
       id: id,
       title: title,
+      info: Value(info),
+      link: Value(link),
       weight: Value(weight),
       createdAt: Value(DateTime.now()),
     );
@@ -29,8 +33,9 @@ class HabitLocalSourceImpl implements HabitLocalSource {
     return HabitEntity(
       id: id,
       title: title,
+      info: info,
+      link: link,
       weight: weight,
-      info: '',
       completionCount: 0,
     );
   }
@@ -107,6 +112,7 @@ class HabitLocalSourceImpl implements HabitLocalSource {
           title: row.title,
           weight: row.weight,
           info: row.info,
+          link: row.link,
           completionCount: 0,
         );
       }).toList();

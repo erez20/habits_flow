@@ -25,6 +25,8 @@ class AddHabitUseCase extends ExecUseCase<void, AddHabitUseCaseParams> {
 
     final habitResp = await habitRepo.createHabit(
       title: params.title,
+      info: params.info,
+      link: params.link,
       weight: newWeight,
     );
 
@@ -51,11 +53,13 @@ class AddHabitUseCaseParams {
   final String groupId;
   final String title;
   final String info;
+  final String link;
 
 
   AddHabitUseCaseParams({
     required this.groupId,
     required this.title,
     required this.info,
+    required this.link,
   });
 }

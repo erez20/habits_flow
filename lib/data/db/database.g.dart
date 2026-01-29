@@ -389,6 +389,16 @@ class $HabitsTable extends Habits with TableInfo<$HabitsTable, Habit> {
     requiredDuringInsert: false,
     defaultValue: const Constant(''),
   );
+  static const VerificationMeta _linkMeta = const VerificationMeta('link');
+  @override
+  late final GeneratedColumn<String> link = GeneratedColumn<String>(
+    'link',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(''),
+  );
   static const VerificationMeta _weightMeta = const VerificationMeta('weight');
   @override
   late final GeneratedColumn<double> weight = GeneratedColumn<double>(
@@ -430,6 +440,7 @@ class $HabitsTable extends Habits with TableInfo<$HabitsTable, Habit> {
     id,
     title,
     info,
+    link,
     weight,
     createdAt,
     groupId,
@@ -463,6 +474,12 @@ class $HabitsTable extends Habits with TableInfo<$HabitsTable, Habit> {
       context.handle(
         _infoMeta,
         info.isAcceptableOrUnknown(data['info']!, _infoMeta),
+      );
+    }
+    if (data.containsKey('link')) {
+      context.handle(
+        _linkMeta,
+        link.isAcceptableOrUnknown(data['link']!, _linkMeta),
       );
     }
     if (data.containsKey('weight')) {
@@ -504,6 +521,10 @@ class $HabitsTable extends Habits with TableInfo<$HabitsTable, Habit> {
         DriftSqlType.string,
         data['${effectivePrefix}info'],
       )!,
+      link: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}link'],
+      )!,
       weight: attachedDatabase.typeMapping.read(
         DriftSqlType.double,
         data['${effectivePrefix}weight'],
@@ -529,6 +550,7 @@ class Habit extends DataClass implements Insertable<Habit> {
   final String id;
   final String title;
   final String info;
+  final String link;
   final double weight;
   final DateTime createdAt;
   final String? groupId;
@@ -536,6 +558,7 @@ class Habit extends DataClass implements Insertable<Habit> {
     required this.id,
     required this.title,
     required this.info,
+    required this.link,
     required this.weight,
     required this.createdAt,
     this.groupId,
@@ -546,6 +569,7 @@ class Habit extends DataClass implements Insertable<Habit> {
     map['id'] = Variable<String>(id);
     map['title'] = Variable<String>(title);
     map['info'] = Variable<String>(info);
+    map['link'] = Variable<String>(link);
     map['weight'] = Variable<double>(weight);
     map['created_at'] = Variable<DateTime>(createdAt);
     if (!nullToAbsent || groupId != null) {
@@ -559,6 +583,7 @@ class Habit extends DataClass implements Insertable<Habit> {
       id: Value(id),
       title: Value(title),
       info: Value(info),
+      link: Value(link),
       weight: Value(weight),
       createdAt: Value(createdAt),
       groupId: groupId == null && nullToAbsent
@@ -576,6 +601,7 @@ class Habit extends DataClass implements Insertable<Habit> {
       id: serializer.fromJson<String>(json['id']),
       title: serializer.fromJson<String>(json['title']),
       info: serializer.fromJson<String>(json['info']),
+      link: serializer.fromJson<String>(json['link']),
       weight: serializer.fromJson<double>(json['weight']),
       createdAt: serializer.fromJson<DateTime>(json['createdAt']),
       groupId: serializer.fromJson<String?>(json['groupId']),
@@ -588,6 +614,7 @@ class Habit extends DataClass implements Insertable<Habit> {
       'id': serializer.toJson<String>(id),
       'title': serializer.toJson<String>(title),
       'info': serializer.toJson<String>(info),
+      'link': serializer.toJson<String>(link),
       'weight': serializer.toJson<double>(weight),
       'createdAt': serializer.toJson<DateTime>(createdAt),
       'groupId': serializer.toJson<String?>(groupId),
@@ -598,6 +625,7 @@ class Habit extends DataClass implements Insertable<Habit> {
     String? id,
     String? title,
     String? info,
+    String? link,
     double? weight,
     DateTime? createdAt,
     Value<String?> groupId = const Value.absent(),
@@ -605,6 +633,7 @@ class Habit extends DataClass implements Insertable<Habit> {
     id: id ?? this.id,
     title: title ?? this.title,
     info: info ?? this.info,
+    link: link ?? this.link,
     weight: weight ?? this.weight,
     createdAt: createdAt ?? this.createdAt,
     groupId: groupId.present ? groupId.value : this.groupId,
@@ -614,6 +643,7 @@ class Habit extends DataClass implements Insertable<Habit> {
       id: data.id.present ? data.id.value : this.id,
       title: data.title.present ? data.title.value : this.title,
       info: data.info.present ? data.info.value : this.info,
+      link: data.link.present ? data.link.value : this.link,
       weight: data.weight.present ? data.weight.value : this.weight,
       createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
       groupId: data.groupId.present ? data.groupId.value : this.groupId,
@@ -626,6 +656,7 @@ class Habit extends DataClass implements Insertable<Habit> {
           ..write('id: $id, ')
           ..write('title: $title, ')
           ..write('info: $info, ')
+          ..write('link: $link, ')
           ..write('weight: $weight, ')
           ..write('createdAt: $createdAt, ')
           ..write('groupId: $groupId')
@@ -634,7 +665,8 @@ class Habit extends DataClass implements Insertable<Habit> {
   }
 
   @override
-  int get hashCode => Object.hash(id, title, info, weight, createdAt, groupId);
+  int get hashCode =>
+      Object.hash(id, title, info, link, weight, createdAt, groupId);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -642,6 +674,7 @@ class Habit extends DataClass implements Insertable<Habit> {
           other.id == this.id &&
           other.title == this.title &&
           other.info == this.info &&
+          other.link == this.link &&
           other.weight == this.weight &&
           other.createdAt == this.createdAt &&
           other.groupId == this.groupId);
@@ -651,6 +684,7 @@ class HabitsCompanion extends UpdateCompanion<Habit> {
   final Value<String> id;
   final Value<String> title;
   final Value<String> info;
+  final Value<String> link;
   final Value<double> weight;
   final Value<DateTime> createdAt;
   final Value<String?> groupId;
@@ -659,6 +693,7 @@ class HabitsCompanion extends UpdateCompanion<Habit> {
     this.id = const Value.absent(),
     this.title = const Value.absent(),
     this.info = const Value.absent(),
+    this.link = const Value.absent(),
     this.weight = const Value.absent(),
     this.createdAt = const Value.absent(),
     this.groupId = const Value.absent(),
@@ -668,6 +703,7 @@ class HabitsCompanion extends UpdateCompanion<Habit> {
     required String id,
     required String title,
     this.info = const Value.absent(),
+    this.link = const Value.absent(),
     this.weight = const Value.absent(),
     this.createdAt = const Value.absent(),
     this.groupId = const Value.absent(),
@@ -678,6 +714,7 @@ class HabitsCompanion extends UpdateCompanion<Habit> {
     Expression<String>? id,
     Expression<String>? title,
     Expression<String>? info,
+    Expression<String>? link,
     Expression<double>? weight,
     Expression<DateTime>? createdAt,
     Expression<String>? groupId,
@@ -687,6 +724,7 @@ class HabitsCompanion extends UpdateCompanion<Habit> {
       if (id != null) 'id': id,
       if (title != null) 'title': title,
       if (info != null) 'info': info,
+      if (link != null) 'link': link,
       if (weight != null) 'weight': weight,
       if (createdAt != null) 'created_at': createdAt,
       if (groupId != null) 'group_id': groupId,
@@ -698,6 +736,7 @@ class HabitsCompanion extends UpdateCompanion<Habit> {
     Value<String>? id,
     Value<String>? title,
     Value<String>? info,
+    Value<String>? link,
     Value<double>? weight,
     Value<DateTime>? createdAt,
     Value<String?>? groupId,
@@ -707,6 +746,7 @@ class HabitsCompanion extends UpdateCompanion<Habit> {
       id: id ?? this.id,
       title: title ?? this.title,
       info: info ?? this.info,
+      link: link ?? this.link,
       weight: weight ?? this.weight,
       createdAt: createdAt ?? this.createdAt,
       groupId: groupId ?? this.groupId,
@@ -725,6 +765,9 @@ class HabitsCompanion extends UpdateCompanion<Habit> {
     }
     if (info.present) {
       map['info'] = Variable<String>(info.value);
+    }
+    if (link.present) {
+      map['link'] = Variable<String>(link.value);
     }
     if (weight.present) {
       map['weight'] = Variable<double>(weight.value);
@@ -747,6 +790,7 @@ class HabitsCompanion extends UpdateCompanion<Habit> {
           ..write('id: $id, ')
           ..write('title: $title, ')
           ..write('info: $info, ')
+          ..write('link: $link, ')
           ..write('weight: $weight, ')
           ..write('createdAt: $createdAt, ')
           ..write('groupId: $groupId, ')
@@ -1362,6 +1406,7 @@ typedef $$HabitsTableCreateCompanionBuilder =
       required String id,
       required String title,
       Value<String> info,
+      Value<String> link,
       Value<double> weight,
       Value<DateTime> createdAt,
       Value<String?> groupId,
@@ -1372,6 +1417,7 @@ typedef $$HabitsTableUpdateCompanionBuilder =
       Value<String> id,
       Value<String> title,
       Value<String> info,
+      Value<String> link,
       Value<double> weight,
       Value<DateTime> createdAt,
       Value<String?> groupId,
@@ -1446,6 +1492,11 @@ class $$HabitsTableFilterComposer
 
   ColumnFilters<String> get info => $composableBuilder(
     column: $table.info,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get link => $composableBuilder(
+    column: $table.link,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -1532,6 +1583,11 @@ class $$HabitsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get link => $composableBuilder(
+    column: $table.link,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<double> get weight => $composableBuilder(
     column: $table.weight,
     builder: (column) => ColumnOrderings(column),
@@ -1583,6 +1639,9 @@ class $$HabitsTableAnnotationComposer
 
   GeneratedColumn<String> get info =>
       $composableBuilder(column: $table.info, builder: (column) => column);
+
+  GeneratedColumn<String> get link =>
+      $composableBuilder(column: $table.link, builder: (column) => column);
 
   GeneratedColumn<double> get weight =>
       $composableBuilder(column: $table.weight, builder: (column) => column);
@@ -1671,6 +1730,7 @@ class $$HabitsTableTableManager
                 Value<String> id = const Value.absent(),
                 Value<String> title = const Value.absent(),
                 Value<String> info = const Value.absent(),
+                Value<String> link = const Value.absent(),
                 Value<double> weight = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
                 Value<String?> groupId = const Value.absent(),
@@ -1679,6 +1739,7 @@ class $$HabitsTableTableManager
                 id: id,
                 title: title,
                 info: info,
+                link: link,
                 weight: weight,
                 createdAt: createdAt,
                 groupId: groupId,
@@ -1689,6 +1750,7 @@ class $$HabitsTableTableManager
                 required String id,
                 required String title,
                 Value<String> info = const Value.absent(),
+                Value<String> link = const Value.absent(),
                 Value<double> weight = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
                 Value<String?> groupId = const Value.absent(),
@@ -1697,6 +1759,7 @@ class $$HabitsTableTableManager
                 id: id,
                 title: title,
                 info: info,
+                link: link,
                 weight: weight,
                 createdAt: createdAt,
                 groupId: groupId,

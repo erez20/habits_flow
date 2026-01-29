@@ -14,11 +14,15 @@ class HabitRepoImpl extends HabitRepo {
   @override
   Future<DomainResponse<HabitEntity>> createHabit({
     required String title,
+    required String info,
+    required String link,
     required double weight,
   }) async {
     try {
       final habit = await habitsLocalSource.createHabit(
         title: title,
+        info: info,
+        link: link,
         weight: weight,
       );
       return Success(habit);

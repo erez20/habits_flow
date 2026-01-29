@@ -3,7 +3,9 @@ import 'package:habits_flow/ui/widgets/new_habit_form/new_habit_form_ui_model.da
 import 'new_habit_form_state.dart';
 
 class NewHabitFormCubit extends Cubit<NewHabitFormState> {
-  NewHabitFormCubit() : super(NewHabitFormState.init()) {
+  final void Function({required NewHabitFormUiModel uiModel}) onConfirm;
+
+  NewHabitFormCubit({required this.onConfirm}) : super(NewHabitFormState.init()) {
     init();
   }
 
@@ -14,16 +16,15 @@ class NewHabitFormCubit extends Cubit<NewHabitFormState> {
   Future<void> submitForm(Map<String, dynamic> formData) async {
     emit(state.copyWith(isSubmitting: true));
     try {
-      // Simulate API call or Repository update
-      await Future.delayed(const Duration(seconds: 1));
 
-      final entity = NewHabitFormUiModel(
+
+      final newUIModel = NewHabitFormUiModel(
         title: formData['title'],
         info: formData['info'],
         link: formData['link'],
       );
-
-      print("Saving Entity: ${entity.title} with info: ${entity.info}");
+      onConfirm(uiModel: newUIModel);
+      print("Saving Entity: ${newUIModel.title} with info: ${newUIModel.info}");
       emit(state.copyWith(isSubmitting: false, isSuccess: true));
     } catch (e) {
       emit(state.copyWith(isSubmitting: false, errorMessage: e.toString()));

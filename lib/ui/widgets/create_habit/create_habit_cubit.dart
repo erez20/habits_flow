@@ -1,5 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:habits_flow/domain/use_cases/habit/add_habit_use_case.dart';
+import 'package:habits_flow/ui/widgets/new_habit_form/new_habit_form_ui_model.dart';
 
 import 'create_habit_state.dart';
 
@@ -12,8 +13,14 @@ class CreateHabitCubit extends Cubit<CreateHabitState> {
     required this.groupId,
   }) : super(CreateHabitState.init());
 
-  void addHabit() {
-    addHabitUseCase.exec(AddHabitUseCaseParams(groupId: groupId, title: "TITLE", info: "info"));
+  void addHabit({required NewHabitFormUiModel uiModel}) {
+    addHabitUseCase.exec(
+      AddHabitUseCaseParams(
+        groupId: groupId,
+        title: uiModel.title,
+        info: uiModel.info,
+        link: uiModel.link,
+      ),
+    );
   }
-
 }

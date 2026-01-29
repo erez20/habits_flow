@@ -72,6 +72,7 @@ class GroupLocalSourceImpl implements GroupLocalSource {
             id: h.id,
             title: h.title,
             info: h.info,
+            link: h.link,
             weight: h.weight,
             completionCount: 0, // Calculated at repo or use case level
           ),
@@ -120,6 +121,7 @@ class GroupLocalSourceImpl implements GroupLocalSource {
                   id: h.id,
                   title: h.title,
                   info: h.info,
+                  link: h.link,
                   weight: h.weight,
                   completionCount: 0,
                 ),
@@ -174,6 +176,7 @@ class GroupLocalSourceImpl implements GroupLocalSource {
         info: const Value('A dummy habit created automatically.'),
         weight: const Value(1),
         groupId: Value(firstGroup.id),
+        link: const Value('https://example.com'),
       );
 
       await db.into(db.habits).insert(companion);

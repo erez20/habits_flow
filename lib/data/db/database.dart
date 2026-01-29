@@ -8,6 +8,7 @@ class Habits extends Table {
   TextColumn get id => text()();
   TextColumn get title => text()();
   TextColumn get info => text().withDefault(const Constant(''))();
+  TextColumn get link => text().withDefault(const Constant(''))();
   RealColumn get weight => real().withDefault(const Constant(1.0))();
   DateTimeColumn get createdAt => dateTime().withDefault(currentDateAndTime)();
 
@@ -46,7 +47,16 @@ class AppDatabase extends _$AppDatabase {
 
 
   @override
-  int get schemaVersion => 1;
+  int get schemaVersion => 2;
+
+  @override
+  MigrationStrategy get migration => MigrationStrategy(
+    onUpgrade: (m, from, to) async {
+      if (from == 1) {
+        await m.addColumn(habits, habits.link);
+      }
+    },
+  );
 
   static QueryExecutor _openConnection() {
     return driftDatabase(name: 'habits_flow_db');

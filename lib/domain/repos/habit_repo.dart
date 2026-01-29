@@ -6,6 +6,8 @@ abstract class HabitRepo {
 
   Future<DomainResponse<HabitEntity>> createHabit({
     required String title,
+    required String info,
+    required String link,
     required double weight,
   });
 
