@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:habits_flow/domain/use_cases/habit/add_habit_use_case.dart';
 import 'new_habit_form_cubit.dart';
 import 'new_habit_form_ui_model.dart';
 import 'new_habit_form_widget.dart';

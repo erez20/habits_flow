@@ -17,8 +17,10 @@ class CreateHabitWidget extends StatelessWidget {
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: habitsSep, vertical: habitsSep),
       child: InkWell(
-        onTap: () =>
-            _addHabitModal(context: context, onConfirm: cubit.addHabit),
+        onTap: () => _addHabitModal(
+          context: context,
+          onConfirm: ({required uiModel}) => cubit.addHabit(uiModel: uiModel),
+        ),
         child: (Container(
           height: size,
           width: size,
@@ -30,15 +32,13 @@ class CreateHabitWidget extends StatelessWidget {
 
   void _addHabitModal({
     required BuildContext context,
-    required void Function({
-      required NewHabitFormUiModel uiModel,
-    })
-    onConfirm,
+    required void Function({required NewHabitFormUiModel uiModel}) onConfirm,
   }) {
     showModalBottomSheet(
       context: context,
-      builder: (_) => NewHabitFormProvider(
-        onConfirm: onConfirm,
+      backgroundColor: Colors.blueGrey[100],
+
+      builder: (_) => NewHabitFormProvider(onConfirm: onConfirm,
       ),
     );
   }
