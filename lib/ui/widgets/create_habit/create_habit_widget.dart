@@ -13,7 +13,7 @@ class CreateHabitWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final cubit = context.read<CreateHabitCubit>();
     final habitsSep = Constants.habitsSep;
-    final size = Constants.habitSize(context);
+    final size = Constants.habitSide(context);
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: habitsSep, vertical: habitsSep),
       child: InkWell(

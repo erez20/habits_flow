@@ -77,6 +77,16 @@ class HabitLocalSourceImpl implements HabitLocalSource {
     await db.into(db.habitPerformances).insert(companion);
   }
 
+@override
+  Future<void> resetHabit({
+    required String habitId,
+
+  }) async {
+    await (db.delete(db.habitPerformances)
+          ..where((tbl) => tbl.habitId.equals(habitId)))
+        .go();
+  }
+
 
 
   @override

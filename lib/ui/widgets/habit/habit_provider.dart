@@ -18,7 +18,7 @@ class HabitProvider extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final habitSep = Constants.habitsSep;
-    final habitSize = Constants.habitSize(context);
+    final habitSide = Constants.habitSide(context);
     final habitRepo = getIt<HabitRepo> ();
     final habitStreamUseCase = getIt<HabitStreamUseCase> ();
     final performHabitUseCase = getIt<PerformHabitUseCase> ();
@@ -28,7 +28,7 @@ class HabitProvider extends StatelessWidget {
       create: (context) => HabitCubit(habitRepo: habitRepo, habit: habit, habitStreamUseCase: habitStreamUseCase, performHabitUseCase: performHabitUseCase,resetHabitUseCase: resetHabitUseCase,),
       child: HabitWidget(
         habitsSep: habitSep,
-        size: habitSize,
+        side: habitSide,
         color: Colors.cyan,
       ),
     );

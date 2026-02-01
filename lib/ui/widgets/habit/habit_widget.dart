@@ -6,13 +6,13 @@ import 'habit_state.dart';
 
 class HabitWidget extends StatelessWidget {
   final double habitsSep;
-  final double size;
+  final double side;
   final MaterialColor color;
 
   const HabitWidget({
     super.key,
     required this.habitsSep,
-    required this.size,
+    required this.side,
     required this.color,
   });
 
@@ -26,8 +26,8 @@ class HabitWidget extends StatelessWidget {
       child: BlocBuilder<HabitCubit, HabitState>(
         builder: (context, state) {
           return Container(
-            width: size,
-            height: size,
+            width: side,
+            height: side,
             decoration: BoxDecoration(
               color: state.habit.isUncompleted ? Colors.white : color[50],
               border: Border.all(

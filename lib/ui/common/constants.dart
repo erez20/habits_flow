@@ -5,9 +5,8 @@ class Constants {
   static const habitsSep = 3.0;
   static const habitsPerRow = 5;
 
-  static double habitSize(BuildContext context) {
+  static double habitSide(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
-    return ((screenWidth - 2 * mainPageHorizontalPadding) / habitsPerRow) -
-        2 * habitsSep;
+    return ((screenWidth - 2 * mainPageHorizontalPadding- (habitsPerRow-1) * habitsSep) / habitsPerRow);
   }
 }
