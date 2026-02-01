@@ -118,4 +118,19 @@ class HabitLocalSourceImpl implements HabitLocalSource {
       }).toList();
     });
   }
+
+  @override
+  Stream<HabitEntity> habitStream(String habitId) {
+    final query = db.select(db.habits)..where((tbl) => tbl.id.equals(habitId));
+    return query.watchSingle().map((row) {
+      return HabitEntity(
+        id: row.id,
+        title: row.title,
+        weight: row.weight,
+        info: row.info,
+        link: row.link,
+        completionCount: 0,
+      );
+    });
+  }
 }

@@ -26,4 +26,6 @@ abstract class HabitLocalSource {
   });
 
   Stream<List<HabitEntity>> habitsOfGroupStream(String groupId);
+
+  Stream<HabitEntity> habitStream(String habitId);
 }

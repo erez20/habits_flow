@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+
+import 'habit_cubit.dart';
 
 class HabitWidget extends StatelessWidget {
   final double habitsSep;
@@ -14,8 +17,10 @@ class HabitWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final cubit = context.read<HabitCubit>();
+
     return GestureDetector(
-      onTap: () {},
+      onTap: cubit.perform,
       onLongPress: () {},
       child: Container(
         width: size,

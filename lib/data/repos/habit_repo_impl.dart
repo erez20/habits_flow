@@ -38,9 +38,12 @@ class HabitRepoImpl extends HabitRepo {
   }
 
   @override
-  Stream<DomainResponse<HabitEntity>> habitStream({required int id}) {
-    // TODO: implement habitStream
-    throw UnimplementedError();
+  Stream<DomainResponse<HabitEntity>> habitStream({required String habitId}) {
+    return habitsLocalSource
+        .habitStream(habitId)
+        .map((habit) => Success(habit) as DomainResponse<HabitEntity>)
+        .handleError(
+            (e) => Failure(error: DatabaseError(message: e.toString())));
   }
 
   @override
