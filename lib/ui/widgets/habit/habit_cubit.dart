@@ -1,10 +1,12 @@
 import 'dart:async';
 
+import 'package:fimber/fimber.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:habits_flow/domain/entities/habit_entity.dart';
 import 'package:habits_flow/domain/repos/habit_repo.dart';
 import 'package:habits_flow/domain/responses/domain_response.dart';
 import 'package:habits_flow/domain/use_cases/habit/habit_stream_use_case.dart';
+import 'package:habits_flow/domain/use_cases/habit/perform_habit_use_case.dart';
 import 'habit_state.dart';
 
 class HabitCubit extends Cubit<HabitState> {
@@ -26,17 +28,19 @@ class HabitCubit extends Cubit<HabitState> {
   _streamSubscription;
 
   void init() {
-    _streamSubscription = habitStreamUseCase.stream(habit.id).listen((event) {
-      if (event.isSuccess) {
-        emit(state.copyWith(habit: event.data));
-      }
-    });
+    _streamSubscription = habitStreamUseCase
+        .stream(HabitStreamUseCaseParams(habitId: habit.id))
+        .listen((event) {
+          if (event.isSuccess) {
+            emit(state.copyWith(habit: event.data));
+          }
+        });
   }
 
   void perform() {
-    performHabitUseCase.perform(habit.id);
+    Fimber.d('perform habit ${habit.id}');
+    performHabitUseCase.exec(PerformHabitUseCaseParams(habitId:habit.id));
   }
-
 
   @override
   Future<void> close() {

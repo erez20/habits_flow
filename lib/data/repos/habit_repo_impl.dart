@@ -40,7 +40,7 @@ class HabitRepoImpl extends HabitRepo {
   @override
   Stream<DomainResponse<HabitEntity>> habitStream({required String habitId}) {
     return habitsLocalSource
-        .habitStream(habitId)
+        .habitSwhay tream(habitId)
         .map((habit) => Success(habit) as DomainResponse<HabitEntity>)
         .handleError(
             (e) => Failure(error: DatabaseError(message: e.toString())));
@@ -56,6 +56,19 @@ class HabitRepoImpl extends HabitRepo {
   Future<DomainResponse<void>> resetHabitCount({required HabitEntity habit}) {
     // TODO: implement resetHabitCount
     throw UnimplementedError();
+  }
+
+  @override
+  Future<DomainResponse<void>> performHabit({required String habitId}) async {
+    try {
+      await habitsLocalSource.performHabit(
+        habitId: habitId,
+        performTime: DateTime.now(),
+      );
+      return const Success(null);
+    } on Exception catch (e) {
+      return Failure(error: DatabaseError(message: e.toString()));
+    }
   }
 
   @override

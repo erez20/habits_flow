@@ -37,8 +37,12 @@ import 'package:habits_flow/domain/use_cases/group/remove_last_dummy_group_use_c
     as _i587;
 import 'package:habits_flow/domain/use_cases/habit/add_habit_use_case.dart'
     as _i262;
+import 'package:habits_flow/domain/use_cases/habit/habit_stream_use_case.dart'
+    as _i271;
 import 'package:habits_flow/domain/use_cases/habit/habits_of_group_stream_use_case.dart'
     as _i1073;
+import 'package:habits_flow/domain/use_cases/habit/perform_habit_use_case.dart'
+    as _i82;
 import 'package:habits_flow/ui/widgets/all_groups/all_groups_cubit.dart'
     as _i967;
 import 'package:habits_flow/ui/widgets/test_dashboard/test_dashboard_cubit.dart'
@@ -59,6 +63,12 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i877.HabitRepo>(
       () =>
           _i375.HabitRepoImpl(habitsLocalSource: gh<_i545.HabitLocalSource>()),
+    );
+    gh.factory<_i271.HabitStreamUseCase>(
+      () => _i271.HabitStreamUseCase(habitRepo: gh<_i877.HabitRepo>()),
+    );
+    gh.factory<_i82.PerformHabitUseCase>(
+      () => _i82.PerformHabitUseCase(habitRepo: gh<_i877.HabitRepo>()),
     );
     gh.factory<_i25.GroupLocalSource>(
       () => _i646.GroupLocalSourceImpl(gh<_i118.AppDatabase>()),

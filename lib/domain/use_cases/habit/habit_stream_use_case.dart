@@ -6,7 +6,7 @@ import 'package:injectable/injectable.dart';
 
 @injectable
 class HabitStreamUseCase
-    extends StreamUseCase<DomainResponse<HabitEntity>, String> {
+    extends StreamUseCase<DomainResponse<HabitEntity>, HabitStreamUseCaseParams> {
   HabitStreamUseCase({
     required this.habitRepo,
   });
@@ -15,8 +15,14 @@ class HabitStreamUseCase
 
   @override
   Stream<DomainResponse<HabitEntity>> stream(
-    String params,
+      HabitStreamUseCaseParams params,
   ) {
-    return habitRepo.habitStream(habitId: params);
+    return habitRepo.habitStream(habitId: params.habitId);
   }
+}
+
+class HabitStreamUseCaseParams {
+  final String habitId;
+
+  HabitStreamUseCaseParams({required this.habitId});
 }

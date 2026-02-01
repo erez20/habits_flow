@@ -23,6 +23,8 @@ abstract class HabitRepo {
     required HabitEntity habit,
   });
 
+  Future<DomainResponse<void>> performHabit({required String habitId});
+
   Stream<List<HabitEntity>> habitsOfGroupStream(String groupId);
 
   Future<DomainResponse<double>> getNextHabitWeight(String groupId);

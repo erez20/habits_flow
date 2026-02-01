@@ -20,4 +20,6 @@ class HabitEntity extends Equatable{
 
   @override
   List<Object?> get props => [id, title, weight, completionCount, info, link];
+
+  bool get isUncompleted => completionCount == 0;
 }
