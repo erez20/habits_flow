@@ -15,6 +15,12 @@ abstract class HabitLocalSource {
     required DateTime performTime,
   });
 
+  Future<void> resetHabit({
+    required String habitId,
+  });
+
+  
+
   Future<void> deleteHabitPerformance({
     required String habitId,
     required DateTime performTime, // To identify the performance to delete (or use ID if passed)

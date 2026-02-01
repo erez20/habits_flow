@@ -3,6 +3,7 @@ import 'package:habits_flow/data/db/database.dart';
 import 'package:habits_flow/data/sources/habits/habit_local_source.dart';
 import 'package:habits_flow/domain/entities/habit_entity.dart';
 import 'package:injectable/injectable.dart';
+import 'package:rxdart/rxdart.dart';
 import 'package:uuid/uuid.dart';
 
 @Injectable(as: HabitLocalSource)
@@ -76,6 +77,8 @@ class HabitLocalSourceImpl implements HabitLocalSource {
     await db.into(db.habitPerformances).insert(companion);
   }
 
+
+
   @override
   Future<void> deleteHabitPerformance({
     required String habitId,
@@ -121,15 +124,22 @@ class HabitLocalSourceImpl implements HabitLocalSource {
 
   @override
   Stream<HabitEntity> habitStream(String habitId) {
-    final query = db.select(db.habits)..where((tbl) => tbl.id.equals(habitId));
-    return query.watchSingle().map((row) {
+    final habitStream =
+        (db.select(db.habits)..where((tbl) => tbl.id.equals(habitId)))
+            .watchSingle();
+    final performancesStream = (db.select(db.habitPerformances)
+          ..where((tbl) => tbl.habitId.equals(habitId)))
+        .watch();
+
+    return Rx.combineLatest2(habitStream, performancesStream,
+        (Habit habit, List<HabitPerformance> performances) {
       return HabitEntity(
-        id: row.id,
-        title: row.title,
-        weight: row.weight,
-        info: row.info,
-        link: row.link,
-        completionCount: 0,
+        id: habit.id,
+        title: habit.title,
+        weight: habit.weight,
+        info: habit.info,
+        link: habit.link,
+        completionCount: performances.length,
       );
     });
   }

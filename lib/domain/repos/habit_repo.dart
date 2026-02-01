@@ -25,6 +25,8 @@ abstract class HabitRepo {
 
   Future<DomainResponse<void>> performHabit({required String habitId});
 
+  Future<DomainResponse<void>> resetHabit({required String habitId});
+
   Stream<List<HabitEntity>> habitsOfGroupStream(String groupId);
 
   Future<DomainResponse<double>> getNextHabitWeight(String groupId);

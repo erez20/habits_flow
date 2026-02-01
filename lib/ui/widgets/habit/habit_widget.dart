@@ -22,16 +22,16 @@ class HabitWidget extends StatelessWidget {
 
     return GestureDetector(
       onTap: cubit.perform,
-      onLongPress: () {},
+      onLongPress: cubit.reset,
       child: BlocBuilder<HabitCubit, HabitState>(
         builder: (context, state) {
           return Container(
             width: size,
             height: size,
             decoration: BoxDecoration(
-              color: color[50],
+              color: state.habit.isUncompleted ? Colors.white : color[50],
               border: Border.all(
-                color: state.habit.isUncompleted ? Colors.white : color,
+                color: color,
                 width: 2,
               ),
               borderRadius: BorderRadius.circular(12),

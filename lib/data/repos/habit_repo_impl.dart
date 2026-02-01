@@ -72,6 +72,18 @@ class HabitRepoImpl extends HabitRepo {
   }
 
   @override
+  Future<DomainResponse<void>> resetHabit({required String habitId}) async {
+    try {
+      await habitsLocalSource.resetHabit(
+        habitId: habitId,
+      );
+      return const Success(null);
+    } on Exception catch (e) {
+      return Failure(error: DatabaseError(message: e.toString()));
+    }
+  }
+
+  @override
   Stream<List<HabitEntity>> habitsOfGroupStream(String groupId) {
     return habitsLocalSource.habitsOfGroupStream(groupId);
   }
