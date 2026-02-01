@@ -1,4 +1,4 @@
-abstract class StreamUseCase<T,Params> {
+abstract class c<T,Params> {
   Stream<T> stream(Params groupId);
 }
 

@@ -20,7 +20,7 @@ class HabitsCollectionProvider extends StatelessWidget {
         groupId: groupId,
         habitsOfGroupStreamUseCase: GetIt.I<HabitsOfGroupStreamUseCase>(),
       ),
-      child: const HabitsCollectionWidget(getHabitSize: Constants.habitWidth),
+      child: const HabitsCollectionWidget(),
     );
   }
 }
