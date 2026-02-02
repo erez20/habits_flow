@@ -75,8 +75,8 @@ class _DrawingLayerWidgetState extends State<DrawingLayerWidget> {
     }
   }
 }
-// Painter class remains the same...
-// Painter remains the same...
+
+
 class _SmoothTrailPainter extends CustomPainter {
   final List<Offset> points;
   _SmoothTrailPainter({required this.points});

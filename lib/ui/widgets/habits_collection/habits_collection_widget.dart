@@ -24,16 +24,16 @@ class _HabitsCollectionWidgetState extends State<HabitsCollectionWidget> {
   Widget build(BuildContext context) {
     return BlocBuilder<HabitsCollectionCubit, HabitCollectionState>(
       builder: (context, state) {
-        // REFACTOR: Removed Stack. DrawingLayerWidget now wraps the content directly.
         return DrawingLayerWidget(
-          targetKey: _wrapKey,
+
           onWidgetHit: (data) {
             if (data is HabitEntity) {
-              Fimber.d('hit habit ${data.id}');
+              var cubit = context.read<HabitsCollectionCubit>();
+              cubit.onHabitHit(data);
             }
           },
           child: Wrap(
-            key: _wrapKey, // The target for hit testing
+            key: _wrapKey,
             alignment: WrapAlignment.start,
             spacing: Constants.habitsSep,
             runSpacing: Constants.habitsSep,

@@ -26,6 +26,8 @@ class HabitsCollectionCubit extends Cubit<HabitCollectionState> {
 
   }
 
+  void onHabitHit(HabitEntity data) {}
+
   @override
   Future<void> close() {
     _habitsSubscription.cancel();
