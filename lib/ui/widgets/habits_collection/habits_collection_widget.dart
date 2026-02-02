@@ -27,6 +27,7 @@ class _HabitsCollectionWidgetState extends State<HabitsCollectionWidget> {
         return DrawingLayerWidget(
 
           onWidgetHit: (data) {
+            Fimber.d("onWidgetHit $data");
             if (data is HabitEntity) {
               var cubit = context.read<HabitsCollectionCubit>();
               cubit.onHabitHit(data);

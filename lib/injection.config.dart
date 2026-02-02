@@ -52,7 +52,7 @@ import 'package:habits_flow/ui/widgets/test_dashboard/test_dashboard_cubit.dart'
 import 'package:injectable/injectable.dart' as _i526;
 
 extension GetItInjectableX on _i174.GetIt {
-  // initializes the registration of main-scope dependencies inside of GetIt
+  // initializes the registration of active_habits-scope dependencies inside of GetIt
   _i174.GetIt init({
     String? environment,
     _i526.EnvironmentFilter? environmentFilter,

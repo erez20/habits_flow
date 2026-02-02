@@ -21,7 +21,7 @@ class HabitWidget extends StatelessWidget {
     final cubit = context.read<HabitCubit>();
 
     return GestureDetector(
-      onTap: cubit.perform,
+      onTap: cubit.performHabit,
       onLongPress: cubit.reset,
       child: BlocBuilder<HabitCubit, HabitState>(
         builder: (context, state) {

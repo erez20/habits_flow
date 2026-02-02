@@ -10,7 +10,7 @@ class ActiveHabitsScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.grey[200],
       appBar: AppBar(
-        title: const Text('Main Screen'),
+        title: const Text('Active Habits'),
       ),
       body: Column(
         children: [

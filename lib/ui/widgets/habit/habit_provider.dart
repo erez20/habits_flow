@@ -7,6 +7,8 @@ import 'package:habits_flow/domain/use_cases/habit/perform_habit_use_case.dart';
 import 'package:habits_flow/domain/use_cases/habit/reset_habit_use_case.dart';
 import 'package:habits_flow/injection.dart';
 import 'package:habits_flow/ui/common/constants.dart';
+import 'package:habits_flow/ui/screens/active_habits/active_habits_ui_manager.dart';
+import 'package:habits_flow/ui/screens/active_habits/active_habits_ui_manager_provider.dart';
 import 'habit_cubit.dart';
 import 'habit_widget.dart';
 
@@ -23,9 +25,10 @@ class HabitProvider extends StatelessWidget {
     final habitStreamUseCase = getIt<HabitStreamUseCase> ();
     final performHabitUseCase = getIt<PerformHabitUseCase> ();
     final resetHabitUseCase = getIt<ResetHabitUseCase> ();
+    final manager = context.read<ActiveHabitsUIManager>();
 
     return BlocProvider(
-      create: (context) => HabitCubit(habitRepo: habitRepo, habit: habit, habitStreamUseCase: habitStreamUseCase, performHabitUseCase: performHabitUseCase,resetHabitUseCase: resetHabitUseCase,),
+      create: (context) => HabitCubit(habitRepo: habitRepo, habit: habit, habitStreamUseCase: habitStreamUseCase, performHabitUseCase: performHabitUseCase,resetHabitUseCase: resetHabitUseCase,manager: manager),
       child: HabitWidget(
         habitsSep: habitSep,
         side: habitSide,

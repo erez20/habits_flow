@@ -3,7 +3,8 @@
 import 'package:flutter/material.dart';
 import 'package:habits_flow/core/logger/app_logger.dart';
 import 'package:habits_flow/injection.dart';
-import 'package:habits_flow/ui/screens/main/active_habits_screen.dart';
+import 'package:habits_flow/ui/screens/active_habits/active_habits_screen.dart';
+import 'package:habits_flow/ui/screens/active_habits/active_habits_ui_manager_provider.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -38,7 +39,7 @@ class MyApp extends StatelessWidget {
         // tested with just a hot reload.
         colorScheme: .fromSeed(seedColor: Colors.deepPurple),
       ),
-      home: const ActiveHabitsScreen(),
+      home: const ActiveHabitsUIManagerProvider(),
     );
   }
 }
