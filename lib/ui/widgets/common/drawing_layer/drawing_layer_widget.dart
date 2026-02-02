@@ -2,13 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 
 class DrawingLayerWidget extends StatefulWidget {
-  final GlobalKey targetKey;
+  final Widget child;
   final Function(dynamic) onWidgetHit;
 
   const DrawingLayerWidget({
     super.key,
-    required this.targetKey,
+    required this.child,
     required this.onWidgetHit,
+
   });
 
   @override
@@ -17,82 +18,72 @@ class DrawingLayerWidget extends StatefulWidget {
 
 class _DrawingLayerWidgetState extends State<DrawingLayerWidget> {
   final ValueNotifier<List<Offset>> _points = ValueNotifier([]);
-  dynamic _lastHit;
+  final Set<dynamic> _sessionHits = {};
 
   @override
   Widget build(BuildContext context) {
-    return Listener(
-      behavior: HitTestBehavior.translucent,
-      onPointerMove: _handlePointerMove,
-      onPointerUp: _handlePointerUp,
-      onPointerCancel: _handlePointerUp,
+    return GestureDetector(
+      onPanStart: (details) {
+        _sessionHits.clear();
+        _points.value = [details.localPosition];
+      },
+
+      onPanUpdate: (details) {
+        final newPoints = List<Offset>.from(_points.value)..add(details.localPosition);
+        _points.value = newPoints;
+        _performHitTest(details);
+      },
+
+      onPanEnd: (details) {
+        _points.value = [];
+        _sessionHits.clear();
+      },
+
       child: ValueListenableBuilder<List<Offset>>(
         valueListenable: _points,
         builder: (context, points, child) {
           return CustomPaint(
-            painter: _SmoothTrailPainter(points: points),
-            size: Size.infinite,
+            // Draw the trail ON TOP of the child
+            foregroundPainter: _SmoothTrailPainter(points: points),
+            child: widget.child, // <--- Render the habits below
           );
         },
       ),
     );
   }
 
-  void _handlePointerMove(PointerEvent event) {
-    // 1. Update Drawing Visuals
-    final newPoints = List<Offset>.from(_points.value)..add(event.localPosition);
-    _points.value = newPoints;
-
-    // 2. TARGETED HIT TEST
-    // Instead of checking the whole screen, we check ONLY the Wrap's RenderBox.
-    final RenderBox? targetRenderBox = widget.targetKey.currentContext?.findRenderObject() as RenderBox?;
+  void _performHitTest(DragUpdateDetails details) {
+    // If targetKey is provided, use it. Otherwise, hit test the child context.
+    final RenderBox? targetRenderBox  = context.findRenderObject() as RenderBox?;
 
     if (targetRenderBox != null) {
-      // Convert the global finger position to the Wrap's local coordinate system
-      final localOffset = targetRenderBox.globalToLocal(event.position);
-
-      // Create a manual HitTest result
+      final localOffset = targetRenderBox.globalToLocal(details.globalPosition);
       final BoxHitTestResult result = BoxHitTestResult();
 
-      // Ask the Wrap: "Is this point hitting you or your children?"
+      // Hit test specifically to find MetaData
       if (targetRenderBox.hitTest(result, position: localOffset)) {
-
-        bool hitFound = false;
-
-        // Iterate through the results found INSIDE the Wrap
         for (final item in result.path) {
           if (item.target is RenderMetaData) {
             final data = (item.target as RenderMetaData).metaData;
-
-            if (data != null && data != _lastHit) {
-              _lastHit = data;
+            if (data != null && !_sessionHits.contains(data)) {
+              _sessionHits.add(data);
               widget.onWidgetHit(data);
-              hitFound = true;
-            } else if (data == _lastHit) {
-              hitFound = true;
             }
           }
         }
-        if (!hitFound) _lastHit = null;
       }
     }
   }
-
-  void _handlePointerUp(PointerEvent event) {
-    _points.value = [];
-    _lastHit = null;
-  }
 }
-
-// Painter stays the same...
+// Painter class remains the same...
+// Painter remains the same...
 class _SmoothTrailPainter extends CustomPainter {
   final List<Offset> points;
   _SmoothTrailPainter({required this.points});
 
   @override
   void paint(Canvas canvas, Size size) {
-    if (points.isEmpty || points.length < 25) return;
-    print("Drawing ${points.length} points");
+    if (points.length < 2) return;
 
     final paint = Paint()
       ..color = Colors.blue.withOpacity(0.5)
@@ -116,5 +107,6 @@ class _SmoothTrailPainter extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(covariant _SmoothTrailPainter oldDelegate) => oldDelegate.points != points;
+  bool shouldRepaint(covariant _SmoothTrailPainter oldDelegate) =>
+      oldDelegate.points != points;
 }
