@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:habits_flow/domain/entities/habit_entity.dart';
 import 'package:habits_flow/ui/common/constants.dart';
 import 'package:habits_flow/ui/widgets/create_habit/create_habit_provider.dart';
 import 'package:habits_flow/ui/widgets/habit/habit_provider.dart';

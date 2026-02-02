@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
+
 import 'new_habit_form_cubit.dart';
 import 'new_habit_form_state.dart';
 
@@ -25,7 +26,7 @@ class _NewHabitFormWidgetState extends State<NewHabitFormWidget> {
             const SnackBar(content: Text('Habit created successfully!')),
           );
         }
-        if (state.errorMessage != null) {
+        if (state.errorMessage.isNotEmpty) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(state.errorMessage),

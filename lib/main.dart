@@ -4,10 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:habits_flow/core/logger/app_logger.dart';
 import 'package:habits_flow/injection.dart';
 import 'package:habits_flow/ui/screens/main/main_screen.dart';
-import 'package:habits_flow/ui/widgets/test_dashboard/test_dashboard_provider.dart';
-import 'package:fimber/fimber.dart';
-
-import 'domain/use_cases/group/add_group_use_case.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
