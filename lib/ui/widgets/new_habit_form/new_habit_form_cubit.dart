@@ -1,3 +1,4 @@
+import 'package:fimber/fimber.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:habits_flow/ui/widgets/new_habit_form/new_habit_form_ui_model.dart';
 import 'new_habit_form_state.dart';
@@ -24,7 +25,7 @@ class NewHabitFormCubit extends Cubit<NewHabitFormState> {
         link: formData['link'],
       );
       onConfirm(uiModel: newUIModel);
-      print("Saving Entity: ${newUIModel.title} with info: ${newUIModel.info}");
+      Fimber.d("Saving Entity: ${newUIModel.title} with info: ${newUIModel.info}");
       emit(state.copyWith(isSubmitting: false, isSuccess: true));
     } catch (e) {
       emit(state.copyWith(isSubmitting: false, errorMessage: e.toString()));

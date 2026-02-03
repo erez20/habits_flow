@@ -86,7 +86,7 @@ class _SmoothTrailPainter extends CustomPainter {
     if (points.length < 2) return;
 
     final paint = Paint()
-      ..color = Colors.blue.withOpacity(0.5)
+      ..color = Colors.blue
       ..strokeCap = StrokeCap.round
       ..strokeWidth = 12.0
       ..style = PaintingStyle.stroke

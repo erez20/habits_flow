@@ -26,7 +26,7 @@ class TestDashboardCubit extends Cubit<int> {
   final AddDummyHabitToFirstGroupUseCase addDummyHabitToFirstGroupUseCase;
 
   void addGroup() {
-    print("Add Group");
+    Fimber.d("Add Group");
     final i = Random().nextInt(100);
     AddGroupUseCaseParams params = AddGroupUseCaseParams(
       title: "Fitness$i",
