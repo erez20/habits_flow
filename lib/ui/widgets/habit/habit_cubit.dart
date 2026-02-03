@@ -9,6 +9,7 @@ import 'package:habits_flow/domain/use_cases/habit/habit_stream_use_case.dart';
 import 'package:habits_flow/domain/use_cases/habit/perform_habit_use_case.dart';
 import 'package:habits_flow/domain/use_cases/habit/reset_habit_use_case.dart';
 import 'package:habits_flow/ui/screens/active_habits/active_habits_manager.dart';
+
 import 'habit_state.dart';
 
 class HabitCubit extends Cubit<HabitState> {
@@ -51,9 +52,10 @@ class HabitCubit extends Cubit<HabitState> {
     });
   }
 
-  void performHabit() {
+  void performHabit() async{
     Fimber.d('perform habit ${habit.id}');
-    performHabitUseCase.exec(PerformHabitUseCaseParams(habitId: habit.id));
+    await performHabitUseCase.exec(PerformHabitUseCaseParams(habitId: habit.id));
+
   }
 
   void reset() {

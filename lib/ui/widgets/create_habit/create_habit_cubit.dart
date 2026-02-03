@@ -13,7 +13,7 @@ class CreateHabitCubit extends Cubit<CreateHabitState> {
     required this.groupId,
   }) : super(CreateHabitState.init());
 
-  void addHabit({required NewHabitFormUiModel uiModel}) {
+  void addHabit({required NewHabitFormUiModel uiModel}) async{
     addHabitUseCase.exec(
       AddHabitUseCaseParams(
         groupId: groupId,

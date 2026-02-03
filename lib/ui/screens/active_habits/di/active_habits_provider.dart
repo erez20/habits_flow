@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:habits_flow/ui/screens/active_habits/active_habits_manager.dart';
 
-import 'active_habits_manager.dart';
-import 'active_habits_screen.dart';
+import '../active_habits_screen/active_habits_screen_provider.dart';
 
 class ActiveHabitsProvider extends StatelessWidget {
   const ActiveHabitsProvider({super.key});
@@ -12,7 +12,7 @@ class ActiveHabitsProvider extends StatelessWidget {
     return RepositoryProvider<ActiveHabitsManager>(
       create: (context) => ActiveHabitsManagerImpl(),
       dispose: (manager) => manager.dispose(),
-      child: ActiveHabitsScreen(),
+      child: ActiveHabitsScreenProvider(),
     );
   }
 }

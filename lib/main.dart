@@ -3,7 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:habits_flow/core/logger/app_logger.dart';
 import 'package:habits_flow/injection.dart';
-import 'package:habits_flow/ui/screens/active_habits/active_habits_provider.dart';
+import 'package:habits_flow/ui/screens/active_habits/di/active_habits_provider.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
