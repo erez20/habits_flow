@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 
@@ -17,33 +15,24 @@ class DrawingLayerWidget extends StatefulWidget {
   State<DrawingLayerWidget> createState() => _DrawingLayerWidgetState();
 }
 
-class _DrawingLayerWidgetState extends State<DrawingLayerWidget> {
-  final ValueNotifier<List<_TrailPoint>> _points = ValueNotifier([]);
+class _DrawingLayerWidgetState extends State<DrawingLayerWidget> with SingleTickerProviderStateMixin {
+  final List<_TrailPoint> _points = [];
   final Set<dynamic> _sessionHits = {};
-  Timer? _trailCleanupTimer;
+  late final AnimationController _controller;
+  static const _trailDuration = Duration(milliseconds: 500);
 
   @override
   void initState() {
     super.initState();
-    // Start a periodic timer to clean up old points
-    _trailCleanupTimer = Timer.periodic(const Duration(milliseconds: 50), (timer) {
-      if (_points.value.isNotEmpty) {
-        final now = DateTime.now();
-        final newPoints = _points.value.where((p) {
-          return now.difference(p.timestamp).inMilliseconds < 500; // Keep points younger than 500ms
-        }).toList();
-
-        if (newPoints.length != _points.value.length) {
-          _points.value = newPoints;
-        }
-      }
-    });
+    _controller = AnimationController(
+      vsync: this,
+      duration: _trailDuration,
+    );
   }
 
   @override
   void dispose() {
-    _trailCleanupTimer?.cancel();
-    _points.dispose();
+    _controller.dispose();
     super.dispose();
   }
 
@@ -52,24 +41,36 @@ class _DrawingLayerWidgetState extends State<DrawingLayerWidget> {
     return GestureDetector(
       onPanStart: (details) {
         _sessionHits.clear();
-        final newPoint = _TrailPoint(details.localPosition);
-        _points.value = [newPoint];
+        _points.add(_TrailPoint(details.localPosition));
+        if (!_controller.isAnimating) {
+          _controller.repeat();
+        }
       },
       onPanUpdate: (details) {
-        final newPoint = _TrailPoint(details.localPosition);
-        _points.value = List.from(_points.value)..add(newPoint);
+        _points.add(_TrailPoint(details.localPosition));
         _performHitTest(details);
       },
       onPanEnd: (details) {
-        // Don't clear points, let the timer handle it
         _sessionHits.clear();
       },
-      child: ValueListenableBuilder<List<_TrailPoint>>(
-        valueListenable: _points,
-        builder: (context, points, child) {
+      child: AnimatedBuilder(
+        animation: _controller,
+        child: widget.child,
+        builder: (context, child) {
+          // Cleanup old points
+          _points.removeWhere((p) => DateTime.now().difference(p.timestamp) > _trailDuration);
+
+          // Stop animation if no points are left
+          if (_points.isEmpty && _controller.isAnimating) {
+            _controller.stop();
+          }
+
           return CustomPaint(
-            foregroundPainter: _SmoothTrailPainter(points: points),
-            child: widget.child,
+            foregroundPainter: _SmoothTrailPainter(
+              points: _points,
+              maxAge: _trailDuration,
+            ),
+            child: child,
           );
         },
       ),
@@ -105,9 +106,9 @@ class _TrailPoint {
 
 class _SmoothTrailPainter extends CustomPainter {
   final List<_TrailPoint> points;
-  final Duration maxAge = const Duration(milliseconds: 500);
+  final Duration maxAge;
 
-  _SmoothTrailPainter({required this.points});
+  _SmoothTrailPainter({required this.points, required this.maxAge});
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -129,16 +130,13 @@ class _SmoothTrailPainter extends CustomPainter {
         ..style = PaintingStyle.stroke
         ..strokeJoin = StrokeJoin.round;
 
-      final path = Path()
-        ..moveTo(p1.offset.dx, p1.offset.dy)
-        ..lineTo(p2.offset.dx, p2.offset.dy);
-
-      canvas.drawPath(path, paint);
+      canvas.drawLine(p1.offset, p2.offset, paint);
     }
   }
 
   @override
   bool shouldRepaint(covariant _SmoothTrailPainter oldDelegate) {
-    return oldDelegate.points != points;
+    // We want to repaint on every frame of the animation.
+    return true;
   }
 }
