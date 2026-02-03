@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:habits_flow/domain/entities/habit_entity.dart';
 import 'package:rxdart/rxdart.dart';
 
-abstract class ActiveHabitsUIManager {
+abstract class ActiveHabitsManager {
   Stream<void> listenToDrownHabit(String id);
 
   void addDrownHabit(String id);
@@ -14,7 +14,7 @@ abstract class ActiveHabitsUIManager {
   void dispose();
 }
 
-class ActiveHabitsUIManagerImpl implements ActiveHabitsUIManager {
+class ActiveHabitsManagerImpl implements ActiveHabitsManager {
   final BehaviorSubject<String> _drawOverHabit = BehaviorSubject<String>();
   final BehaviorSubject<HabitEntity> _onHabitHit = BehaviorSubject<HabitEntity>();
 
