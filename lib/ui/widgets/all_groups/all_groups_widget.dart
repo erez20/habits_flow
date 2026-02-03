@@ -45,11 +45,11 @@ class AllGroupsWidget extends StatelessWidget {
                             duration: const Duration(milliseconds: 150),
                             transitionBuilder:
                                 (Widget child, Animation<double> animation) {
-                                  return SizeTransition(
-                                    sizeFactor: animation,
-                                    child: child,
-                                  );
-                                },
+                              return SizeTransition(
+                                sizeFactor: animation,
+                                child: child,
+                              );
+                            },
                             child: state.expandedGroupIds.contains(group.id)
                                 ? HabitsCollectionProvider(groupId: group.id)
                                 : const SizedBox.shrink(),
