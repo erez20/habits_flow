@@ -4,7 +4,7 @@ abstract class GroupLocalSource {
   Future<GroupEntity> createGroup({
     required String title,
     required int weight,
-    required String colorHex,
+    required int colorValue,
   });
 
   Future<void> deleteGroup({required String groupId}) ;

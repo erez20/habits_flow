@@ -9,7 +9,7 @@ abstract class GroupRepo {
   Future<DomainResponse<GroupEntity>> createGroup({
     required String title,
     required int weight,
-    required String colorHex,
+    required int colorValue,
   });
 
   Future<DomainResponse<void>> deleteGroup({

@@ -15,7 +15,7 @@ class AddGroupUseCase extends ExecUseCase<GroupEntity, AddGroupUseCaseParams> {
     return groupRepo.createGroup(
       title: params.title,
       weight: params.weight,
-      colorHex: params.colorHex,
+      colorValue: params.colorValue,
     );
   }
 }
@@ -23,11 +23,11 @@ class AddGroupUseCase extends ExecUseCase<GroupEntity, AddGroupUseCaseParams> {
 class AddGroupUseCaseParams {
   final String title;
   final int weight;
-  final String colorHex;
+  final int colorValue;
 
   AddGroupUseCaseParams({
     required this.title,
     required this.weight,
-    required this.colorHex,
+    required this.colorValue,
   });
 }

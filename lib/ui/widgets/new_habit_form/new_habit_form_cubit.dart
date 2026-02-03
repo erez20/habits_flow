@@ -1,6 +1,7 @@
 import 'package:fimber/fimber.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:habits_flow/ui/widgets/new_habit_form/new_habit_form_ui_model.dart';
+
 import 'new_habit_form_state.dart';
 
 class NewHabitFormCubit extends Cubit<NewHabitFormState> {

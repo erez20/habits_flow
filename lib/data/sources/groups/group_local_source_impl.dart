@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:drift/drift.dart';
 import 'package:habits_flow/data/db/database.dart';
 import 'package:habits_flow/data/sources/groups/group_local_source.dart';
@@ -16,14 +18,14 @@ class GroupLocalSourceImpl implements GroupLocalSource {
   Future<GroupEntity> createGroup({
     required String title,
     required int weight,
-    required String colorHex,
+    required int colorValue,
   }) async {
     final id = const Uuid().v4();
     final companion = GroupsCompanion.insert(
       id: id,
       title: title,
       weight: Value(weight),
-      colorHex: colorHex,
+      colorValue: colorValue,
       createdAt: Value(DateTime.now()),
     );
 
@@ -33,7 +35,7 @@ class GroupLocalSourceImpl implements GroupLocalSource {
       id: id,
       title: title,
       weight: weight,
-      colorHex: colorHex,
+      color: Color(colorValue),
       habits: const [],
     );
   }
@@ -83,7 +85,7 @@ class GroupLocalSourceImpl implements GroupLocalSource {
       id: group.id,
       title: group.title,
       weight: group.weight,
-      colorHex: group.colorHex,
+      color: Color(group.colorValue),
       habits: habitEntities,
     );
   }
@@ -114,7 +116,7 @@ class GroupLocalSourceImpl implements GroupLocalSource {
           id: group.id,
           title: group.title,
           weight: group.weight,
-          colorHex: group.colorHex,
+          color: Color(group.colorValue),
           habits: habits
               .map(
                 (h) => HabitEntity(

@@ -1,0 +1,44 @@
+import 'package:equatable/equatable.dart';
+import 'package:flutter/material.dart';
+import 'package:habits_flow/domain/entities/group_entity.dart';
+import 'package:habits_flow/domain/entities/habit_entity.dart';
+import 'package:habits_flow/ui/common/colors/app_colors.dart';
+
+class GroupUIModel extends Equatable {
+  final String id;
+  final String title;
+  final int weight;
+  final MaterialColor color;
+  final List<HabitEntity> habits;
+
+  const GroupUIModel({
+    required this.id,
+    required this.title,
+    required this.weight,
+    required this.color,
+    required this.habits,
+  });
+
+  factory GroupUIModel.fromEntity(GroupEntity entity) {
+    return GroupUIModel(
+      id: entity.id,
+      title: entity.title,
+      weight: entity.weight,
+      color: AppColors.getMaterialColor(entity.color),
+      habits: entity.habits,
+    );
+  }
+
+  @override
+  List<Object?> get props => [id, title, weight, habits, color];
+
+  String get hashKey =>
+      Object.hash(id, title, weight, color, Object.hashAll(habits)).toString();
+
+  @override
+  String toString() {
+    return 'GroupEntity(id: ${id.substring(id.length - 6)}, title: $title)';
+  }
+
+  String get shortId => id.substring(id.length - 6);
+}

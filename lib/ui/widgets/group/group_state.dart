@@ -1,12 +1,22 @@
 import 'package:equatable/equatable.dart';
-import 'package:habits_flow/domain/entities/group_entity.dart';
+
+import 'group_ui_model.dart';
 
 class GroupState extends Equatable {
-  final GroupEntity entity;
+  final GroupUIModel uiModel;
 
-  const GroupState({required this.entity});
+  const GroupState({required this.uiModel});
+
 
 
   @override
-  List<Object?> get props => [entity];
+  List<Object?> get props => [uiModel];
+
+  GroupState copyWith({
+    GroupUIModel? uiModel,
+  }) {
+    return GroupState(
+      uiModel: uiModel ?? this.uiModel,
+    );
+  }
 }

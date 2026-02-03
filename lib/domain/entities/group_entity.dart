@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:flutter/material.dart';
 import 'habit_entity.dart';
 
 class GroupEntity extends Equatable {
@@ -6,18 +7,18 @@ class GroupEntity extends Equatable {
   final String title;
   final int weight;
   final List<HabitEntity> habits;
-  final String colorHex;
+  final Color color;
 
   const GroupEntity({
     required this.id,
     required this.title,
     required this.weight,
     required this.habits,
-    required this.colorHex,
+    required this.color,
   });
 
   @override
-  List<Object?> get props => [id, title, weight, habits, colorHex];
+  List<Object?> get props => [id, title, weight, habits, color];
 
   void addHabit(HabitEntity habit) {
     habits.add(habit);
@@ -27,7 +28,7 @@ class GroupEntity extends Equatable {
     habits.remove(habit);
   }
 
-  String get hashKey => Object.hash(id, title, weight, colorHex, Object.hashAll(habits)).toString();
+  String get hashKey => Object.hash(id, title, weight, color, Object.hashAll(habits)).toString();
 
   @override
   String toString() {

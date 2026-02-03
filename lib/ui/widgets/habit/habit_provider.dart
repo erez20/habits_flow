@@ -7,7 +7,8 @@ import 'package:habits_flow/domain/use_cases/habit/perform_habit_use_case.dart';
 import 'package:habits_flow/domain/use_cases/habit/reset_habit_use_case.dart';
 import 'package:habits_flow/injection.dart';
 import 'package:habits_flow/ui/common/constants.dart';
-import 'package:habits_flow/ui/screens/active_habits/active_habits_manager.dart';
+import 'package:habits_flow/ui/screens/active_habits/di/active_habits_manager.dart';
+
 
 
 import 'habit_cubit.dart';

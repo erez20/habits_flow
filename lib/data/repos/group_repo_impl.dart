@@ -45,13 +45,13 @@ class GroupRepoImpl extends GroupRepo {
   Future<DomainResponse<GroupEntity>> createGroup({
     required String title,
     required int weight,
-    required String colorHex,
+    required int colorValue,
   }) async {
     try {
       final group = await groupLocalSource.createGroup(
         title: title,
         weight: weight,
-        colorHex: colorHex,
+        colorValue: colorValue,
       );
       return Success(group);
     } on Exception catch (e) {
