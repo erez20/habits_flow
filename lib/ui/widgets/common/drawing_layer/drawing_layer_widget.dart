@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 
@@ -9,7 +11,6 @@ class DrawingLayerWidget extends StatefulWidget {
     super.key,
     required this.child,
     required this.onWidgetHit,
-
   });
 
   @override
@@ -17,35 +18,58 @@ class DrawingLayerWidget extends StatefulWidget {
 }
 
 class _DrawingLayerWidgetState extends State<DrawingLayerWidget> {
-  final ValueNotifier<List<Offset>> _points = ValueNotifier([]);
+  final ValueNotifier<List<_TrailPoint>> _points = ValueNotifier([]);
   final Set<dynamic> _sessionHits = {};
+  Timer? _trailCleanupTimer;
+
+  @override
+  void initState() {
+    super.initState();
+    // Start a periodic timer to clean up old points
+    _trailCleanupTimer = Timer.periodic(const Duration(milliseconds: 50), (timer) {
+      if (_points.value.isNotEmpty) {
+        final now = DateTime.now();
+        final newPoints = _points.value.where((p) {
+          return now.difference(p.timestamp).inMilliseconds < 500; // Keep points younger than 500ms
+        }).toList();
+
+        if (newPoints.length != _points.value.length) {
+          _points.value = newPoints;
+        }
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _trailCleanupTimer?.cancel();
+    _points.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onPanStart: (details) {
         _sessionHits.clear();
-        _points.value = [details.localPosition];
+        final newPoint = _TrailPoint(details.localPosition);
+        _points.value = [newPoint];
       },
-
       onPanUpdate: (details) {
-        final newPoints = List<Offset>.from(_points.value)..add(details.localPosition);
-        _points.value = newPoints;
+        final newPoint = _TrailPoint(details.localPosition);
+        _points.value = List.from(_points.value)..add(newPoint);
         _performHitTest(details);
       },
-
       onPanEnd: (details) {
-        _points.value = [];
+        // Don't clear points, let the timer handle it
         _sessionHits.clear();
       },
-
-      child: ValueListenableBuilder<List<Offset>>(
+      child: ValueListenableBuilder<List<_TrailPoint>>(
         valueListenable: _points,
         builder: (context, points, child) {
           return CustomPaint(
-            // Draw the trail ON TOP of the child
             foregroundPainter: _SmoothTrailPainter(points: points),
-            child: widget.child, // <--- Render the habits below
+            child: widget.child,
           );
         },
       ),
@@ -53,14 +77,10 @@ class _DrawingLayerWidgetState extends State<DrawingLayerWidget> {
   }
 
   void _performHitTest(DragUpdateDetails details) {
-    // If targetKey is provided, use it. Otherwise, hit test the child context.
-    final RenderBox? targetRenderBox  = context.findRenderObject() as RenderBox?;
-
+    final RenderBox? targetRenderBox = context.findRenderObject() as RenderBox?;
     if (targetRenderBox != null) {
       final localOffset = targetRenderBox.globalToLocal(details.globalPosition);
       final BoxHitTestResult result = BoxHitTestResult();
-
-      // Hit test specifically to find MetaData
       if (targetRenderBox.hitTest(result, position: localOffset)) {
         for (final item in result.path) {
           if (item.target is RenderMetaData) {
@@ -76,37 +96,49 @@ class _DrawingLayerWidgetState extends State<DrawingLayerWidget> {
   }
 }
 
+class _TrailPoint {
+  final Offset offset;
+  final DateTime timestamp;
+
+  _TrailPoint(this.offset) : timestamp = DateTime.now();
+}
 
 class _SmoothTrailPainter extends CustomPainter {
-  final List<Offset> points;
+  final List<_TrailPoint> points;
+  final Duration maxAge = const Duration(milliseconds: 500);
+
   _SmoothTrailPainter({required this.points});
 
   @override
   void paint(Canvas canvas, Size size) {
-    if (points.length < 2) return;
+    final now = DateTime.now();
 
-    final paint = Paint()
-      ..color = Colors.blue
-      ..strokeCap = StrokeCap.round
-      ..strokeWidth = 12.0
-      ..style = PaintingStyle.stroke
-      ..strokeJoin = StrokeJoin.round;
+    for (int i = 0; i < points.length - 1; i++) {
+      final p1 = points[i];
+      final p2 = points[i + 1];
 
-    final path = Path();
-    path.moveTo(points[0].dx, points[0].dy);
+      final age = now.difference(p1.timestamp);
+      final opacity = 1.0 - (age.inMilliseconds / maxAge.inMilliseconds).clamp(0.0, 1.0);
 
-    for (int i = 1; i < points.length - 1; i++) {
-      final p0 = points[i];
-      final p1 = points[i + 1];
-      path.quadraticBezierTo(
-        p0.dx, p0.dy,
-        (p0.dx + p1.dx) / 2, (p0.dy + p1.dy) / 2,
-      );
+      if (opacity <= 0) continue;
+
+      final paint = Paint()
+        ..color = Colors.blue.withOpacity(opacity)
+        ..strokeCap = StrokeCap.round
+        ..strokeWidth = 12.0
+        ..style = PaintingStyle.stroke
+        ..strokeJoin = StrokeJoin.round;
+
+      final path = Path()
+        ..moveTo(p1.offset.dx, p1.offset.dy)
+        ..lineTo(p2.offset.dx, p2.offset.dy);
+
+      canvas.drawPath(path, paint);
     }
-    canvas.drawPath(path, paint);
   }
 
   @override
-  bool shouldRepaint(covariant _SmoothTrailPainter oldDelegate) =>
-      oldDelegate.points != points;
+  bool shouldRepaint(covariant _SmoothTrailPainter oldDelegate) {
+    return oldDelegate.points != points;
+  }
 }
