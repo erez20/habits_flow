@@ -1,0 +1,30 @@
+import 'package:flutter/material.dart';
+import 'package:habits_flow/ui/screens/active_habits/app_bar/active_habits_app_bar.dart';
+import 'package:habits_flow/ui/widgets/all_groups/all_groups_provider.dart';
+import 'package:habits_flow/ui/widgets/test_dashboard/test_dashboard_provider.dart';
+
+
+
+class ActiveHabitsScreen extends StatelessWidget {
+  const ActiveHabitsScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.grey[200],
+      appBar: ActiveHabitsAppBar(),
+      body: Column(
+        children: [
+          Container(
+            height: 200,
+            color: Colors.red[100],
+            child: TestDashboardProvider(),
+          ),
+
+          AllGroupsProvider(),
+        ],
+      ),
+    );
+  }
+}
+
