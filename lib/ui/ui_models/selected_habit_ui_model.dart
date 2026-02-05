@@ -1,5 +1,4 @@
 import 'package:equatable/equatable.dart';
-import 'package:habits_flow/data/db/database.dart';
 import 'package:habits_flow/domain/entities/habit_entity.dart';
 
 class SelectedHabitUiModel extends Equatable {

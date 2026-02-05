@@ -4,9 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:habits_flow/domain/entities/group_entity.dart';
 import 'package:habits_flow/domain/entities/habit_entity.dart';
 import 'package:habits_flow/domain/use_cases/habit/habits_of_group_stream_use_case.dart';
-import 'package:habits_flow/ui/common/colors/app_colors.dart';
 import 'package:habits_flow/ui/screens/active_habits/di/active_habits_manager.dart';
-
 import 'package:habits_flow/ui/widgets/habits_collection/habits_collection_state.dart';
 
 class HabitsCollectionCubit extends Cubit<HabitCollectionState> {
@@ -22,7 +20,6 @@ class HabitsCollectionCubit extends Cubit<HabitCollectionState> {
          HabitCollectionState(
            habits: [],
            groupId: group.id,
-           color: AppColors.getMaterialColor(group.color),
          ),
        ) {
     init();
@@ -38,7 +35,7 @@ class HabitsCollectionCubit extends Cubit<HabitCollectionState> {
     });
   }
 
-  void onHabitHit(HabitEntity data) {
+  void onHabitDrown(HabitEntity data) {
     manager.habitDrown(data.id);
   }
 

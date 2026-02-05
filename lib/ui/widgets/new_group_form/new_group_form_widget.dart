@@ -114,30 +114,6 @@ class _NewGroupFormWidgetState extends State<NewGroupFormWidget> {
     );
   }
 
-  FormBuilderTextField _info() {
-    return FormBuilderTextField(
-      name: 'info',
-      maxLength: 200,
-      maxLines: 5,
-      minLines: 3,
-      keyboardType: TextInputType.multiline,
-
-      decoration: InputDecoration(
-        labelText: 'Information',
-        prefixIcon: Icon(Icons.info_outline),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8.0),
-        ),
-        alignLabelWithHint: false,
-        filled: true,
-        fillColor: Colors.grey[200],
-      ),
-      validator: FormBuilderValidators.compose([
-        FormBuilderValidators.required(),
-        FormBuilderValidators.maxLength(200),
-      ]),
-    );
-  }
 
   SizedBox _submit(NewGroupFormState state, NewGroupFormCubit cubit) {
     return SizedBox(
@@ -166,23 +142,6 @@ class _NewGroupFormWidgetState extends State<NewGroupFormWidget> {
     );
   }
 
-  FormBuilderTextField _link() {
-    return FormBuilderTextField(
-      name: 'link',
-      decoration: InputDecoration(
-        labelText: 'Reference Link',
-        prefixIcon: Icon(Icons.link),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8.0),
-        ),
-        filled: true,
-        fillColor: Colors.grey[200],
-      ),
-      validator: FormBuilderValidators.compose([
-        FormBuilderValidators.url(),
-      ]),
-    );
-  }
 }
 
 /*

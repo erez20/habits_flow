@@ -25,12 +25,11 @@ class _HabitsCollectionWidgetState extends State<HabitsCollectionWidget> {
     return BlocBuilder<HabitsCollectionCubit, HabitCollectionState>(
       builder: (context, state) {
         return DrawingLayerWidget(
-
           onWidgetHit: (data) {
             Fimber.d("onWidgetHit $data");
             if (data is HabitEntity) {
               var cubit = context.read<HabitsCollectionCubit>();
-              cubit.onHabitHit(data);
+              cubit.onHabitDrown(data);
             }
           },
           child: Wrap(
@@ -46,6 +45,7 @@ class _HabitsCollectionWidgetState extends State<HabitsCollectionWidget> {
                   child: HabitProvider(
                     key: ValueKey(habit.id),
                     habit: habit,
+
                   ),
                 );
               }),
