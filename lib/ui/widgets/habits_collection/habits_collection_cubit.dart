@@ -32,7 +32,7 @@ class HabitsCollectionCubit extends Cubit<HabitCollectionState> {
   }
 
   void onHabitHit(HabitEntity data) {
-    manager.addDrownHabit(data.id);
+    manager.habitDrown(data.id);
   }
 
   @override

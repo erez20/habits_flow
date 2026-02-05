@@ -6,34 +6,41 @@ import 'package:rxdart/rxdart.dart';
 abstract class ActiveHabitsManager {
   Stream<void> listenToDrownHabit(String id);
 
-  void addDrownHabit(String id);
+  void habitDrown(String id);
 
-  Stream<HabitEntity> get onHabitHit;
-  void habitHit(HabitEntity habit);
+  Stream<HabitEntity?> get listenToHabitSelected;
+
+  void habitSelected({required HabitEntity habit});
+
+  void clearHabitSelection();
 
   void dispose();
 }
 
 class ActiveHabitsManagerImpl implements ActiveHabitsManager {
   final BehaviorSubject<String> _drawOverHabit = BehaviorSubject<String>();
-  final BehaviorSubject<HabitEntity> _onHabitHit = BehaviorSubject<HabitEntity>();
+  final BehaviorSubject<HabitEntity?> _habitSelected = BehaviorSubject<HabitEntity?>();
 
   @override
-  Stream<void> listenToDrownHabit(String id) =>
-      _drawOverHabit.stream.where((element) => element == id).map((_) {});
+  Stream<String> listenToDrownHabit(String id) =>
+      _drawOverHabit.stream.where((element) => element == id);
 
   @override
-  void addDrownHabit(String id) => _drawOverHabit.add(id);
+  void habitDrown(String id) => _drawOverHabit.add(id);
 
   @override
-  Stream<HabitEntity> get onHabitHit => _onHabitHit.stream;
+  Stream<HabitEntity?> get listenToHabitSelected => _habitSelected.stream;
 
   @override
-  void habitHit(HabitEntity habit) => _onHabitHit.add(habit);
+  void habitSelected({required HabitEntity habit}) =>
+      _habitSelected.add(habit);
 
   @override
   void dispose() {
     _drawOverHabit.close();
-    _onHabitHit.close();
+    _habitSelected.close();
   }
+
+  @override
+  void clearHabitSelection() => _habitSelected.add(null);
 }

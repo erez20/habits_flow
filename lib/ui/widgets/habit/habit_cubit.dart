@@ -18,7 +18,6 @@ class HabitCubit extends Cubit<HabitState> {
   final HabitEntity habit;
   final HabitStreamUseCase habitStreamUseCase;
   final PerformHabitUseCase performHabitUseCase;
-  final ResetHabitUseCase resetHabitUseCase;
   final ActiveHabitsManager manager;
 
   HabitCubit({
@@ -26,7 +25,6 @@ class HabitCubit extends Cubit<HabitState> {
     required this.habit,
     required this.habitStreamUseCase,
     required this.performHabitUseCase,
-    required this.resetHabitUseCase,
     required this.manager,
   }) : super(HabitState.init(habit: habit)) {
     init();
@@ -59,10 +57,11 @@ class HabitCubit extends Cubit<HabitState> {
 
   }
 
-  void reset() {
-    Fimber.d('perform habit ${habit.id}');
-    resetHabitUseCase.exec(ResetHabitUseCaseParams(habitId: habit.id));
+  void onLongPress() {
+
+    manager.habitSelected(habit: habit);
   }
+
 
   @override
   Future<void> close() {

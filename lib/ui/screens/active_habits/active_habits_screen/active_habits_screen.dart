@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:habits_flow/ui/screens/active_habits/app_bar/active_habits_app_bar.dart';
+import 'package:habits_flow/ui/screens/active_habits/app_bar/app_bar_builder.dart';
 import 'package:habits_flow/ui/widgets/all_groups/all_groups_provider.dart';
 import 'package:habits_flow/ui/widgets/test_dashboard/test_dashboard_provider.dart';
 
@@ -12,7 +13,7 @@ class ActiveHabitsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.grey[200],
-      appBar: ActiveHabitsAppBar(),
+      appBar: AppBarBuilder(),
       body: Column(
         children: [
           Container(
