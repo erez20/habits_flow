@@ -40,7 +40,6 @@ class HabitProvider extends StatelessWidget {
       child: HabitWidget(
         habitsSep: habitSep,
         side: habitSide,
-        color: Colors.cyan,
       ),
     );
   }

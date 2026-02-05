@@ -32,7 +32,7 @@ class TestDashboardCubit extends Cubit<int> {
     AddGroupUseCaseParams params = AddGroupUseCaseParams(
       title: "Fitness$i",
       weight: 50,
-      colorValue: AppColors.palette[6].toARGB32(),  //TODO COLOR
+      colorValue: AppColors.palette[9].toARGB32(),  //TODO COLOR
     );
     addGroupUseCase.exec(params);
   }
