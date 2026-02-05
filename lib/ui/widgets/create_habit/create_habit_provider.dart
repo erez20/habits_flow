@@ -8,13 +8,14 @@ import 'create_habit_widget.dart';
 
 class CreateHabitProvider extends StatelessWidget {
   final String groupId;
+  final int groupColor;
 
-  const CreateHabitProvider({super.key, required this.groupId});
+  const CreateHabitProvider({super.key, required this.groupId, required this.groupColor});
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => CreateHabitCubit(addHabitUseCase: getIt<AddHabitUseCase>(), groupId: groupId),
+      create: (context) => CreateHabitCubit(addHabitUseCase: getIt<AddHabitUseCase>(), groupId: groupId, groupColor: groupColor),
       child: CreateHabitWidget(),
     );
   }

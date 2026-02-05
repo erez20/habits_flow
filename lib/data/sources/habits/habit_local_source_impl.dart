@@ -13,35 +13,35 @@ class HabitLocalSourceImpl implements HabitLocalSource {
   HabitLocalSourceImpl(this.db);
 
   @override
-  Future<HabitEntity> createHabit({
-    required String title,
-    required String info,
-    required String link,
-    required double weight,
-  }) async {
-    final id = const Uuid().v4();
-    final companion = HabitsCompanion.insert(
-      id: id,
-      title: title,
-      info: Value(info),
-      link: Value(link),
-      weight: Value(weight),
-      createdAt: Value(DateTime.now()),
-    );
-
-    await db.into(db.habits).insert(companion);
-
-    return HabitEntity(
-      id: id,
-      title: title,
-      info: info,
-      link: link,
-      weight: weight,
-      completionCount: 0,
-    );
-  }
-
-  @override
+        Future<HabitEntity> createHabit({
+          required String title,
+          required String info,
+          required String link,
+          required double weight,
+          required int groupColor,
+        }) async {
+          final id = const Uuid().v4();
+          final companion = HabitsCompanion.insert(
+            id: id,
+            title: title,
+            info: Value(info),
+            link: Value(link),
+            weight: Value(weight),
+            createdAt: Value(DateTime.now()),
+          );
+      
+          await db.into(db.habits).insert(companion);
+      
+          return HabitEntity(
+            id: id,
+            title: title,
+            info: info,
+            link: link,
+            weight: weight,
+            completionCount: 0,
+            groupColor: groupColor,
+          );
+        }  @override
   Future<void> deleteHabit({required String habitId}) async {
     await (db.delete(db.habits)..where((tbl) => tbl.id.equals(habitId))).go();
   }
@@ -117,40 +117,52 @@ class HabitLocalSourceImpl implements HabitLocalSource {
 
   @override
   Stream<List<HabitEntity>> habitsOfGroupStream(String groupId) {
-    final query = db.select(db.habits)..where((tbl) => tbl.groupId.equals(groupId));
+    final query = db.select(db.habits).join([
+      innerJoin(db.groups, db.groups.id.equalsExp(db.habits.groupId)),
+    ])..where(db.habits.groupId.equals(groupId));
+
     return query.watch().map((rows) {
       return rows.map((row) {
+        final habit = row.readTable(db.habits);
+        final group = row.readTable(db.groups);
         return HabitEntity(
-          id: row.id,
-          title: row.title,
-          weight: row.weight,
-          info: row.info,
-          link: row.link,
+          id: habit.id,
+          title: habit.title,
+          weight: habit.weight,
+          info: habit.info,
+          link: habit.link,
           completionCount: 0,
+          groupColor: group.colorValue,
         );
       }).toList();
     });
   }
 
   @override
-  Stream<HabitEntity> habitStream(String habitId) {
-    final habitStream =
-        (db.select(db.habits)..where((tbl) => tbl.id.equals(habitId)))
-            .watchSingle();
-    final performancesStream = (db.select(db.habitPerformances)
-          ..where((tbl) => tbl.habitId.equals(habitId)))
-        .watch();
-
-    return Rx.combineLatest2(habitStream, performancesStream,
-        (Habit habit, List<HabitPerformance> performances) {
-      return HabitEntity(
-        id: habit.id,
-        title: habit.title,
-        weight: habit.weight,
-        info: habit.info,
-        link: habit.link,
-        completionCount: performances.length,
-      );
-    });
-  }
+    Stream<HabitEntity> habitStream(String habitId) {
+      final habitWithGroupStream = (db.select(db.habits).join([
+        innerJoin(db.groups, db.groups.id.equalsExp(db.habits.groupId)),
+      ])..where(db.habits.id.equals(habitId)))
+          .watchSingle();
+  
+      final performancesStream = (db.select(db.habitPerformances)
+            ..where((tbl) => tbl.habitId.equals(habitId)))
+          .watch();
+  
+          return Rx.combineLatest2<TypedResult, List<HabitPerformance>, HabitEntity>(
+              habitWithGroupStream,
+              performancesStream,
+              (TypedResult row, List<HabitPerformance> performances) {
+            final habit = row.readTable(db.habits);
+            final group = row.readTable(db.groups);
+            return HabitEntity(
+              id: habit.id,
+              title: habit.title,
+              weight: habit.weight,
+              info: habit.info,
+              link: habit.link,
+              completionCount: performances.length,
+              groupColor: group.colorValue,
+            );
+          });    }
 }

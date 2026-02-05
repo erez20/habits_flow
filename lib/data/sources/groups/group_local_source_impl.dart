@@ -77,6 +77,7 @@ class GroupLocalSourceImpl implements GroupLocalSource {
             link: h.link,
             weight: h.weight,
             completionCount: 0, // Calculated at repo or use case level
+            groupColor: group.colorValue,
           ),
         )
         .toList();
@@ -126,6 +127,7 @@ class GroupLocalSourceImpl implements GroupLocalSource {
                   link: h.link,
                   weight: h.weight,
                   completionCount: 0,
+                  groupColor: group.colorValue,
                 ),
               )
               .toList(),

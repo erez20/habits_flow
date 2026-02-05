@@ -6,6 +6,7 @@ abstract class HabitLocalSource {
     required String info,
     required String link,
     required double weight,
+    required int groupColor,
   });
 
   Future<void> deleteHabit({required String habitId}) ;

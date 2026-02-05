@@ -9,6 +9,7 @@ abstract class HabitRepo {
     required String info,
     required String link,
     required double weight,
+    required int groupColor,
   });
 
   Future<DomainResponse<void>> deleteHabit({

@@ -6,6 +6,7 @@ class HabitEntity extends Equatable{
   final String link;
   final double weight;
   final int completionCount;
+  final int groupColor;
 
   const HabitEntity({
     required this.id,
@@ -14,12 +15,13 @@ class HabitEntity extends Equatable{
     required this.link,
     required this.weight,
     required this.completionCount,
+    required this.groupColor,
   });
 
-  String get hashKey => Object.hash(id, title, weight, completionCount, info, link).toString();
+  String get hashKey => Object.hash(id, title, weight, completionCount, info, link, groupColor).toString();
 
   @override
-  List<Object?> get props => [id, title, weight, completionCount, info, link];
+  List<Object?> get props => [id, title, weight, completionCount, info, link, groupColor];
 
   bool get isUncompleted => completionCount == 0;
 }

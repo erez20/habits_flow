@@ -7,10 +7,12 @@ import 'create_habit_state.dart';
 class CreateHabitCubit extends Cubit<CreateHabitState> {
   final AddHabitUseCase addHabitUseCase;
   final String groupId;
+  final int groupColor;
 
   CreateHabitCubit({
     required this.addHabitUseCase,
     required this.groupId,
+    required this.groupColor,
   }) : super(CreateHabitState.init());
 
   void addHabit({required NewHabitFormUiModel uiModel}) async{
@@ -20,6 +22,7 @@ class CreateHabitCubit extends Cubit<CreateHabitState> {
         title: uiModel.title,
         info: uiModel.info,
         link: uiModel.link,
+        groupColor: groupColor,
       ),
     );
   }

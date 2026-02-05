@@ -49,7 +49,7 @@ class _HabitsCollectionWidgetState extends State<HabitsCollectionWidget> {
                   ),
                 );
               }),
-              CreateHabitProvider(groupId: state.groupId),
+              CreateHabitProvider(groupId: state.groupId, groupColor: context.read<HabitsCollectionCubit>().group.color.value),
             ],
           ),
         );

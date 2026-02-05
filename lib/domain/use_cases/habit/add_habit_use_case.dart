@@ -28,6 +28,7 @@ class AddHabitUseCase extends ExecUseCase<void, AddHabitUseCaseParams> {
       info: params.info,
       link: params.link,
       weight: newWeight,
+      groupColor: params.groupColor,
     );
 
     if (habitResp case Failure(:final error)) {
@@ -54,6 +55,7 @@ class AddHabitUseCaseParams {
   final String title;
   final String info;
   final String link;
+  final int groupColor;
 
 
   AddHabitUseCaseParams({
@@ -61,5 +63,6 @@ class AddHabitUseCaseParams {
     required this.title,
     required this.info,
     required this.link,
+    required this.groupColor,
   });
 }
