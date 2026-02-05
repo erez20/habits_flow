@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:habits_flow/ui/common/constants.dart';
 import 'package:habits_flow/ui/widgets/new_habit_form/new_habit_form_provider.dart';
-import 'package:habits_flow/ui/widgets/new_habit_form/new_habit_form_ui_model.dart';
+import 'package:habits_flow/ui/ui_models/new_habit_form_ui_model.dart';
 
 import 'create_habit_cubit.dart';
 

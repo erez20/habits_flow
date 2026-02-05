@@ -1,6 +1,6 @@
 import 'package:equatable/equatable.dart';
 
-import 'group_ui_model.dart';
+import '../../ui_models/group_ui_model.dart';
 
 class GroupState extends Equatable {
   final GroupUIModel uiModel;

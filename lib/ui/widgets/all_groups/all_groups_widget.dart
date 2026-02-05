@@ -51,7 +51,7 @@ class AllGroupsWidget extends StatelessWidget {
                               );
                             },
                             child: state.expandedGroupIds.contains(group.id)
-                                ? HabitsCollectionProvider(groupId: group.id)
+                                ? HabitsCollectionProvider(group: group)
                                 : const SizedBox.shrink(),
                           ),
                         ],

@@ -1,6 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:habits_flow/domain/use_cases/habit/add_habit_use_case.dart';
-import 'package:habits_flow/ui/widgets/new_habit_form/new_habit_form_ui_model.dart';
+import 'package:habits_flow/ui/ui_models/new_habit_form_ui_model.dart';
 
 import 'create_habit_state.dart';
 
