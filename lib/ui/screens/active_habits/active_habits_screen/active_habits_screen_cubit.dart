@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:fimber/fimber.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:habits_flow/data/db/database.dart';
 import 'package:habits_flow/domain/entities/habit_entity.dart';
 import 'package:habits_flow/domain/use_cases/group/add_group_use_case.dart';
 import 'package:habits_flow/domain/use_cases/habit/reset_habit_use_case.dart';
@@ -57,8 +56,12 @@ class ActiveHabitsScreenCubit extends Cubit<ActiveHabitsScreenState> {
     manager.clearHabitSelection();
   }
 
-  void resetHabit(Habit habit) {
-    resetHabitUseCase.exec(ResetHabitUseCaseParams(habitId: habit.id));
+  void resetHabit() {
+    Fimber.d('resetHabit');
+    var uiModel = state.uiModel;
+    if (uiModel != null) {
+      resetHabitUseCase.exec(ResetHabitUseCaseParams(habitId: uiModel.habitId));
+    }
   }
 
   @override

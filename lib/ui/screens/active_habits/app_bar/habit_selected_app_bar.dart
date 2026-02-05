@@ -24,7 +24,7 @@ class HabitSelectedAppBar extends StatelessWidget
         actions: [
           IconButton(
             icon: const Icon(Icons.refresh),
-            onPressed: () => cubit.resetHabitUseCase,
+            onPressed:  cubit.resetHabit,
           ),
           IconButton(
             icon: const Icon(Icons.delete_outline),

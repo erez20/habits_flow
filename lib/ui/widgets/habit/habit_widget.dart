@@ -25,6 +25,7 @@ class HabitWidget extends StatelessWidget {
       onLongPress: cubit.onLongPress,
       child: BlocBuilder<HabitCubit, HabitState>(
         builder: (context, state) {
+          var completionCount = state.habit.completionCount;
           return Container(
             width: side,
             height: side,
@@ -37,14 +38,18 @@ class HabitWidget extends StatelessWidget {
               borderRadius: BorderRadius.circular(12),
             ),
             child: Stack(
-               children: [
-                  Center(
-                    child: Text(
-                      state.habit.title,
-                      textAlign: TextAlign.center,
-
-                    ),
+              children: [
+                Center(
+                  child: Text(
+                    state.habit.title,
+                    textAlign: TextAlign.center,
                   ),
+                ),
+                if (completionCount >0) Positioned(
+                  top: 2,
+                  right: 2,
+                  child: Text("$completionCount")
+                ),
               ],
             ),
           );
