@@ -7,7 +7,6 @@ import 'package:habits_flow/domain/use_cases/group/add_group_use_case.dart';
 import 'package:habits_flow/domain/use_cases/group/generate_dummy_group_name_use_case.dart';
 import 'package:habits_flow/domain/use_cases/group/remove_last_dummy_group_use_case.dart';
 import 'package:habits_flow/domain/use_cases/habit/add_habit_use_case.dart';
-import 'package:habits_flow/ui/common/colors/app_colors.dart';
 import 'package:injectable/injectable.dart';
 
 @Injectable()
@@ -32,7 +31,7 @@ class TestDashboardCubit extends Cubit<int> {
     AddGroupUseCaseParams params = AddGroupUseCaseParams(
       title: "Fitness$i",
       weight: 50,
-      colorValue: AppColors.palette[9].toARGB32(),  //TODO COLOR
+      colorValue: 0xFFE91E63,
     );
     addGroupUseCase.exec(params);
   }

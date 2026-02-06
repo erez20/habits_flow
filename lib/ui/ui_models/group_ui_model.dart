@@ -24,7 +24,7 @@ class GroupUIModel extends Equatable {
       id: entity.id,
       title: entity.title,
       weight: entity.weight,
-      color: AppColors.getMaterialColor(Colors.amber),
+      color: AppColors.getMaterialColor(entity.groupColor),
 
       //AppColors.getMaterialColor(entity.color),
       habits: entity.habits,

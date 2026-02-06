@@ -1,5 +1,3 @@
-
-
 import 'package:flutter/material.dart';
 
 class AppColors {
@@ -23,18 +21,12 @@ class AppColors {
     Colors.brown,
     Colors.blueGrey,
   ];
-  static MaterialColor getMaterialColor(Color color) {
-    return AppColors.palette.firstWhere(
-          (mColor) => mColor.value == color.value,
-      orElse: () => Colors.grey, // Fallback
+
+  static MaterialColor getMaterialColor(int colorValue) {
+    return palette.firstWhere(
+      (mColor) => mColor.toARGB32() == colorValue,
+      orElse: () => Colors.grey,
     );
   }
 }
 
-/*
-// To DB
-final colorInt = entity.color.value;
-
-// From DB
-final color = Color(result.colorValue);
- */

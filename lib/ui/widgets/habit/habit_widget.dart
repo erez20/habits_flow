@@ -25,7 +25,7 @@ class HabitWidget extends StatelessWidget {
       child: BlocBuilder<HabitCubit, HabitState>(
         builder: (context, state) {
           var completionCount = state.habit.completionCount;
-          var materialColor = AppColors.getMaterialColor(Color(state.habit.groupColor)); //use ui model!!!
+          var materialColor = AppColors.getMaterialColor(state.habit.groupColor); //use ui model!!!
           return Container(
             width: side,
             height: side,
