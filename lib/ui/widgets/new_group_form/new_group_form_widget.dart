@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
+import 'package:habits_flow/ui/common/colors/app_colors.dart';
 
 import 'new_group_form_cubit.dart';
 import 'new_group_form_state.dart';
@@ -22,9 +23,6 @@ class _NewGroupFormWidgetState extends State<NewGroupFormWidget> {
       listener: (context, state) {
         if (state.isSuccess) {
           Navigator.of(context).pop();
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Habit created successfully!')),
-          );
         }
         if (state.errorMessage.isNotEmpty) {
           ScaffoldMessenger.of(context).showSnackBar(
@@ -60,6 +58,8 @@ class _NewGroupFormWidgetState extends State<NewGroupFormWidget> {
                     _title(),
                     const SizedBox(height: 16),
                     _durationInSec(),
+                    const SizedBox(height: 16),
+                    _color(),
                     const SizedBox(height: 32),
                     _submit(state, cubit),
                     const SizedBox(height: 16),
@@ -82,9 +82,11 @@ class _NewGroupFormWidgetState extends State<NewGroupFormWidget> {
         final formState = _formKey.currentState;
         if (formState == null) return null;
 
-        final months = int.tryParse(formState.fields['months']?.value ?? '0') ?? 0;
+        final months =
+            int.tryParse(formState.fields['months']?.value ?? '0') ?? 0;
         final days = int.tryParse(formState.fields['days']?.value ?? '0') ?? 0;
-        final hours = int.tryParse(formState.fields['hours']?.value ?? '0') ?? 0;
+        final hours =
+            int.tryParse(formState.fields['hours']?.value ?? '0') ?? 0;
 
         if (months == 0 && days == 0 && hours == 0) {
           return 'You must choose duration';
@@ -110,10 +112,11 @@ class _NewGroupFormWidgetState extends State<NewGroupFormWidget> {
                       fillColor: Colors.grey[200],
                     ),
                     keyboardType: TextInputType.number,
- 
+
                     onChanged: (value) => field.didChange({}),
                     onTap: () {
-                      if (_formKey.currentState?.fields['months']?.value == '0') {
+                      if (_formKey.currentState?.fields['months']?.value ==
+                          '0') {
                         _formKey.currentState?.fields['months']?.didChange('');
                       }
                     },
@@ -133,7 +136,7 @@ class _NewGroupFormWidgetState extends State<NewGroupFormWidget> {
                       fillColor: Colors.grey[200],
                     ),
                     keyboardType: TextInputType.number,
- 
+
                     onChanged: (value) => field.didChange({}),
                     onTap: () {
                       if (_formKey.currentState?.fields['days']?.value == '0') {
@@ -156,10 +159,11 @@ class _NewGroupFormWidgetState extends State<NewGroupFormWidget> {
                       fillColor: Colors.grey[200],
                     ),
                     keyboardType: TextInputType.number,
- 
+
                     onChanged: (value) => field.didChange({}),
                     onTap: () {
-                      if (_formKey.currentState?.fields['hours']?.value == '0') {
+                      if (_formKey.currentState?.fields['hours']?.value ==
+                          '0') {
                         _formKey.currentState?.fields['hours']?.didChange('');
                       }
                     },
@@ -183,10 +187,8 @@ class _NewGroupFormWidgetState extends State<NewGroupFormWidget> {
       },
     );
   }
+
   //
-
-
-
 
   Widget _handle() {
     return Center(
@@ -283,33 +285,47 @@ class _NewGroupFormWidgetState extends State<NewGroupFormWidget> {
       ),
     );
   }
+
+  Widget _color() {
+    return FormBuilderField<Color>(
+      name: 'habit_color',
+      initialValue: Colors.red,
+      builder: (FormFieldState<Color?> field) {
+        return InputDecorator(
+          decoration: InputDecoration(
+            labelText: 'Select Group Color',
+            errorText: field.errorText,
+          ),
+          child: Container(
+            padding: EdgeInsets.all(8),
+            decoration: BoxDecoration(
+
+
+              color: Colors.grey[200],
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all(color: Colors.grey, width: 3 ),
+            ),
+            child: Wrap(
+              alignment: WrapAlignment.start,
+              spacing: 8,
+              runSpacing: 8,
+              children: AppColors.palette.map((materialColor) {
+                return GestureDetector(
+                  onTap: () => field.didChange(materialColor),
+                  child: CircleAvatar(
+                    backgroundColor: materialColor,
+                    child: field.value == materialColor
+                        ? const Icon(Icons.check, color: Colors.white)
+                        : null,
+                  ),
+                );
+              }).toList(),
+            ),
+          ),
+        );
+      },
+    );
+  }
 }
 
-/*
-FormBuilderField<Color>(
-  name: 'habit_color',
-  initialValue: Colors.blue,
-  builder: (FormFieldState<Color?> field) {
-    return InputDecorator(
-      decoration: InputDecoration(
-        labelText: 'Select Habit Color',
-        errorText: field.errorText,
-      ),
-      child: Wrap(
-        spacing: 8,
-        children: AppColors.palette.map((materialColor) {
-          return GestureDetector(
-            onTap: () => field.didChange(materialColor),
-            child: CircleAvatar(
-              backgroundColor: materialColor,
-              child: field.value == materialColor
-                ? const Icon(Icons.check, color: Colors.white)
-                : null,
-            ),
-          );
-        }).toList(),
-      ),
-    );
-  },
-)
- */
+/**/
