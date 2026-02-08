@@ -31,7 +31,6 @@ class GroupEntity extends Equatable {
 
   String get hashKey => Object.hash(id, title, weight, groupColor, durationInSec, Object.hashAll(habits)).toString();
 
-  int get completedHabits => habits.where((habit) => habit.isCompleted).length;
 
   @override
   String toString() {

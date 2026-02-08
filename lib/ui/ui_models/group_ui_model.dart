@@ -25,11 +25,13 @@ class GroupUIModel extends Equatable {
       title: entity.title,
       weight: entity.weight,
       color: AppColors.getMaterialColor(entity.groupColor),
-
-      //AppColors.getMaterialColor(entity.color),
       habits: entity.habits,
     );
   }
+
+  int get habitsCount => habits.length;
+
+  int get completedHabits => habits.where((habit) => habit.isCompleted).length;
 
   @override
   List<Object?> get props => [id, title, weight, habits, color];

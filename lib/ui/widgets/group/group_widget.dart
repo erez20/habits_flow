@@ -24,9 +24,9 @@ class GroupWidget extends StatelessWidget {
             child: Padding(
               padding: const EdgeInsets.all(12.0),
               child: Text(
-                state.uiModel.title,
+                "${state.uiModel.title} (${state.uiModel.completedHabits}/${state.uiModel.habitsCount})",
                 style: const TextStyle(
-                  fontFamily: 'LondrinaOutline',
+                  fontFamily: 'Montserrat',
                   fontWeight: FontWeight.bold,
                   fontSize: 24,
                 ),
