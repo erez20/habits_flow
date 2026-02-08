@@ -16,6 +16,7 @@ class HabitSelectedAppBar extends StatelessWidget
   Widget build(BuildContext context) {
     final cubit = context.read<ActiveHabitsScreenCubit>();
     return AppBar(
+      backgroundColor: uiModel.color[300],
       leading: IconButton(
         icon: const Icon(Icons.close),
         onPressed: () => cubit.clearSelection(),
