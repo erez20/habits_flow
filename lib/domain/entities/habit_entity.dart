@@ -24,4 +24,6 @@ class HabitEntity extends Equatable{
   List<Object?> get props => [id, title, weight, completionCount, info, link, groupColor];
 
   bool get isUncompleted => completionCount == 0;
+
+  bool get isCompleted => completionCount > 0;
 }

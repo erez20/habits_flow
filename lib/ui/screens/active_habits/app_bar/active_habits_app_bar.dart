@@ -39,6 +39,7 @@ class ActiveHabitsAppBar extends StatelessWidget
   }) {
     showModalBottomSheet(
       context: context,
+      isScrollControlled: true,
       backgroundColor: Colors.blueGrey[100],
 
       builder: (_) => NewGroupFormProvider(

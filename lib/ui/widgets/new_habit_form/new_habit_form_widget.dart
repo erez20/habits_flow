@@ -39,33 +39,38 @@ class _NewHabitFormWidgetState extends State<NewHabitFormWidget> {
         final cubit = context.read<NewHabitFormCubit>();
 
         return SafeArea(
-          child: Padding(
-            padding: EdgeInsets.only(
-              bottom: MediaQuery.of(context).viewInsets.bottom,
-              left: 16.0,
-              right: 16.0,
-              top: 16.0,
+          child: Container(
+            constraints: BoxConstraints(
+              maxHeight: MediaQuery.of(context).size.height * 0.75,
             ),
-            child: SingleChildScrollView(
-              child: FormBuilder(
-                key: _formKey,
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _handle(),
-                    const SizedBox(height: 16),
-                    _formTitle(context),
-                    const SizedBox(height: 24),
-                    _title(),
-                    const SizedBox(height: 16),
-                    _info(),
-                    const SizedBox(height: 16),
-                    _link(),
-                    const SizedBox(height: 32),
-                    _submit(state, cubit),
-                    const SizedBox(height: 16),
-                  ],
+            child: Padding(
+              padding: EdgeInsets.only(
+                bottom: MediaQuery.of(context).viewInsets.bottom,
+                left: 16.0,
+                right: 16.0,
+                top: 16.0,
+              ),
+              child: SingleChildScrollView(
+                child: FormBuilder(
+                  key: _formKey,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _handle(),
+                      const SizedBox(height: 16),
+                      _formTitle(context),
+                      const SizedBox(height: 24),
+                      _title(),
+                      const SizedBox(height: 16),
+                      _info(),
+                      const SizedBox(height: 16),
+                      _link(),
+                      const SizedBox(height: 32),
+                      _submit(state, cubit),
+                      const SizedBox(height: 16),
+                    ],
+                  ),
                 ),
               ),
             ),

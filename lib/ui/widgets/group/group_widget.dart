@@ -18,7 +18,7 @@ class GroupWidget extends StatelessWidget {
     return BlocBuilder<GroupCubit, GroupState>(
       builder: (context, state) {
         return Container(
-          color: state.uiModel.color,
+          color: state.uiModel.color[400],
           child: InkWell(
             onTap: onTap,
             child: Padding(
