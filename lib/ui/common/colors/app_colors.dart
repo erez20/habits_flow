@@ -28,5 +28,9 @@ class AppColors {
       orElse: () => Colors.grey,
     );
   }
+
+  static int getColorValue(MaterialColor materialColor) {
+    return materialColor.toARGB32();
+  }
 }
 

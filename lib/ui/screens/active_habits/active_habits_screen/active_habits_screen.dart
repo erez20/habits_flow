@@ -13,16 +13,18 @@ class ActiveHabitsScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.grey[200],
       appBar: AppBarBuilder(),
-      body: Column(
-        children: [
-          Container(
-            height: 200,
-            color: Colors.red[100],
-            child: TestDashboardProvider(),
-          ),
+      body: SafeArea(
+        child: Column(
+          children: [
+            Container(
+              height: 200,
+              color: Colors.red[100],
+              child: TestDashboardProvider(),
+            ),
 
-          AllGroupsProvider(),
-        ],
+            AllGroupsProvider(),
+          ],
+        ),
       ),
     );
   }

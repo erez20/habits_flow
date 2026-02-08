@@ -5,9 +5,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:habits_flow/domain/entities/habit_entity.dart';
 import 'package:habits_flow/domain/use_cases/group/add_group_use_case.dart';
 import 'package:habits_flow/domain/use_cases/habit/reset_habit_use_case.dart';
+import 'package:habits_flow/ui/common/colors/app_colors.dart';
 import 'package:habits_flow/ui/screens/active_habits/di/active_habits_manager.dart';
-import 'package:habits_flow/ui/ui_models/selected_habit_ui_model.dart';
 import 'package:habits_flow/ui/ui_models/new_group_form_ui_model.dart';
+import 'package:habits_flow/ui/ui_models/selected_habit_ui_model.dart';
+
 import 'active_habits_screen_state.dart';
 
 class ActiveHabitsScreenCubit extends Cubit<ActiveHabitsScreenState> {
@@ -47,7 +49,7 @@ class ActiveHabitsScreenCubit extends Cubit<ActiveHabitsScreenState> {
       AddGroupUseCaseParams(
         title: uiModel.title,
         weight: 4,
-        colorValue: 4,
+        colorValue: AppColors.getColorValue(uiModel.color),
         durationInSec: uiModel.durationInSec,
       ),
     );

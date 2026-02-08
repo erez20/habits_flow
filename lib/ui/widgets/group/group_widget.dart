@@ -17,20 +17,22 @@ class GroupWidget extends StatelessWidget {
     Fimber.d("build: GroupWidget");
     return BlocBuilder<GroupCubit, GroupState>(
       builder: (context, state) {
-
         return Container(
-          color: state.uiModel.color[50],
-          child: InkWell(onTap: onTap, child: Padding(
-            padding: const EdgeInsets.all(12.0),
-            child: Text(
-              state.uiModel.title,
-              style: const TextStyle(
-                fontFamily: 'LondrinaOutline',
-                fontWeight: FontWeight.bold,
-                fontSize: 24,
+          color: state.uiModel.color,
+          child: InkWell(
+            onTap: onTap,
+            child: Padding(
+              padding: const EdgeInsets.all(12.0),
+              child: Text(
+                state.uiModel.title,
+                style: const TextStyle(
+                  fontFamily: 'LondrinaOutline',
+                  fontWeight: FontWeight.bold,
+                  fontSize: 24,
+                ),
               ),
             ),
-          )),
+          ),
         );
       },
     );
