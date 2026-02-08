@@ -18,7 +18,7 @@ class NewGroupFormCubit extends Cubit<NewGroupFormState> {
     try {
       final newUIModel = NewGroupFormUIModel(
         title: formData['title'],
-        duration: formData['duration'],
+        durationInSec: formData['durationInSec'] ?? 86400,
       );
       onConfirm(uiModel: newUIModel);
       emit(state.copyWith(isSubmitting: false, isSuccess: true));

@@ -17,7 +17,7 @@ class GroupLocalSourceImpl implements GroupLocalSource {
     required String title,
     required int weight,
     required int colorValue,
-    required int duration,
+    int? durationInSec,
   }) async {
     final id = const Uuid().v4();
     final companion = GroupsCompanion.insert(
@@ -26,7 +26,7 @@ class GroupLocalSourceImpl implements GroupLocalSource {
       weight: Value(weight),
       colorValue: colorValue,
       createdAt: Value(DateTime.now()),
-      duration: Value(duration),
+      durationInSec: Value(durationInSec ?? 86400),
     );
 
     await db.into(db.groups).insert(companion);
@@ -37,7 +37,7 @@ class GroupLocalSourceImpl implements GroupLocalSource {
       weight: weight,
       groupColor: colorValue,
       habits: const [],
-      duration: duration,
+      durationInSec: durationInSec ?? 86400,
     );
   }
 
@@ -89,7 +89,7 @@ class GroupLocalSourceImpl implements GroupLocalSource {
       weight: group.weight,
       groupColor: group.colorValue,
       habits: habitEntities,
-      duration: group.duration,
+      durationInSec: group.durationInSec,
     );
   }
 
@@ -120,7 +120,7 @@ class GroupLocalSourceImpl implements GroupLocalSource {
           title: group.title,
           weight: group.weight,
           groupColor: group.colorValue,
-          duration: group.duration,
+          durationInSec: group.durationInSec,
           habits: habits
               .map(
                 (h) => HabitEntity(

@@ -10,7 +10,7 @@ abstract class GroupRepo {
     required String title,
     required int weight,
     required int colorValue,
-    required int  duration,
+    int? durationInSec,
   });
 
   Future<DomainResponse<void>> deleteGroup({

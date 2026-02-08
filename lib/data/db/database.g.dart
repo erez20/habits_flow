@@ -59,17 +59,17 @@ class $GroupsTable extends Groups with TableInfo<$GroupsTable, Group> {
     requiredDuringInsert: false,
     defaultValue: currentDateAndTime,
   );
-  static const VerificationMeta _durationMeta = const VerificationMeta(
-    'duration',
+  static const VerificationMeta _durationInSecMeta = const VerificationMeta(
+    'durationInSec',
   );
   @override
-  late final GeneratedColumn<int> duration = GeneratedColumn<int>(
-    'duration',
+  late final GeneratedColumn<int> durationInSec = GeneratedColumn<int>(
+    'duration_in_sec',
     aliasedName,
     false,
     type: DriftSqlType.int,
     requiredDuringInsert: false,
-    defaultValue: const Constant(24),
+    defaultValue: const Constant(86400),
   );
   @override
   List<GeneratedColumn> get $columns => [
@@ -78,7 +78,7 @@ class $GroupsTable extends Groups with TableInfo<$GroupsTable, Group> {
     weight,
     colorValue,
     createdAt,
-    duration,
+    durationInSec,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -125,10 +125,13 @@ class $GroupsTable extends Groups with TableInfo<$GroupsTable, Group> {
         createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta),
       );
     }
-    if (data.containsKey('duration')) {
+    if (data.containsKey('duration_in_sec')) {
       context.handle(
-        _durationMeta,
-        duration.isAcceptableOrUnknown(data['duration']!, _durationMeta),
+        _durationInSecMeta,
+        durationInSec.isAcceptableOrUnknown(
+          data['duration_in_sec']!,
+          _durationInSecMeta,
+        ),
       );
     }
     return context;
@@ -160,9 +163,9 @@ class $GroupsTable extends Groups with TableInfo<$GroupsTable, Group> {
         DriftSqlType.dateTime,
         data['${effectivePrefix}created_at'],
       )!,
-      duration: attachedDatabase.typeMapping.read(
+      durationInSec: attachedDatabase.typeMapping.read(
         DriftSqlType.int,
-        data['${effectivePrefix}duration'],
+        data['${effectivePrefix}duration_in_sec'],
       )!,
     );
   }
@@ -179,14 +182,14 @@ class Group extends DataClass implements Insertable<Group> {
   final int weight;
   final int colorValue;
   final DateTime createdAt;
-  final int duration;
+  final int durationInSec;
   const Group({
     required this.id,
     required this.title,
     required this.weight,
     required this.colorValue,
     required this.createdAt,
-    required this.duration,
+    required this.durationInSec,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -196,7 +199,7 @@ class Group extends DataClass implements Insertable<Group> {
     map['weight'] = Variable<int>(weight);
     map['color_value'] = Variable<int>(colorValue);
     map['created_at'] = Variable<DateTime>(createdAt);
-    map['duration'] = Variable<int>(duration);
+    map['duration_in_sec'] = Variable<int>(durationInSec);
     return map;
   }
 
@@ -207,7 +210,7 @@ class Group extends DataClass implements Insertable<Group> {
       weight: Value(weight),
       colorValue: Value(colorValue),
       createdAt: Value(createdAt),
-      duration: Value(duration),
+      durationInSec: Value(durationInSec),
     );
   }
 
@@ -222,7 +225,7 @@ class Group extends DataClass implements Insertable<Group> {
       weight: serializer.fromJson<int>(json['weight']),
       colorValue: serializer.fromJson<int>(json['colorValue']),
       createdAt: serializer.fromJson<DateTime>(json['createdAt']),
-      duration: serializer.fromJson<int>(json['duration']),
+      durationInSec: serializer.fromJson<int>(json['durationInSec']),
     );
   }
   @override
@@ -234,7 +237,7 @@ class Group extends DataClass implements Insertable<Group> {
       'weight': serializer.toJson<int>(weight),
       'colorValue': serializer.toJson<int>(colorValue),
       'createdAt': serializer.toJson<DateTime>(createdAt),
-      'duration': serializer.toJson<int>(duration),
+      'durationInSec': serializer.toJson<int>(durationInSec),
     };
   }
 
@@ -244,14 +247,14 @@ class Group extends DataClass implements Insertable<Group> {
     int? weight,
     int? colorValue,
     DateTime? createdAt,
-    int? duration,
+    int? durationInSec,
   }) => Group(
     id: id ?? this.id,
     title: title ?? this.title,
     weight: weight ?? this.weight,
     colorValue: colorValue ?? this.colorValue,
     createdAt: createdAt ?? this.createdAt,
-    duration: duration ?? this.duration,
+    durationInSec: durationInSec ?? this.durationInSec,
   );
   Group copyWithCompanion(GroupsCompanion data) {
     return Group(
@@ -262,7 +265,9 @@ class Group extends DataClass implements Insertable<Group> {
           ? data.colorValue.value
           : this.colorValue,
       createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
-      duration: data.duration.present ? data.duration.value : this.duration,
+      durationInSec: data.durationInSec.present
+          ? data.durationInSec.value
+          : this.durationInSec,
     );
   }
 
@@ -274,14 +279,14 @@ class Group extends DataClass implements Insertable<Group> {
           ..write('weight: $weight, ')
           ..write('colorValue: $colorValue, ')
           ..write('createdAt: $createdAt, ')
-          ..write('duration: $duration')
+          ..write('durationInSec: $durationInSec')
           ..write(')'))
         .toString();
   }
 
   @override
   int get hashCode =>
-      Object.hash(id, title, weight, colorValue, createdAt, duration);
+      Object.hash(id, title, weight, colorValue, createdAt, durationInSec);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -291,7 +296,7 @@ class Group extends DataClass implements Insertable<Group> {
           other.weight == this.weight &&
           other.colorValue == this.colorValue &&
           other.createdAt == this.createdAt &&
-          other.duration == this.duration);
+          other.durationInSec == this.durationInSec);
 }
 
 class GroupsCompanion extends UpdateCompanion<Group> {
@@ -300,7 +305,7 @@ class GroupsCompanion extends UpdateCompanion<Group> {
   final Value<int> weight;
   final Value<int> colorValue;
   final Value<DateTime> createdAt;
-  final Value<int> duration;
+  final Value<int> durationInSec;
   final Value<int> rowid;
   const GroupsCompanion({
     this.id = const Value.absent(),
@@ -308,7 +313,7 @@ class GroupsCompanion extends UpdateCompanion<Group> {
     this.weight = const Value.absent(),
     this.colorValue = const Value.absent(),
     this.createdAt = const Value.absent(),
-    this.duration = const Value.absent(),
+    this.durationInSec = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   GroupsCompanion.insert({
@@ -317,7 +322,7 @@ class GroupsCompanion extends UpdateCompanion<Group> {
     this.weight = const Value.absent(),
     required int colorValue,
     this.createdAt = const Value.absent(),
-    this.duration = const Value.absent(),
+    this.durationInSec = const Value.absent(),
     this.rowid = const Value.absent(),
   }) : id = Value(id),
        title = Value(title),
@@ -328,7 +333,7 @@ class GroupsCompanion extends UpdateCompanion<Group> {
     Expression<int>? weight,
     Expression<int>? colorValue,
     Expression<DateTime>? createdAt,
-    Expression<int>? duration,
+    Expression<int>? durationInSec,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
@@ -337,7 +342,7 @@ class GroupsCompanion extends UpdateCompanion<Group> {
       if (weight != null) 'weight': weight,
       if (colorValue != null) 'color_value': colorValue,
       if (createdAt != null) 'created_at': createdAt,
-      if (duration != null) 'duration': duration,
+      if (durationInSec != null) 'duration_in_sec': durationInSec,
       if (rowid != null) 'rowid': rowid,
     });
   }
@@ -348,7 +353,7 @@ class GroupsCompanion extends UpdateCompanion<Group> {
     Value<int>? weight,
     Value<int>? colorValue,
     Value<DateTime>? createdAt,
-    Value<int>? duration,
+    Value<int>? durationInSec,
     Value<int>? rowid,
   }) {
     return GroupsCompanion(
@@ -357,7 +362,7 @@ class GroupsCompanion extends UpdateCompanion<Group> {
       weight: weight ?? this.weight,
       colorValue: colorValue ?? this.colorValue,
       createdAt: createdAt ?? this.createdAt,
-      duration: duration ?? this.duration,
+      durationInSec: durationInSec ?? this.durationInSec,
       rowid: rowid ?? this.rowid,
     );
   }
@@ -380,8 +385,8 @@ class GroupsCompanion extends UpdateCompanion<Group> {
     if (createdAt.present) {
       map['created_at'] = Variable<DateTime>(createdAt.value);
     }
-    if (duration.present) {
-      map['duration'] = Variable<int>(duration.value);
+    if (durationInSec.present) {
+      map['duration_in_sec'] = Variable<int>(durationInSec.value);
     }
     if (rowid.present) {
       map['rowid'] = Variable<int>(rowid.value);
@@ -397,7 +402,7 @@ class GroupsCompanion extends UpdateCompanion<Group> {
           ..write('weight: $weight, ')
           ..write('colorValue: $colorValue, ')
           ..write('createdAt: $createdAt, ')
-          ..write('duration: $duration, ')
+          ..write('durationInSec: $durationInSec, ')
           ..write('rowid: $rowid')
           ..write(')'))
         .toString();
@@ -1163,7 +1168,7 @@ typedef $$GroupsTableCreateCompanionBuilder =
       Value<int> weight,
       required int colorValue,
       Value<DateTime> createdAt,
-      Value<int> duration,
+      Value<int> durationInSec,
       Value<int> rowid,
     });
 typedef $$GroupsTableUpdateCompanionBuilder =
@@ -1173,7 +1178,7 @@ typedef $$GroupsTableUpdateCompanionBuilder =
       Value<int> weight,
       Value<int> colorValue,
       Value<DateTime> createdAt,
-      Value<int> duration,
+      Value<int> durationInSec,
       Value<int> rowid,
     });
 
@@ -1235,8 +1240,8 @@ class $$GroupsTableFilterComposer
     builder: (column) => ColumnFilters(column),
   );
 
-  ColumnFilters<int> get duration => $composableBuilder(
-    column: $table.duration,
+  ColumnFilters<int> get durationInSec => $composableBuilder(
+    column: $table.durationInSec,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -1300,8 +1305,8 @@ class $$GroupsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
-  ColumnOrderings<int> get duration => $composableBuilder(
-    column: $table.duration,
+  ColumnOrderings<int> get durationInSec => $composableBuilder(
+    column: $table.durationInSec,
     builder: (column) => ColumnOrderings(column),
   );
 }
@@ -1332,8 +1337,10 @@ class $$GroupsTableAnnotationComposer
   GeneratedColumn<DateTime> get createdAt =>
       $composableBuilder(column: $table.createdAt, builder: (column) => column);
 
-  GeneratedColumn<int> get duration =>
-      $composableBuilder(column: $table.duration, builder: (column) => column);
+  GeneratedColumn<int> get durationInSec => $composableBuilder(
+    column: $table.durationInSec,
+    builder: (column) => column,
+  );
 
   Expression<T> habitsRefs<T extends Object>(
     Expression<T> Function($$HabitsTableAnnotationComposer a) f,
@@ -1394,7 +1401,7 @@ class $$GroupsTableTableManager
                 Value<int> weight = const Value.absent(),
                 Value<int> colorValue = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
-                Value<int> duration = const Value.absent(),
+                Value<int> durationInSec = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => GroupsCompanion(
                 id: id,
@@ -1402,7 +1409,7 @@ class $$GroupsTableTableManager
                 weight: weight,
                 colorValue: colorValue,
                 createdAt: createdAt,
-                duration: duration,
+                durationInSec: durationInSec,
                 rowid: rowid,
               ),
           createCompanionCallback:
@@ -1412,7 +1419,7 @@ class $$GroupsTableTableManager
                 Value<int> weight = const Value.absent(),
                 required int colorValue,
                 Value<DateTime> createdAt = const Value.absent(),
-                Value<int> duration = const Value.absent(),
+                Value<int> durationInSec = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => GroupsCompanion.insert(
                 id: id,
@@ -1420,7 +1427,7 @@ class $$GroupsTableTableManager
                 weight: weight,
                 colorValue: colorValue,
                 createdAt: createdAt,
-                duration: duration,
+                durationInSec: durationInSec,
                 rowid: rowid,
               ),
           withReferenceMapper: (p0) => p0

@@ -48,7 +48,7 @@ class ActiveHabitsScreenCubit extends Cubit<ActiveHabitsScreenState> {
         title: uiModel.title,
         weight: 4,
         colorValue: 4,
-        duration: uiModel.duration,
+        durationInSec: uiModel.durationInSec,
       ),
     );
   }

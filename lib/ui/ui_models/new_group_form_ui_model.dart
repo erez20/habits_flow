@@ -1,9 +1,9 @@
 class NewGroupFormUIModel {
   final String title;
-  final int duration;
+  final int durationInSec;
 
   NewGroupFormUIModel({
     required this.title,
-    required this.duration,
+    required this.durationInSec,
   });
 }

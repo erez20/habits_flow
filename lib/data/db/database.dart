@@ -25,7 +25,7 @@ class Groups extends Table {
   IntColumn get weight => integer().withDefault(const Constant(0))();
   IntColumn get colorValue => integer()();
   DateTimeColumn get createdAt => dateTime().withDefault(currentDateAndTime)();
-  IntColumn get duration => integer().withDefault(const Constant(24))();
+  IntColumn get durationInSec => integer().withDefault(const Constant(86400))();
 
   @override
   Set<Column> get primaryKey => {id};
@@ -48,7 +48,7 @@ class AppDatabase extends _$AppDatabase {
 
 
   @override
-  int get schemaVersion => 3;
+  int get schemaVersion => 4;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -57,7 +57,10 @@ class AppDatabase extends _$AppDatabase {
         await m.addColumn(habits, habits.link);
       }
       if (from == 2) {
-        await m.addColumn(groups, groups.duration);
+        await m.addColumn(groups, groups.durationInSec);
+      }
+      if (from == 3) {
+        await m.renameColumn(groups, 'duration', groups.durationInSec);
       }
     },
   );

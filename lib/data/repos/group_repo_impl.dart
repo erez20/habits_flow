@@ -46,14 +46,14 @@ class GroupRepoImpl extends GroupRepo {
     required String title,
     required int weight,
     required int colorValue,
-    required int  duration,
+    int? durationInSec,
   }) async {
     try {
       final group = await groupLocalSource.createGroup(
         title: title,
         weight: weight,
         colorValue: colorValue,
-        duration: duration,
+        durationInSec: durationInSec,
       );
       return Success(group);
     } on Exception catch (e) {

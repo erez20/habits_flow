@@ -16,7 +16,7 @@ class AddGroupUseCase extends ExecUseCase<GroupEntity, AddGroupUseCaseParams> {
       title: params.title,
       weight: params.weight,
       colorValue: params.colorValue,
-      duration: params.duration,
+      durationInSec: params.durationInSec,
     );
   }
 }
@@ -25,12 +25,12 @@ class AddGroupUseCaseParams {
   final String title;
   final int weight;
   final int colorValue;
-  final int duration;
+  final int? durationInSec;
 
   AddGroupUseCaseParams({
     required this.title,
     required this.weight,
     required this.colorValue,
-    required this.duration,
+    this.durationInSec,
   });
 }
