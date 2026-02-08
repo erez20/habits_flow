@@ -4,6 +4,7 @@ import 'package:habits_flow/data/sources/groups/group_local_source.dart';
 import 'package:habits_flow/domain/entities/group_entity.dart';
 import 'package:habits_flow/domain/entities/habit_entity.dart';
 import 'package:injectable/injectable.dart';
+import 'package:rxdart/rxdart.dart';
 import 'package:uuid/uuid.dart';
 
 @Injectable(as: GroupLocalSource)
@@ -69,19 +70,24 @@ class GroupLocalSourceImpl implements GroupLocalSource {
           ..where((tbl) => tbl.groupId.equals(groupId)))
         .get();
 
-    final habitEntities = habits
-        .map(
-          (h) => HabitEntity(
-            id: h.id,
-            title: h.title,
-            info: h.info,
-            link: h.link,
-            weight: h.weight,
-            completionCount: 0, // Calculated at repo or use case level
-            groupColor: group.colorValue,
-          ),
-        )
-        .toList();
+    final habitCompletionCounts = await Future.wait(
+      habits.map((h) =>
+          db.watchHabitDailyCompletionCount(h.id, DateTime.now()).first),
+    );
+
+    final habitEntities = habits.asMap().entries.map((entry) {
+      final index = entry.key;
+      final h = entry.value;
+      return HabitEntity(
+        id: h.id,
+        title: h.title,
+        info: h.info,
+        link: h.link,
+        weight: h.weight,
+        completionCount: habitCompletionCounts[index],
+        groupColor: group.colorValue,
+      );
+    }).toList();
 
     return GroupEntity(
       id: group.id,
@@ -99,43 +105,78 @@ class GroupLocalSourceImpl implements GroupLocalSource {
       leftOuterJoin(db.habits, db.habits.groupId.equalsExp(db.groups.id)),
     ]);
 
-    return query.watch().map((rows) {
+    return query.watch().switchMap((rows) {
       final groupHabits = <Group, List<Habit>>{};
-
       for (final row in rows) {
         final group = row.readTable(db.groups);
         final habit = row.readTableOrNull(db.habits);
-
-        final habits = groupHabits.putIfAbsent(group, () => []);
         if (habit != null) {
-          habits.add(habit);
+          groupHabits.putIfAbsent(group, () => []).add(habit);
+        } else {
+          groupHabits.putIfAbsent(group, () => []);
         }
       }
 
-      return groupHabits.entries.map((entry) {
-        final group = entry.key;
-        final habits = entry.value;
-        return GroupEntity(
-          id: group.id,
-          title: group.title,
-          weight: group.weight,
-          groupColor: group.colorValue,
-          durationInSec: group.durationInSec,
-          habits: habits
-              .map(
-                (h) => HabitEntity(
-                  id: h.id,
+      if (groupHabits.isEmpty) {
+        return Stream.value([]);
+      }
+
+      final habitCompletionStreams = <String, Stream<int>>{};
+      for (final habits in groupHabits.values) {
+        for (final habit in habits) {
+          if (habit != null) {
+            habitCompletionStreams[habit.id] =
+                db.watchHabitDailyCompletionCount(habit.id, DateTime.now());
+          }
+        }
+      }
+
+      if (habitCompletionStreams.isEmpty) {
+        return Stream.value(groupHabits.keys.map((group) {
+          return GroupEntity(
+            id: group.id,
+            title: group.title,
+            weight: group.weight,
+            groupColor: group.colorValue,
+            durationInSec: group.durationInSec,
+            habits: const [],
+          );
+        }).toList());
+      }
+      
+      return Rx.combineLatest(
+        habitCompletionStreams.values,
+        (List<int> counts) {
+          final habitIdToCount = Map.fromIterables(
+            habitCompletionStreams.keys,
+            counts,
+          );
+
+          return groupHabits.entries.map((entry) {
+            final group = entry.key;
+            final habits = entry.value;
+
+            return GroupEntity(
+              id: group.id,
+              title: group.title,
+              weight: group.weight,
+              groupColor: group.colorValue,
+              durationInSec: group.durationInSec,
+              habits: habits.where((h) => h != null).map((h) {
+                return HabitEntity(
+                  id: h!.id,
                   title: h.title,
                   info: h.info,
                   link: h.link,
                   weight: h.weight,
-                  completionCount: 0,
+                  completionCount: habitIdToCount[h.id] ?? 0,
                   groupColor: group.colorValue,
-                ),
-              )
-              .toList(),
-        );
-      }).toList();
+                );
+              }).toList(),
+            );
+          }).toList();
+        },
+      );
     });
   }
 

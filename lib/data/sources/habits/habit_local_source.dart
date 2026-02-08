@@ -35,4 +35,6 @@ abstract class HabitLocalSource {
   Stream<List<HabitEntity>> habitsOfGroupStream(String groupId);
 
   Stream<HabitEntity> habitStream(String habitId);
+
+  Stream<int> watchHabitDailyCompletionCount(String habitId, DateTime date);
 }

@@ -38,7 +38,7 @@ class HabitLocalSourceImpl implements HabitLocalSource {
             info: info,
             link: link,
             weight: weight,
-            completionCount: 0,
+            completionCount: 0, //new habit
             groupColor: groupColor,
           );
         }  @override
@@ -121,20 +121,33 @@ class HabitLocalSourceImpl implements HabitLocalSource {
       innerJoin(db.groups, db.groups.id.equalsExp(db.habits.groupId)),
     ])..where(db.habits.groupId.equals(groupId));
 
-    return query.watch().map((rows) {
-      return rows.map((row) {
+    return query.watch().switchMap((rows) {
+      if (rows.isEmpty) {
+        return Stream.value([]);
+      }
+      final habitEntities = rows.map((row) {
         final habit = row.readTable(db.habits);
         final group = row.readTable(db.groups);
-        return HabitEntity(
-          id: habit.id,
-          title: habit.title,
-          weight: habit.weight,
-          info: habit.info,
-          link: habit.link,
-          completionCount: 0,
-          groupColor: group.colorValue,
-        );
+        return (habit: habit, groupColor: group.colorValue);
       }).toList();
+
+      final completionCountStreams = habitEntities.map((h) =>
+          db.watchHabitDailyCompletionCount(h.habit.id, DateTime.now()));
+
+      return Rx.combineLatestList(completionCountStreams).map((counts) {
+        return List.generate(habitEntities.length, (index) {
+          final h = habitEntities[index];
+          return HabitEntity(
+            id: h.habit.id,
+            title: h.habit.title,
+            weight: h.habit.weight,
+            info: h.habit.info,
+            link: h.habit.link,
+            completionCount: counts[index],
+            groupColor: h.groupColor,
+          );
+        });
+      });
     });
   }
 
@@ -149,10 +162,10 @@ class HabitLocalSourceImpl implements HabitLocalSource {
             ..where((tbl) => tbl.habitId.equals(habitId)))
           .watch();
   
-          return Rx.combineLatest2<TypedResult, List<HabitPerformance>, HabitEntity>(
+          return Rx.combineLatest2<TypedResult, int, HabitEntity>(
               habitWithGroupStream,
-              performancesStream,
-              (TypedResult row, List<HabitPerformance> performances) {
+              db.watchHabitDailyCompletionCount(habitId, DateTime.now()),
+              (TypedResult row, int completionCount) {
             final habit = row.readTable(db.habits);
             final group = row.readTable(db.groups);
             return HabitEntity(
@@ -161,8 +174,14 @@ class HabitLocalSourceImpl implements HabitLocalSource {
               weight: habit.weight,
               info: habit.info,
               link: habit.link,
-              completionCount: performances.length,
+              completionCount: completionCount,
               groupColor: group.colorValue,
             );
-          });    }
+          });
+    }
+
+  @override
+  Stream<int> watchHabitDailyCompletionCount(String habitId, DateTime date) {
+    return db.watchHabitDailyCompletionCount(habitId, date);
+  }
 }

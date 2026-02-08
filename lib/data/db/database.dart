@@ -64,8 +64,22 @@ class AppDatabase extends _$AppDatabase {
       }
     },
   );
+  Stream<int> watchHabitDailyCompletionCount(String habitId, DateTime date) {
+    final startOfDay = DateTime(date.year, date.month, date.day);
+    final endOfDay = startOfDay.add(const Duration(days: 1));
+
+    final countExpression = habitPerformances.id.count();
+
+    return (selectOnly(habitPerformances)
+      ..addColumns([countExpression])
+      ..where(habitPerformances.habitId.equals(habitId) &
+      habitPerformances.performTime.isBetweenValues(startOfDay, endOfDay)))
+        .map((row) => row.read(countExpression) ?? 0)
+        .watchSingle();
+  }
 
   static QueryExecutor _openConnection() {
     return driftDatabase(name: 'habits_flow_db');
   }
+
 }
