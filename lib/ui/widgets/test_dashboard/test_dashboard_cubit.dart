@@ -32,6 +32,7 @@ class TestDashboardCubit extends Cubit<int> {
       title: "Fitness$i",
       weight: 50,
       colorValue: 0xFFE91E63,
+      duration: 24,
     );
     addGroupUseCase.exec(params);
   }

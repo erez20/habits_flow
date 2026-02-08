@@ -7,6 +7,7 @@ class GroupEntity extends Equatable {
   final int weight;
   final List<HabitEntity> habits;
   final int groupColor;
+  final int duration;
 
   const GroupEntity({
     required this.id,
@@ -14,10 +15,11 @@ class GroupEntity extends Equatable {
     required this.weight,
     required this.habits,
     required this.groupColor,
+    required this.duration,
   });
 
   @override
-  List<Object?> get props => [id, title, weight, habits, groupColor];
+  List<Object?> get props => [id, title, weight, habits, groupColor, duration];
 
   void addHabit(HabitEntity habit) {
     habits.add(habit);
@@ -27,7 +29,7 @@ class GroupEntity extends Equatable {
     habits.remove(habit);
   }
 
-  String get hashKey => Object.hash(id, title, weight, groupColor, Object.hashAll(habits)).toString();
+  String get hashKey => Object.hash(id, title, weight, groupColor, duration, Object.hashAll(habits)).toString();
 
   @override
   String toString() {

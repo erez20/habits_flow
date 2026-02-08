@@ -16,18 +16,14 @@ class NewGroupFormCubit extends Cubit<NewGroupFormState> {
   void submitForm(Map<String, dynamic> formData) {
     emit(state.copyWith(isSubmitting: true));
     try {
-
-
       final newUIModel = NewGroupFormUIModel(
         title: formData['title'],
-
+        duration: formData['duration'],
       );
       onConfirm(uiModel: newUIModel);
       emit(state.copyWith(isSubmitting: false, isSuccess: true));
     } catch (e) {
       emit(state.copyWith(isSubmitting: false, errorMessage: e.toString()));
     }
-
-
   }
 }

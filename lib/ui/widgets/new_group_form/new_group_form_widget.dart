@@ -58,6 +58,58 @@ class _NewGroupFormWidgetState extends State<NewGroupFormWidget> {
                     _formTitle(context),
                     const SizedBox(height: 24),
                     _title(),
+                    const SizedBox(height: 16),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: FormBuilderTextField(
+                            name: 'months',
+                            decoration: InputDecoration(
+                              labelText: 'Months',
+                              prefixIcon: const Icon(Icons.calendar_today),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(8.0),
+                              ),
+                              filled: true,
+                              fillColor: Colors.grey[200],
+                            ),
+                            keyboardType: TextInputType.number,
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: FormBuilderTextField(
+                            name: 'days',
+                            decoration: InputDecoration(
+                              labelText: 'Days',
+                              prefixIcon: const Icon(Icons.calendar_today),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(8.0),
+                              ),
+                              filled: true,
+                              fillColor: Colors.grey[200],
+                            ),
+                            keyboardType: TextInputType.number,
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: FormBuilderTextField(
+                            name: 'hours',
+                            decoration: InputDecoration(
+                              labelText: 'Hours',
+                              prefixIcon: const Icon(Icons.access_time),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(8.0),
+                              ),
+                              filled: true,
+                              fillColor: Colors.grey[200],
+                            ),
+                            keyboardType: TextInputType.number,
+                          ),
+                        ),
+                      ],
+                    ),
                     const SizedBox(height: 32),
                     _submit(state, cubit),
                     const SizedBox(height: 16),
@@ -121,22 +173,34 @@ class _NewGroupFormWidgetState extends State<NewGroupFormWidget> {
       child: FilledButton(
         style: FilledButton.styleFrom(
           backgroundColor: Colors.blueGrey[800],
-
           padding: const EdgeInsets.symmetric(vertical: 16),
         ),
         onPressed: state.isSubmitting
             ? null
             : () {
-          if (_formKey.currentState?.saveAndValidate() ?? false) {
-            cubit.submitForm(_formKey.currentState!.value);
-          }
-        },
+                if (_formKey.currentState?.saveAndValidate() ?? false) {
+                  final formData = _formKey.currentState!.value;
+                  final months = int.tryParse(formData['months'] ?? '0') ?? 0;
+                  final days = int.tryParse(formData['days'] ?? '0') ?? 0;
+                  final hours = int.tryParse(formData['hours'] ?? '0') ?? 0;
+
+                  final durationInHours =
+                      (months * 30 * 24) + (days * 24) + hours;
+
+                  final updatedFormData = {
+                    ...formData,
+                    'duration': durationInHours,
+                  };
+
+                  cubit.submitForm(updatedFormData);
+                }
+              },
         child: state.isSubmitting
             ? const CircularProgressIndicator(
-          valueColor: AlwaysStoppedAnimation(
-            Colors.white,
-          ),
-        )
+                valueColor: AlwaysStoppedAnimation(
+                  Colors.white,
+                ),
+              )
             : const Text('Confirm'),
       ),
     );
