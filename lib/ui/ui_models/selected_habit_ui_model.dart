@@ -15,7 +15,8 @@ class SelectedHabitUiModel extends Equatable {
   });
 
   @override
-  List<Object?> get props => [title, habitId];
+  List<Object?> get props => [title, habitId, color];
+
 
   factory SelectedHabitUiModel.fromHabit(HabitEntity habit) =>
       SelectedHabitUiModel(

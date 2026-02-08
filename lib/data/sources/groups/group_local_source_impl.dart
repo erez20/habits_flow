@@ -124,11 +124,9 @@ class GroupLocalSourceImpl implements GroupLocalSource {
       final habitCompletionStreams = <String, Stream<int>>{};
       for (final habits in groupHabits.values) {
         for (final habit in habits) {
-          if (habit != null) {
-            habitCompletionStreams[habit.id] =
-                db.watchHabitDailyCompletionCount(habit.id, DateTime.now());
-          }
-        }
+          habitCompletionStreams[habit.id] =
+              db.watchHabitDailyCompletionCount(habit.id, DateTime.now());
+                }
       }
 
       if (habitCompletionStreams.isEmpty) {

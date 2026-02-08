@@ -17,21 +17,51 @@ class GroupWidget extends StatelessWidget {
     Fimber.d("build: GroupWidget");
     return BlocBuilder<GroupCubit, GroupState>(
       builder: (context, state) {
-        return Container(
-          color: state.uiModel.color[400],
-          child: InkWell(
-            onTap: onTap,
-            child: Padding(
-              padding: const EdgeInsets.all(12.0),
-              child: Text(
-                "${state.uiModel.title} (${state.uiModel.completedHabits}/${state.uiModel.habitsCount})",
-                style: const TextStyle(
-                  fontFamily: 'Montserrat',
-                  fontWeight: FontWeight.bold,
-                  fontSize: 24,
+        var uiModel = state.uiModel;
+        var largeFactor = 100;
+        return SizedBox(
+          height: 52,
+          child: Stack(
+            children: [
+              Row(
+                children: [
+                  Expanded(
+                    flex: uiModel.completedHabits *largeFactor,
+                    child: Container(
+                      color: uiModel.color[300],
+
+                    ),
+                  ),
+                  Expanded(
+                    flex: 1 + uiModel.habitsCount *largeFactor - uiModel.completedHabits*largeFactor,
+                    child: Container(
+                      color: uiModel.color[100],
+
+                    ),
+                  ),
+                ],
+              ),
+              Center(
+                widthFactor: 1,
+                child: InkWell(
+                  onTap: onTap,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                    child: Text(
+
+
+                      "${uiModel.title} (${uiModel.completedHabits}/${uiModel.habitsCount})",
+                      style: const TextStyle(
+                        fontFamily: 'Montserrat',
+                        fontWeight: FontWeight.bold,
+                        fontSize: 24,
+
+                      ),
+                    ),
+                  ),
                 ),
               ),
-            ),
+            ],
           ),
         );
       },

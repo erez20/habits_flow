@@ -22,7 +22,7 @@ class AllGroupsWidget extends StatelessWidget {
                 SliverPadding(
                   padding: EdgeInsets.symmetric(
                     horizontal: Constants.mainPageHorizontalPadding,
-                    vertical: 8,
+                    vertical: 2,
                   ),
                   sliver: SliverToBoxAdapter(
                     child: Container(

@@ -65,6 +65,7 @@ class ActiveHabitsScreenCubit extends Cubit<ActiveHabitsScreenState> {
     if (uiModel != null) {
       resetHabitUseCase.exec(ResetHabitUseCaseParams(habitId: uiModel.habitId));
     }
+    clearSelection();
   }
 
   @override
