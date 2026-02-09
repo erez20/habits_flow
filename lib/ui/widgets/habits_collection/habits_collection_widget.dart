@@ -45,11 +45,16 @@ class _HabitsCollectionWidgetState extends State<HabitsCollectionWidget> {
                   child: HabitProvider(
                     key: ValueKey(habit.id),
                     habit: habit,
-
                   ),
                 );
               }),
-              CreateHabitProvider(groupId: state.groupId, groupColor: context.read<HabitsCollectionCubit>().group.groupColor),
+              CreateHabitProvider(
+                groupId: state.groupId,
+                groupColor: context
+                    .read<HabitsCollectionCubit>()
+                    .group
+                    .groupColor,
+              ),
             ],
           ),
         );

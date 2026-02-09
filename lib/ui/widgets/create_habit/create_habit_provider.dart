@@ -10,12 +10,23 @@ class CreateHabitProvider extends StatelessWidget {
   final String groupId;
   final int groupColor;
 
-  const CreateHabitProvider({super.key, required this.groupId, required this.groupColor});
+  const CreateHabitProvider({
+    super.key,
+    required this.groupId,
+    required this.groupColor,
+  });
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => CreateHabitCubit(addHabitUseCase: getIt<AddHabitUseCase>(), groupId: groupId, groupColor: groupColor),
+      create: (context) {
+        var addHabitUseCase = getIt<AddHabitUseCase>();
+        return CreateHabitCubit(
+          addHabitUseCase: addHabitUseCase,
+          groupId: groupId,
+          groupColor: groupColor,
+        );
+      },
       child: CreateHabitWidget(),
     );
   }
