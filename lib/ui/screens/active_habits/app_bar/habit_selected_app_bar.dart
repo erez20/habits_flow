@@ -16,19 +16,20 @@ class HabitSelectedAppBar extends StatelessWidget
   Widget build(BuildContext context) {
     final cubit = context.read<ActiveHabitsScreenCubit>();
     return AppBar(
-      backgroundColor: uiModel.color[300],
+      backgroundColor: Colors.white,
+      actionsPadding: EdgeInsets.symmetric(horizontal: 16),
       leading: IconButton(
-        icon: const Icon(Icons.close),
+        icon:  Icon(Icons.close, color: uiModel.color,),
         onPressed: () => cubit.clearSelection(),
       ),
-        title: Text(uiModel.title),
+        title: Text(uiModel.title, style:  TextStyle(color: uiModel.color),),
         actions: [
           IconButton(
-            icon: const Icon(Icons.refresh),
+            icon:  Icon(Icons.restore, color: uiModel.color),
             onPressed:  cubit.resetHabit,
           ),
           IconButton(
-            icon: const Icon(Icons.delete_outline),
+            icon:  Icon(Icons.delete_outlined, color: uiModel.color),
             onPressed: () => _handleDelete(context),
           ),
         ],
@@ -38,9 +39,7 @@ class HabitSelectedAppBar extends StatelessWidget
   @override
   Size get preferredSize => const Size.fromHeight(kToolbarHeight);
 
-  // void _handleReset(BuildContext context) {
-  //
-  // }
+
 
   void _handleDelete(BuildContext context) {}
 
