@@ -34,3 +34,6 @@ class AppColors {
   }
 }
 
+class AppColorsConst {
+  static  final border =Colors.grey[700]!;
+}

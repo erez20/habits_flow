@@ -10,6 +10,10 @@ abstract class ActiveHabitsManager {
 
   Stream<HabitEntity?> get listenToHabitSelected;
 
+  Stream<bool> get listenToCollapseExpandAll;
+
+  void collapseExpandAll({required bool shouldExpand});
+
   void habitSelected({required HabitEntity habit});
 
   void clearHabitSelection();
@@ -20,6 +24,8 @@ abstract class ActiveHabitsManager {
 class ActiveHabitsManagerImpl implements ActiveHabitsManager {
   final BehaviorSubject<String> _drawOverHabit = BehaviorSubject<String>();
   final BehaviorSubject<HabitEntity?> _habitSelected = BehaviorSubject<HabitEntity?>();
+  final BehaviorSubject<bool> _collapseExpandAll = BehaviorSubject<bool>();
+
 
   @override
   Stream<String> listenToDrownHabit(String id) =>
@@ -43,4 +49,12 @@ class ActiveHabitsManagerImpl implements ActiveHabitsManager {
 
   @override
   void clearHabitSelection() => _habitSelected.add(null);
+
+  @override
+  void collapseExpandAll({required bool shouldExpand}) {
+    _collapseExpandAll.add(shouldExpand);
+  }
+
+  @override
+  Stream<bool> get listenToCollapseExpandAll => _collapseExpandAll;
 }

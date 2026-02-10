@@ -26,6 +26,18 @@ class ActiveHabitsAppBar extends StatelessWidget
             child: Icon(Icons.add),
           ),
         ),
+        InkWell(
+          child: InkWell(
+            onTap: context.read<ActiveHabitsScreenCubit>().expandAll,
+            child: Icon(Icons.expand_more),
+          ),
+        ),
+        InkWell(
+          child: InkWell(
+            onTap: context.read<ActiveHabitsScreenCubit>().collapseAll,
+            child: Icon(Icons.expand_less),
+          ),
+        )
       ],
     );
   }
@@ -47,6 +59,7 @@ class ActiveHabitsAppBar extends StatelessWidget
       ),
     );
   }
+
 
 
 }

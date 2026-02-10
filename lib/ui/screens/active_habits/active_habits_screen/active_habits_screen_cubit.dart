@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:fimber/fimber.dart';
+import 'package:flutter/src/gestures/tap.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:habits_flow/domain/entities/habit_entity.dart';
 import 'package:habits_flow/domain/use_cases/group/add_group_use_case.dart';
@@ -72,5 +73,13 @@ class ActiveHabitsScreenCubit extends Cubit<ActiveHabitsScreenState> {
   Future<void> close() {
     _habitSelectedStreamSubscription.cancel();
     return super.close();
+  }
+
+  void expandAll() {
+    manager.collapseExpandAll(shouldExpand: true);
+  }
+
+  void collapseAll() {
+    manager.collapseExpandAll(shouldExpand: false);
   }
 }

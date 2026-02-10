@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:habits_flow/domain/entities/habit_entity.dart';
 import 'package:habits_flow/ui/common/constants.dart';
+import 'package:habits_flow/ui/ui_models/group_ui_model.dart';
 import 'package:habits_flow/ui/widgets/common/drawing_layer/drawing_layer_widget.dart';
 import 'package:habits_flow/ui/widgets/create_habit/create_habit_provider.dart';
 import 'package:habits_flow/ui/widgets/habit/habit_provider.dart';
@@ -49,11 +50,7 @@ class _HabitsCollectionWidgetState extends State<HabitsCollectionWidget> {
                 );
               }),
               CreateHabitProvider(
-                groupId: state.groupId,
-                groupColor: context
-                    .read<HabitsCollectionCubit>()
-                    .group
-                    .groupColor,
+                groupUIModel: GroupUIModel.fromEntity(state.group),
               ),
             ],
           ),

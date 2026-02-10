@@ -20,7 +20,6 @@ class GroupWidget extends StatelessWidget {
     return BlocBuilder<GroupCubit, GroupState>(
       builder: (context, state) {
         var uiModel = state.uiModel;
-        var largeFactor = 100;
         return SizedBox(
           height: 54,
           child: InkWell(
@@ -33,20 +32,34 @@ class GroupWidget extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: .start,
                 children: [
-                  Text(
-                    "${uiModel.title} (${uiModel.completedHabits}/${uiModel.habitsCount})",
-                    style: GoogleFonts.outfit(
-                      fontWeight: FontWeight.w400,
-                      // ExtraLight for elegance
-                      fontSize: 24,
-                      // Slightly larger to maintain readability at thin weights
-                      letterSpacing: 1.2, // Adds breathability
-                    ),
+                  Row(
+                    children: [
+                      Text(
+                        "${uiModel.title}",
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                          color: Color(0xFF111827), // Light mode
+                        ),
+                      ),
+
+                      Text(
+                        " ${uiModel.completedHabits}/${uiModel.habitsCount}",
+                        style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.normal,
+                          color: Color(0xFF6B7280), // Light mode
+                        ),
+                      ),
+                    ],
                   ),
+                  SizedBox(height: 8),
                   LinearProgressIndicator(
                     backgroundColor: uiModel.color[50],
                     color: uiModel.color[700],
-                    value: (uiModel.habitsCount != 0) ? uiModel.completedHabits / uiModel.habitsCount : 0,
+                    value: (uiModel.habitsCount != 0)
+                        ? uiModel.completedHabits / uiModel.habitsCount
+                        : 0,
                     minHeight: 4,
                     borderRadius: BorderRadius.circular(1),
                   ),

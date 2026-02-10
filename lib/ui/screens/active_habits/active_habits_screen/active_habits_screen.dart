@@ -28,7 +28,7 @@ class ActiveHabitsScreen extends StatelessWidget {
                 ignoring: isDisabled,
                 child: ColorFiltered(
                   colorFilter: isDisabled
-                      ? ColorFilter.mode(Colors.grey.withValues(alpha: 0.6), BlendMode.srcATop)
+                      ? ColorFilter.mode(Colors.grey.withValues(alpha: 0.4), BlendMode.srcATop)
                       : const ColorFilter.mode(Colors.transparent, BlendMode.dst),
                   child: SafeArea(
                     child: Column(

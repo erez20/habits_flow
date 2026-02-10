@@ -142,8 +142,8 @@ class _NewHabitFormWidgetState extends State<NewHabitFormWidget> {
         fillColor: Colors.grey[200],
       ),
       validator: FormBuilderValidators.compose([
-        FormBuilderValidators.required(),
-        FormBuilderValidators.maxLength(200),
+
+        FormBuilderValidators.maxLength(200, checkNullOrEmpty: false),
       ]),
     );
   }
@@ -188,7 +188,7 @@ class _NewHabitFormWidgetState extends State<NewHabitFormWidget> {
         fillColor: Colors.grey[200],
       ),
       validator: FormBuilderValidators.compose([
-        FormBuilderValidators.url(),
+        FormBuilderValidators.url(checkNullOrEmpty: false),
       ]),
     );
   }

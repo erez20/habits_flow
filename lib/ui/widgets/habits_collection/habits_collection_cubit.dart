@@ -19,7 +19,7 @@ class HabitsCollectionCubit extends Cubit<HabitCollectionState> {
   }) : super(
          HabitCollectionState(
            habits: [],
-           groupId: group.id,
+           group: group,
          ),
        ) {
     init();

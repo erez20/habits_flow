@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
 import 'package:habits_flow/domain/use_cases/group/groups_list_stream_use_case.dart';
+import 'package:habits_flow/ui/screens/active_habits/di/active_habits_manager.dart';
 
 import 'all_groups_cubit.dart';
 import 'all_groups_widget.dart';
@@ -11,8 +12,13 @@ class AllGroupsProvider extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final manager = context.read<ActiveHabitsManager>();
     return BlocProvider(
-      create: (context) => AllGroupsCubit(groupsListStreamUseCase: GetIt.I<GroupsListStreamUseCase>()),
+      create: (context) => AllGroupsCubit(
+        groupsListStreamUseCase: GetIt.I<GroupsListStreamUseCase>(),
+        manager: manager,
+
+      ),
       child: AllGroupsWidget(),
     );
   }

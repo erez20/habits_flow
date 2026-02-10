@@ -12,7 +12,8 @@ class NewHabitFormState extends Equatable {
   });
 
   @override
-  List<Object?> get props => [];
+  List<Object?> get props => [isSubmitting, errorMessage, isSuccess];
+
 
   factory NewHabitFormState.init() => const NewHabitFormState(
     isSubmitting: false,

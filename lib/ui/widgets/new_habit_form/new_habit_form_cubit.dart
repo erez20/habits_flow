@@ -22,8 +22,8 @@ class NewHabitFormCubit extends Cubit<NewHabitFormState> {
 
       final newUIModel = NewHabitFormUiModel(
         title: formData['title'],
-        info: formData['info'],
-        link: formData['link'],
+        info: formData['info']??"",
+        link: formData['link']??"",
       );
       onConfirm(uiModel: newUIModel);
       Fimber.d("Saving Entity: ${newUIModel.title} with info: ${newUIModel.info}");
