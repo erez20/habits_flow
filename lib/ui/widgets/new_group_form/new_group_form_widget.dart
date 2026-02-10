@@ -61,7 +61,7 @@ class _NewGroupFormWidgetState extends State<NewGroupFormWidget> {
                       const SizedBox(height: 24),
                       _title(),
                       const SizedBox(height: 16),
-                      _durationInSec(),
+                      _DurationInSec(formKey: _formKey),
                       const SizedBox(height: 16),
                       _color(),
                       const SizedBox(height: 32),
@@ -77,123 +77,6 @@ class _NewGroupFormWidgetState extends State<NewGroupFormWidget> {
       },
     );
   }
-
-  //
-
-  Widget _durationInSec() {
-    return FormBuilderField<Map<String, int>>(
-      name: 'duration',
-      validator: (value) {
-        final formState = _formKey.currentState;
-        if (formState == null) return null;
-
-        final months =
-            int.tryParse(formState.fields['months']?.value ?? '0') ?? 0;
-        final days = int.tryParse(formState.fields['days']?.value ?? '0') ?? 0;
-        final hours =
-            int.tryParse(formState.fields['hours']?.value ?? '0') ?? 0;
-
-        if (months == 0 && days == 0 && hours == 0) {
-          return 'You must choose duration';
-        }
-        return null;
-      },
-      builder: (FormFieldState<Map<String, int>> field) {
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Expanded(
-                  child: FormBuilderTextField(
-                    name: 'months',
-                    decoration: InputDecoration(
-                      labelText: 'Months',
-                      prefixIcon: const Icon(Icons.calendar_today),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8.0),
-                      ),
-                      filled: true,
-                      fillColor: Colors.grey[200],
-                    ),
-                    keyboardType: TextInputType.number,
-
-                    onChanged: (value) => field.didChange({}),
-                    onTap: () {
-                      if (_formKey.currentState?.fields['months']?.value ==
-                          '0') {
-                        _formKey.currentState?.fields['months']?.didChange('');
-                      }
-                    },
-                  ),
-                ),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: FormBuilderTextField(
-                    name: 'days',
-                    decoration: InputDecoration(
-                      labelText: 'Days',
-                      prefixIcon: const Icon(Icons.calendar_today),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8.0),
-                      ),
-                      filled: true,
-                      fillColor: Colors.grey[200],
-                    ),
-                    keyboardType: TextInputType.number,
-
-                    onChanged: (value) => field.didChange({}),
-                    onTap: () {
-                      if (_formKey.currentState?.fields['days']?.value == '0') {
-                        _formKey.currentState?.fields['days']?.didChange('');
-                      }
-                    },
-                  ),
-                ),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: FormBuilderTextField(
-                    name: 'hours',
-                    decoration: InputDecoration(
-                      labelText: 'Hours',
-                      prefixIcon: const Icon(Icons.access_time),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8.0),
-                      ),
-                      filled: true,
-                      fillColor: Colors.grey[200],
-                    ),
-                    keyboardType: TextInputType.number,
-
-                    onChanged: (value) => field.didChange({}),
-                    onTap: () {
-                      if (_formKey.currentState?.fields['hours']?.value ==
-                          '0') {
-                        _formKey.currentState?.fields['hours']?.didChange('');
-                      }
-                    },
-                  ),
-                ),
-              ],
-            ),
-            if (field.hasError)
-              Padding(
-                padding: const EdgeInsets.only(top: 8.0, left: 12.0),
-                child: Text(
-                  field.errorText!,
-                  style: TextStyle(
-                    color: Colors.red[700],
-                    fontSize: 12,
-                  ),
-                ),
-              ),
-          ],
-        );
-      },
-    );
-  }
-
-  //
 
   Widget _handle() {
     return Center(
@@ -251,26 +134,29 @@ class _NewGroupFormWidgetState extends State<NewGroupFormWidget> {
             : () {
                 if (_formKey.currentState?.saveAndValidate() ?? false) {
                   final formData = _formKey.currentState!.value;
-                  final months = int.tryParse(formData['months'] ?? '0') ?? 0;
-                  final days = int.tryParse(formData['days'] ?? '0') ?? 0;
-                  final hours = int.tryParse(formData['hours'] ?? '0') ?? 0;
+                  final durationValue = int.tryParse(formData['duration_value'] ?? '0') ?? 0;
+                  final durationType = formData['duration_type'] as DurationType;
 
-                  if (months == 0 && days == 0 && hours == 0) {
+                  int durationInSeconds = 0;
+                  if (durationType == DurationType.months) {
+                    durationInSeconds = durationValue * 30 * 24 * 3600;
+                  } else if (durationType == DurationType.days) {
+                    durationInSeconds = durationValue * 24 * 3600;
+                  } else if (durationType == DurationType.hours) {
+                    durationInSeconds = durationValue * 3600;
+                  }
+
+                  if (durationInSeconds == 0) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
                         content: const Text(
-                          'Please enter a duration (months, days, or hours).',
+                          'Please enter a valid duration.',
                         ),
                         backgroundColor: Theme.of(context).colorScheme.error,
                       ),
                     );
                     return;
                   }
-
-                  final durationInSeconds =
-                      (months * 30 * 24 * 3600) +
-                      (days * 24 * 3600) +
-                      (hours * 3600);
 
                   final updatedFormData = {
                     ...formData,
@@ -330,4 +216,96 @@ class _NewGroupFormWidgetState extends State<NewGroupFormWidget> {
   }
 }
 
-/**/
+class _DurationInSec extends StatefulWidget {
+  const _DurationInSec({
+    required this.formKey,
+  });
+
+  final GlobalKey<FormBuilderState> formKey;
+
+  @override
+  State<_DurationInSec> createState() => _DurationInSecState();
+}
+
+class _DurationInSecState extends State<_DurationInSec> {
+  DurationType _selectedDuration = DurationType.days;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Center(
+          child: SegmentedButton<DurationType>(
+            segments: const [
+              ButtonSegment(
+                value: DurationType.months,
+                label: Text('Months'),
+                icon: Icon(Icons.calendar_today),
+              ),
+              ButtonSegment(
+                value: DurationType.days,
+                label: Text('Days'),
+                icon: Icon(Icons.calendar_view_day),
+              ),
+              ButtonSegment(
+                value: DurationType.hours,
+                label: Text('Hours'),
+                icon: Icon(Icons.access_time),
+              ),
+            ],
+            selected: {_selectedDuration},
+            onSelectionChanged: (newSelection) {
+              setState(() {
+                _selectedDuration = newSelection.first;
+                widget.formKey.currentState?.fields['duration_value']?.didChange(null);
+                widget.formKey.currentState?.fields['duration_type']?.didChange(_selectedDuration);
+              });
+            },
+          ),
+        ),
+        const SizedBox(height: 16),
+        FormBuilderTextField(
+          name: 'duration_value',
+          decoration: InputDecoration(
+            labelText: 'Duration (${_selectedDuration.name})',
+            prefixIcon: const Icon(Icons.timelapse),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(8.0),
+            ),
+            filled: true,
+            fillColor: Colors.grey[200],
+          ),
+          keyboardType: TextInputType.number,
+          validator: FormBuilderValidators.compose([
+            FormBuilderValidators.required(),
+            FormBuilderValidators.numeric(),
+            (value) {
+              if (value == null) return null;
+              final number = int.tryParse(value);
+              if (number == null) return 'Invalid number';
+              if (_selectedDuration == DurationType.hours && (number < 1 || number > 23)) {
+                return 'Hours must be between 1 and 23';
+              }
+              if ((_selectedDuration == DurationType.days || _selectedDuration == DurationType.months) && number < 1) {
+                return 'Must be at least 1';
+              }
+              return null;
+            },
+          ]),
+        ),
+        FormBuilderField<DurationType>(
+          name: 'duration_type',
+          initialValue: _selectedDuration,
+          builder: (field) => const SizedBox.shrink(),
+        ),
+      ],
+    );
+  }
+}
+
+enum DurationType {
+  months,
+  days,
+  hours,
+}
