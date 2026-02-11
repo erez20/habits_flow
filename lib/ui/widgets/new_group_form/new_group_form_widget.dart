@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
@@ -134,7 +135,8 @@ class _NewGroupFormWidgetState extends State<NewGroupFormWidget> {
             : () {
                 if (_formKey.currentState?.saveAndValidate() ?? false) {
                   final formData = _formKey.currentState!.value;
-                  final durationValue = int.tryParse(formData['duration_value'] ?? '0') ?? 0;
+                  final durationValue =
+                      int.tryParse(formData['duration_value'] ?? '0') ?? 0;
                   final durationType = formData['duration_type'] as DurationType;
 
                   int durationInSeconds = 0;
@@ -144,6 +146,8 @@ class _NewGroupFormWidgetState extends State<NewGroupFormWidget> {
                     durationInSeconds = durationValue * 24 * 3600;
                   } else if (durationType == DurationType.hours) {
                     durationInSeconds = durationValue * 3600;
+                  } else if (durationType == DurationType.seconds) {
+                    durationInSeconds = durationValue;
                   }
 
                   if (durationInSeconds == 0) {
@@ -253,13 +257,20 @@ class _DurationInSecState extends State<_DurationInSec> {
                 label: Text('Hours'),
                 icon: Icon(Icons.access_time),
               ),
+              if (kDebugMode) ButtonSegment(
+                value: DurationType.seconds,
+                label: Text('Seconds'),
+                icon: Icon(Icons.timer),
+              ),
             ],
             selected: {_selectedDuration},
             onSelectionChanged: (newSelection) {
               setState(() {
                 _selectedDuration = newSelection.first;
-                widget.formKey.currentState?.fields['duration_value']?.didChange(null);
-                widget.formKey.currentState?.fields['duration_type']?.didChange(_selectedDuration);
+                widget.formKey.currentState?.fields['duration_value']
+                    ?.didChange(null);
+                widget.formKey.currentState?.fields['duration_type']
+                    ?.didChange(_selectedDuration);
               });
             },
           ),
@@ -284,10 +295,14 @@ class _DurationInSecState extends State<_DurationInSec> {
               if (value == null) return null;
               final number = int.tryParse(value);
               if (number == null) return 'Invalid number';
-              if (_selectedDuration == DurationType.hours && (number < 1 || number > 23)) {
+              if (_selectedDuration == DurationType.hours &&
+                  (number < 1 || number > 23)) {
                 return 'Hours must be between 1 and 23';
               }
-              if ((_selectedDuration == DurationType.days || _selectedDuration == DurationType.months) && number < 1) {
+              if ((_selectedDuration == DurationType.days ||
+                      _selectedDuration == DurationType.months ||
+                      _selectedDuration == DurationType.seconds) &&
+                  number < 1) {
                 return 'Must be at least 1';
               }
               return null;
@@ -308,4 +323,5 @@ enum DurationType {
   months,
   days,
   hours,
+  seconds,
 }
