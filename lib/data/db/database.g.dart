@@ -893,8 +893,20 @@ class $HabitPerformancesTable extends HabitPerformances
     type: DriftSqlType.dateTime,
     requiredDuringInsert: true,
   );
+  static const VerificationMeta _timeKeyMeta = const VerificationMeta(
+    'timeKey',
+  );
   @override
-  List<GeneratedColumn> get $columns => [id, habitId, performTime];
+  late final GeneratedColumn<int> timeKey = GeneratedColumn<int>(
+    'time_key',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
+  );
+  @override
+  List<GeneratedColumn> get $columns => [id, habitId, performTime, timeKey];
   @override
   String get aliasedName => _alias ?? actualTableName;
   @override
@@ -931,6 +943,12 @@ class $HabitPerformancesTable extends HabitPerformances
     } else if (isInserting) {
       context.missing(_performTimeMeta);
     }
+    if (data.containsKey('time_key')) {
+      context.handle(
+        _timeKeyMeta,
+        timeKey.isAcceptableOrUnknown(data['time_key']!, _timeKeyMeta),
+      );
+    }
     return context;
   }
 
@@ -952,6 +970,10 @@ class $HabitPerformancesTable extends HabitPerformances
         DriftSqlType.dateTime,
         data['${effectivePrefix}perform_time'],
       )!,
+      timeKey: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}time_key'],
+      )!,
     );
   }
 
@@ -966,10 +988,12 @@ class HabitPerformance extends DataClass
   final String id;
   final String habitId;
   final DateTime performTime;
+  final int timeKey;
   const HabitPerformance({
     required this.id,
     required this.habitId,
     required this.performTime,
+    required this.timeKey,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -977,6 +1001,7 @@ class HabitPerformance extends DataClass
     map['id'] = Variable<String>(id);
     map['habit_id'] = Variable<String>(habitId);
     map['perform_time'] = Variable<DateTime>(performTime);
+    map['time_key'] = Variable<int>(timeKey);
     return map;
   }
 
@@ -985,6 +1010,7 @@ class HabitPerformance extends DataClass
       id: Value(id),
       habitId: Value(habitId),
       performTime: Value(performTime),
+      timeKey: Value(timeKey),
     );
   }
 
@@ -997,6 +1023,7 @@ class HabitPerformance extends DataClass
       id: serializer.fromJson<String>(json['id']),
       habitId: serializer.fromJson<String>(json['habitId']),
       performTime: serializer.fromJson<DateTime>(json['performTime']),
+      timeKey: serializer.fromJson<int>(json['timeKey']),
     );
   }
   @override
@@ -1006,6 +1033,7 @@ class HabitPerformance extends DataClass
       'id': serializer.toJson<String>(id),
       'habitId': serializer.toJson<String>(habitId),
       'performTime': serializer.toJson<DateTime>(performTime),
+      'timeKey': serializer.toJson<int>(timeKey),
     };
   }
 
@@ -1013,10 +1041,12 @@ class HabitPerformance extends DataClass
     String? id,
     String? habitId,
     DateTime? performTime,
+    int? timeKey,
   }) => HabitPerformance(
     id: id ?? this.id,
     habitId: habitId ?? this.habitId,
     performTime: performTime ?? this.performTime,
+    timeKey: timeKey ?? this.timeKey,
   );
   HabitPerformance copyWithCompanion(HabitPerformancesCompanion data) {
     return HabitPerformance(
@@ -1025,6 +1055,7 @@ class HabitPerformance extends DataClass
       performTime: data.performTime.present
           ? data.performTime.value
           : this.performTime,
+      timeKey: data.timeKey.present ? data.timeKey.value : this.timeKey,
     );
   }
 
@@ -1033,37 +1064,42 @@ class HabitPerformance extends DataClass
     return (StringBuffer('HabitPerformance(')
           ..write('id: $id, ')
           ..write('habitId: $habitId, ')
-          ..write('performTime: $performTime')
+          ..write('performTime: $performTime, ')
+          ..write('timeKey: $timeKey')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode => Object.hash(id, habitId, performTime);
+  int get hashCode => Object.hash(id, habitId, performTime, timeKey);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
       (other is HabitPerformance &&
           other.id == this.id &&
           other.habitId == this.habitId &&
-          other.performTime == this.performTime);
+          other.performTime == this.performTime &&
+          other.timeKey == this.timeKey);
 }
 
 class HabitPerformancesCompanion extends UpdateCompanion<HabitPerformance> {
   final Value<String> id;
   final Value<String> habitId;
   final Value<DateTime> performTime;
+  final Value<int> timeKey;
   final Value<int> rowid;
   const HabitPerformancesCompanion({
     this.id = const Value.absent(),
     this.habitId = const Value.absent(),
     this.performTime = const Value.absent(),
+    this.timeKey = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   HabitPerformancesCompanion.insert({
     required String id,
     required String habitId,
     required DateTime performTime,
+    this.timeKey = const Value.absent(),
     this.rowid = const Value.absent(),
   }) : id = Value(id),
        habitId = Value(habitId),
@@ -1072,12 +1108,14 @@ class HabitPerformancesCompanion extends UpdateCompanion<HabitPerformance> {
     Expression<String>? id,
     Expression<String>? habitId,
     Expression<DateTime>? performTime,
+    Expression<int>? timeKey,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
       if (habitId != null) 'habit_id': habitId,
       if (performTime != null) 'perform_time': performTime,
+      if (timeKey != null) 'time_key': timeKey,
       if (rowid != null) 'rowid': rowid,
     });
   }
@@ -1086,12 +1124,14 @@ class HabitPerformancesCompanion extends UpdateCompanion<HabitPerformance> {
     Value<String>? id,
     Value<String>? habitId,
     Value<DateTime>? performTime,
+    Value<int>? timeKey,
     Value<int>? rowid,
   }) {
     return HabitPerformancesCompanion(
       id: id ?? this.id,
       habitId: habitId ?? this.habitId,
       performTime: performTime ?? this.performTime,
+      timeKey: timeKey ?? this.timeKey,
       rowid: rowid ?? this.rowid,
     );
   }
@@ -1108,6 +1148,9 @@ class HabitPerformancesCompanion extends UpdateCompanion<HabitPerformance> {
     if (performTime.present) {
       map['perform_time'] = Variable<DateTime>(performTime.value);
     }
+    if (timeKey.present) {
+      map['time_key'] = Variable<int>(timeKey.value);
+    }
     if (rowid.present) {
       map['rowid'] = Variable<int>(rowid.value);
     }
@@ -1120,6 +1163,7 @@ class HabitPerformancesCompanion extends UpdateCompanion<HabitPerformance> {
           ..write('id: $id, ')
           ..write('habitId: $habitId, ')
           ..write('performTime: $performTime, ')
+          ..write('timeKey: $timeKey, ')
           ..write('rowid: $rowid')
           ..write(')'))
         .toString();
@@ -1936,6 +1980,7 @@ typedef $$HabitPerformancesTableCreateCompanionBuilder =
       required String id,
       required String habitId,
       required DateTime performTime,
+      Value<int> timeKey,
       Value<int> rowid,
     });
 typedef $$HabitPerformancesTableUpdateCompanionBuilder =
@@ -1943,6 +1988,7 @@ typedef $$HabitPerformancesTableUpdateCompanionBuilder =
       Value<String> id,
       Value<String> habitId,
       Value<DateTime> performTime,
+      Value<int> timeKey,
       Value<int> rowid,
     });
 
@@ -1997,6 +2043,11 @@ class $$HabitPerformancesTableFilterComposer
     builder: (column) => ColumnFilters(column),
   );
 
+  ColumnFilters<int> get timeKey => $composableBuilder(
+    column: $table.timeKey,
+    builder: (column) => ColumnFilters(column),
+  );
+
   $$HabitsTableFilterComposer get habitId {
     final $$HabitsTableFilterComposer composer = $composerBuilder(
       composer: this,
@@ -2040,6 +2091,11 @@ class $$HabitPerformancesTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<int> get timeKey => $composableBuilder(
+    column: $table.timeKey,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   $$HabitsTableOrderingComposer get habitId {
     final $$HabitsTableOrderingComposer composer = $composerBuilder(
       composer: this,
@@ -2080,6 +2136,9 @@ class $$HabitPerformancesTableAnnotationComposer
     column: $table.performTime,
     builder: (column) => column,
   );
+
+  GeneratedColumn<int> get timeKey =>
+      $composableBuilder(column: $table.timeKey, builder: (column) => column);
 
   $$HabitsTableAnnotationComposer get habitId {
     final $$HabitsTableAnnotationComposer composer = $composerBuilder(
@@ -2141,11 +2200,13 @@ class $$HabitPerformancesTableTableManager
                 Value<String> id = const Value.absent(),
                 Value<String> habitId = const Value.absent(),
                 Value<DateTime> performTime = const Value.absent(),
+                Value<int> timeKey = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => HabitPerformancesCompanion(
                 id: id,
                 habitId: habitId,
                 performTime: performTime,
+                timeKey: timeKey,
                 rowid: rowid,
               ),
           createCompanionCallback:
@@ -2153,11 +2214,13 @@ class $$HabitPerformancesTableTableManager
                 required String id,
                 required String habitId,
                 required DateTime performTime,
+                Value<int> timeKey = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => HabitPerformancesCompanion.insert(
                 id: id,
                 habitId: habitId,
                 performTime: performTime,
+                timeKey: timeKey,
                 rowid: rowid,
               ),
           withReferenceMapper: (p0) => p0

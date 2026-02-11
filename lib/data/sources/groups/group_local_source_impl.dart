@@ -52,8 +52,30 @@ class GroupLocalSourceImpl implements GroupLocalSource {
     required String groupId,
     required String habitId,
   }) async {
+    final newGroup = await (db.select(db.groups)
+          ..where((tbl) => tbl.id.equals(groupId)))
+        .getSingle();
+
     await (db.update(db.habits)..where((tbl) => tbl.id.equals(habitId)))
         .write(HabitsCompanion(groupId: Value(groupId)));
+
+    final performances = await (db.select(db.habitPerformances)
+          ..where((tbl) => tbl.habitId.equals(habitId)))
+        .get();
+
+    if (performances.isNotEmpty) {
+      db.batch((batch) {
+        for (final performance in performances) {
+          final newTimeKey =
+              (performance.performTime.millisecondsSinceEpoch ~/ 1000) ~/
+                  newGroup.durationInSec;
+          batch.replace(
+            db.habitPerformances,
+            performance.copyWith(timeKey: newTimeKey),
+          );
+        }
+      });
+    }
   }
 
   @override
@@ -72,7 +94,7 @@ class GroupLocalSourceImpl implements GroupLocalSource {
 
     final habitCompletionCounts = await Future.wait(
       habits.map((h) =>
-          db.watchHabitDailyCompletionCount(h.id, DateTime.now()).first),
+          db.watchHabitCompletionCount(h.id, group.durationInSec).first),
     );
 
     final habitEntities = habits.asMap().entries.map((entry) {
@@ -122,11 +144,13 @@ class GroupLocalSourceImpl implements GroupLocalSource {
       }
 
       final habitCompletionStreams = <String, Stream<int>>{};
-      for (final habits in groupHabits.values) {
+      for (final entry in groupHabits.entries) {
+        final group = entry.key;
+        final habits = entry.value;
         for (final habit in habits) {
           habitCompletionStreams[habit.id] =
-              db.watchHabitDailyCompletionCount(habit.id, DateTime.now());
-                }
+              db.watchHabitCompletionCount(habit.id, group.durationInSec);
+        }
       }
 
       if (habitCompletionStreams.isEmpty) {

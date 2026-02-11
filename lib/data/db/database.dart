@@ -36,6 +36,7 @@ class HabitPerformances extends Table {
   TextColumn get habitId =>
       text().references(Habits, #id, onDelete: KeyAction.cascade)();
   DateTimeColumn get performTime => dateTime()(); // Specific time of performance
+  IntColumn get timeKey => integer().withDefault(const Constant(0))();
 
   @override
   Set<Column> get primaryKey => {id};
@@ -46,34 +47,28 @@ class HabitPerformances extends Table {
 class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());
 
-
   @override
-  int get schemaVersion => 4;
+  int get schemaVersion => 5;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
-    onUpgrade: (m, from, to) async {
-      if (from == 1) {
-        await m.addColumn(habits, habits.link);
-      }
-      if (from == 2) {
-        await m.addColumn(groups, groups.durationInSec);
-      }
-      if (from == 3) {
-        await m.renameColumn(groups, 'duration', groups.durationInSec);
-      }
-    },
-  );
-  Stream<int> watchHabitDailyCompletionCount(String habitId, DateTime date) {
-    final startOfDay = DateTime(date.year, date.month, date.day);
-    final endOfDay = startOfDay.add(const Duration(days: 1));
+        onUpgrade: (m, from, to) async {
+          if (from < 5) {
+            await m.addColumn(habitPerformances, habitPerformances.timeKey);
+          }
+        },
+      );
+  Stream<int> watchHabitCompletionCount(
+      String habitId, int durationInSec) {
+    final timeKey =
+        (DateTime.now().millisecondsSinceEpoch ~/ 1000) ~/ durationInSec;
 
     final countExpression = habitPerformances.id.count();
 
     return (selectOnly(habitPerformances)
-      ..addColumns([countExpression])
-      ..where(habitPerformances.habitId.equals(habitId) &
-      habitPerformances.performTime.isBetweenValues(startOfDay, endOfDay)))
+          ..addColumns([countExpression])
+          ..where(habitPerformances.habitId.equals(habitId) &
+              habitPerformances.timeKey.equals(timeKey)))
         .map((row) => row.read(countExpression) ?? 0)
         .watchSingle();
   }
@@ -81,5 +76,4 @@ class AppDatabase extends _$AppDatabase {
   static QueryExecutor _openConnection() {
     return driftDatabase(name: 'habits_flow_db');
   }
-
 }

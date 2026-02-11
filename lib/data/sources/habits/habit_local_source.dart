@@ -9,7 +9,7 @@ abstract class HabitLocalSource {
     required int groupColor,
   });
 
-  Future<void> deleteHabit({required String habitId}) ;
+  Future<void> deleteHabit({required String habitId});
 
   Future<void> performHabit({
     required String habitId,
@@ -20,8 +20,6 @@ abstract class HabitLocalSource {
     required String habitId,
   });
 
-  
-
   Future<void> deleteHabitPerformance({
     required String habitId,
     required DateTime performTime, // To identify the performance to delete (or use ID if passed)
@@ -29,12 +27,11 @@ abstract class HabitLocalSource {
 
   Future<int> getHabitCompletionCount({
     required String habitId,
-    required DateTime date,
   });
 
   Stream<List<HabitEntity>> habitsOfGroupStream(String groupId);
 
   Stream<HabitEntity> habitStream(String habitId);
 
-  Stream<int> watchHabitDailyCompletionCount(String habitId, DateTime date);
+  Stream<int> watchHabitCompletionCount(String habitId, int durationInSec);
 }

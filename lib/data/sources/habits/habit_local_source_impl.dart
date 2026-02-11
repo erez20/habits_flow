@@ -13,35 +13,37 @@ class HabitLocalSourceImpl implements HabitLocalSource {
   HabitLocalSourceImpl(this.db);
 
   @override
-        Future<HabitEntity> createHabit({
-          required String title,
-          required String info,
-          required String link,
-          required double weight,
-          required int groupColor,
-        }) async {
-          final id = const Uuid().v4();
-          final companion = HabitsCompanion.insert(
-            id: id,
-            title: title,
-            info: Value(info),
-            link: Value(link),
-            weight: Value(weight),
-            createdAt: Value(DateTime.now()),
-          );
-      
-          await db.into(db.habits).insert(companion);
-      
-          return HabitEntity(
-            id: id,
-            title: title,
-            info: info,
-            link: link,
-            weight: weight,
-            completionCount: 0, //new habit
-            groupColor: groupColor,
-          );
-        }  @override
+  Future<HabitEntity> createHabit({
+    required String title,
+    required String info,
+    required String link,
+    required double weight,
+    required int groupColor,
+  }) async {
+    final id = const Uuid().v4();
+    final companion = HabitsCompanion.insert(
+      id: id,
+      title: title,
+      info: Value(info),
+      link: Value(link),
+      weight: Value(weight),
+      createdAt: Value(DateTime.now()),
+    );
+
+    await db.into(db.habits).insert(companion);
+
+    return HabitEntity(
+      id: id,
+      title: title,
+      info: info,
+      link: link,
+      weight: weight,
+      completionCount: 0, //new habit
+      groupColor: groupColor,
+    );
+  }
+
+  @override
   Future<void> deleteHabit({required String habitId}) async {
     await (db.delete(db.habits)..where((tbl) => tbl.id.equals(habitId))).go();
   }
@@ -49,18 +51,27 @@ class HabitLocalSourceImpl implements HabitLocalSource {
   @override
   Future<int> getHabitCompletionCount({
     required String habitId,
-    required DateTime date,
   }) async {
-    final start = DateTime(date.year, date.month, date.day);
-    final end = start.add(const Duration(days: 1));
+    final habit = await (db.select(db.habits)
+          ..where((tbl) => tbl.id.equals(habitId)))
+        .getSingle();
 
-    final dailyPerformances = await (db.select(db.habitPerformances)
+    if (habit.groupId == null) {
+      throw Exception('Habit with ID $habitId has no group.');
+    }
+
+    final group = await (db.select(db.groups)
+          ..where((tbl) => tbl.id.equals(habit.groupId!)))
+        .getSingle();
+    final timeKey = (DateTime.now().millisecondsSinceEpoch ~/ 1000) ~/
+        group.durationInSec;
+
+    final performances = await (db.select(db.habitPerformances)
           ..where((t) =>
-              t.habitId.equals(habitId) &
-              t.performTime.isBetween(Variable(start), Variable(end))))
+              t.habitId.equals(habitId) & t.timeKey.equals(timeKey)))
         .get();
 
-    return dailyPerformances.length;
+    return performances.length;
   }
 
   @override
@@ -68,42 +79,62 @@ class HabitLocalSourceImpl implements HabitLocalSource {
     required String habitId,
     required DateTime performTime,
   }) async {
+    final habit = await (db.select(db.habits)
+          ..where((tbl) => tbl.id.equals(habitId)))
+        .getSingle();
+
+    if (habit.groupId == null) {
+      throw Exception('Habit with ID $habitId has no group.');
+    }
+    final group = await (db.select(db.groups)
+          ..where((tbl) => tbl.id.equals(habit.groupId!)))
+        .getSingle();
+
+    final timeKey =
+        (performTime.millisecondsSinceEpoch ~/ 1000) ~/ group.durationInSec;
+
     final id = const Uuid().v4();
     final companion = HabitPerformancesCompanion.insert(
       id: id,
       habitId: habitId,
       performTime: performTime,
+      timeKey: Value(timeKey),
     );
     await db.into(db.habitPerformances).insert(companion);
   }
 
-@override
+  @override
   Future<void> resetHabit({
     required String habitId,
-
   }) async {
     await (db.delete(db.habitPerformances)
           ..where((tbl) => tbl.habitId.equals(habitId)))
         .go();
   }
 
-
-
   @override
   Future<void> deleteHabitPerformance({
     required String habitId,
     required DateTime performTime,
   }) async {
-    final startOfDay =
-        DateTime(performTime.year, performTime.month, performTime.day);
-    final endOfDay = startOfDay.add(const Duration(days: 1));
+    final habit = await (db.select(db.habits)
+          ..where((tbl) => tbl.id.equals(habitId)))
+        .getSingle();
+    if (habit.groupId == null) {
+      throw Exception('Habit with ID $habitId has no group.');
+    }
+    final group = await (db.select(db.groups)
+          ..where((tbl) => tbl.id.equals(habit.groupId!)))
+        .getSingle();
+    final timeKey =
+        (performTime.millisecondsSinceEpoch ~/ 1000) ~/ group.durationInSec;
 
     final lastPerformance = await (db.select(db.habitPerformances)
-          ..where((tbl) => tbl.habitId.equals(habitId) &
-              tbl.performTime
-                  .isBetween(Variable(startOfDay), Variable(endOfDay)))
+          ..where((tbl) =>
+              tbl.habitId.equals(habitId) & tbl.timeKey.equals(timeKey))
           ..orderBy([
-            (t) => OrderingTerm(expression: t.performTime, mode: OrderingMode.desc)
+            (t) =>
+                OrderingTerm(expression: t.performTime, mode: OrderingMode.desc)
           ])
           ..limit(1))
         .getSingleOrNull();
@@ -119,7 +150,8 @@ class HabitLocalSourceImpl implements HabitLocalSource {
   Stream<List<HabitEntity>> habitsOfGroupStream(String groupId) {
     final query = db.select(db.habits).join([
       innerJoin(db.groups, db.groups.id.equalsExp(db.habits.groupId)),
-    ])..where(db.habits.groupId.equals(groupId));
+    ])
+      ..where(db.habits.groupId.equals(groupId));
 
     return query.watch().switchMap((rows) {
       if (rows.isEmpty) {
@@ -128,11 +160,15 @@ class HabitLocalSourceImpl implements HabitLocalSource {
       final habitEntities = rows.map((row) {
         final habit = row.readTable(db.habits);
         final group = row.readTable(db.groups);
-        return (habit: habit, groupColor: group.colorValue);
+        return (
+          habit: habit,
+          groupColor: group.colorValue,
+          durationInSec: group.durationInSec
+        );
       }).toList();
 
-      final completionCountStreams = habitEntities.map((h) =>
-          db.watchHabitDailyCompletionCount(h.habit.id, DateTime.now()));
+      final completionCountStreams = habitEntities
+          .map((h) => db.watchHabitCompletionCount(h.habit.id, h.durationInSec));
 
       return Rx.combineLatestList(completionCountStreams).map((counts) {
         return List.generate(habitEntities.length, (index) {
@@ -152,36 +188,35 @@ class HabitLocalSourceImpl implements HabitLocalSource {
   }
 
   @override
-    Stream<HabitEntity> habitStream(String habitId) {
-      final habitWithGroupStream = (db.select(db.habits).join([
-        innerJoin(db.groups, db.groups.id.equalsExp(db.habits.groupId)),
-      ])..where(db.habits.id.equals(habitId)))
-          .watchSingle();
-  
-      final performancesStream = (db.select(db.habitPerformances)
-            ..where((tbl) => tbl.habitId.equals(habitId)))
-          .watch();
-  
-          return Rx.combineLatest2<TypedResult, int, HabitEntity>(
-              habitWithGroupStream,
-              db.watchHabitDailyCompletionCount(habitId, DateTime.now()),
-              (TypedResult row, int completionCount) {
-            final habit = row.readTable(db.habits);
-            final group = row.readTable(db.groups);
-            return HabitEntity(
-              id: habit.id,
-              title: habit.title,
-              weight: habit.weight,
-              info: habit.info,
-              link: habit.link,
-              completionCount: completionCount,
-              groupColor: group.colorValue,
-            );
-          });
-    }
+  Stream<HabitEntity> habitStream(String habitId) {
+    final habitWithGroupStream = (db.select(db.habits).join([
+      innerJoin(db.groups, db.groups.id.equalsExp(db.habits.groupId)),
+    ])..where(db.habits.id.equals(habitId)))
+        .watchSingle();
+
+    return habitWithGroupStream.switchMap((row) {
+      final habit = row.readTable(db.habits);
+      final group = row.readTable(db.groups);
+
+      return db
+          .watchHabitCompletionCount(habitId, group.durationInSec)
+          .map((completionCount) {
+        return HabitEntity(
+          id: habit.id,
+          title: habit.title,
+          weight: habit.weight,
+          info: habit.info,
+          link: habit.link,
+          completionCount: completionCount,
+          groupColor: group.colorValue,
+        );
+      });
+    });
+  }
 
   @override
-  Stream<int> watchHabitDailyCompletionCount(String habitId, DateTime date) {
-    return db.watchHabitDailyCompletionCount(habitId, date);
+  Stream<int> watchHabitCompletionCount(String habitId, int durationInSec) {
+    return db.watchHabitCompletionCount(habitId, durationInSec);
   }
 }
+
