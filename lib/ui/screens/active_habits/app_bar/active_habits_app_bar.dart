@@ -23,7 +23,6 @@ class ActiveHabitsAppBar extends StatelessWidget
       actionsPadding: EdgeInsets.symmetric(horizontal: 16),
       backgroundColor: Colors.blueGrey[700],
       actions: [
-
         IconButton(
           onPressed: context.read<ActiveHabitsScreenCubit>().expandAll,
           icon: Icon(

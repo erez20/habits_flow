@@ -33,27 +33,30 @@ class _HabitsCollectionWidgetState extends State<HabitsCollectionWidget> {
               cubit.onHabitDrown(data);
             }
           },
-           onDrawingStarts: cubit.onDrawingStarts,
-          child: Wrap(
-            key: _wrapKey,
-            alignment: WrapAlignment.start,
-            spacing: Constants.habitsSep,
-            runSpacing: Constants.habitsSep,
-            children: [
-              ...state.habits.map((habit) {
-                return MetaData(
-                  behavior: HitTestBehavior.opaque,
-                  metaData: habit,
-                  child: HabitProvider(
-                    key: ValueKey(habit.id),
-                    habit: habit,
-                  ),
-                );
-              }),
-              CreateHabitProvider(
-                groupUIModel: GroupUIModel.fromEntity(state.group),
-              ),
-            ],
+          onDrawingStarts: cubit.onDrawingStarts,
+          child: Padding(
+            padding: const EdgeInsets.only(bottom: 16),
+            child: Wrap(
+              key: _wrapKey,
+              alignment: WrapAlignment.start,
+              spacing: Constants.habitsSep,
+              runSpacing: Constants.habitsSep,
+              children: [
+                ...state.habits.map((habit) {
+                  return MetaData(
+                    behavior: HitTestBehavior.opaque,
+                    metaData: habit,
+                    child: HabitProvider(
+                      key: ValueKey(habit.id),
+                      habit: habit,
+                    ),
+                  );
+                }),
+                CreateHabitProvider(
+                  groupUIModel: GroupUIModel.fromEntity(state.group),
+                ),
+              ],
+            ),
           ),
         );
       },
