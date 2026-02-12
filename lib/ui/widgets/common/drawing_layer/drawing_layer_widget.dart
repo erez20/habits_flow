@@ -4,11 +4,13 @@ import 'package:flutter/rendering.dart';
 class DrawingLayerWidget extends StatefulWidget {
   final Widget child;
   final Function(dynamic) onWidgetHit;
+  final Function() onDrawingStarts;
 
   const DrawingLayerWidget({
     super.key,
     required this.child,
     required this.onWidgetHit,
+    required this.onDrawingStarts,
   });
 
   @override
@@ -40,6 +42,7 @@ class _DrawingLayerWidgetState extends State<DrawingLayerWidget> with SingleTick
   Widget build(BuildContext context) {
     return GestureDetector(
       onPanStart: (details) {
+        widget.onDrawingStarts();
         _sessionHits.clear();
         _points.add(_TrailPoint(details.localPosition));
         if (!_controller.isAnimating) {

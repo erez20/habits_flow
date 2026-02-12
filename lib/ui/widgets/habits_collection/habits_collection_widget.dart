@@ -23,16 +23,17 @@ class _HabitsCollectionWidgetState extends State<HabitsCollectionWidget> {
 
   @override
   Widget build(BuildContext context) {
+    var cubit = context.read<HabitsCollectionCubit>();
     return BlocBuilder<HabitsCollectionCubit, HabitCollectionState>(
       builder: (context, state) {
         return DrawingLayerWidget(
           onWidgetHit: (data) {
             Fimber.d("onWidgetHit $data");
             if (data is HabitEntity) {
-              var cubit = context.read<HabitsCollectionCubit>();
               cubit.onHabitDrown(data);
             }
           },
+           onDrawingStarts: cubit.onDrawingStarts,
           child: Wrap(
             key: _wrapKey,
             alignment: WrapAlignment.start,

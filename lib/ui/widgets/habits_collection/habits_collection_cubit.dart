@@ -11,6 +11,8 @@ class HabitsCollectionCubit extends Cubit<HabitCollectionState> {
   final GroupEntity group;
   final HabitsOfGroupStreamUseCase habitsOfGroupStreamUseCase;
   final ActiveHabitsManager manager;
+  final Set<String> _drownedHabits = {};
+
 
   HabitsCollectionCubit({
     required this.group,
@@ -36,7 +38,12 @@ class HabitsCollectionCubit extends Cubit<HabitCollectionState> {
   }
 
   void onHabitDrown(HabitEntity data) {
-    manager.habitDrown(data.id);
+    var id = data.id;
+    if (!_drownedHabits.contains(id)) {
+      _drownedHabits.add(id);
+      manager.habitDrown(id);
+    }
+
   }
 
   @override
@@ -44,4 +51,6 @@ class HabitsCollectionCubit extends Cubit<HabitCollectionState> {
     _habitsSubscription.cancel();
     return super.close();
   }
+
+  void onDrawingStarts() => _drownedHabits.clear();
 }
