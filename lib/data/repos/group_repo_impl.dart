@@ -123,6 +123,24 @@ class GroupRepoImpl extends GroupRepo {
   }
 
   @override
+  Future<int?> getClosestRefresh() async{
+    final groups = await getGroupsListStream().first;
+    final nowInSec = DateTime.now().millisecondsSinceEpoch ~/ 1000;
+    int? closestRefresh;
+    for (final group in groups) {
+      if (group.durationInSec > 0) {
+        final duration = group.durationInSec;
+        final nextRefresh = ((nowInSec / duration).floor() + 1) * duration;
+
+        if (closestRefresh == null || nextRefresh < closestRefresh) {
+          closestRefresh = nextRefresh;
+        }
+      }
+    }
+    return closestRefresh;
+  }
+
+  @override
   Future<void> refresh() {
     return groupLocalSource.refresh();
   }

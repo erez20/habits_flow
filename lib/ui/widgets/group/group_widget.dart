@@ -1,8 +1,6 @@
 import 'package:fimber/fimber.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:habits_flow/ui/ui_models/group_ui_model.dart';
 import 'package:habits_flow/ui/widgets/group/group_cubit.dart';
 import 'package:habits_flow/ui/widgets/group/group_state.dart';
 
@@ -69,28 +67,6 @@ class GroupWidget extends StatelessWidget {
           ),
         );
       },
-    );
-  }
-
-  Row _progressBar(GroupUIModel uiModel, int largeFactor) {
-    return Row(
-      children: [
-        Expanded(
-          flex: uiModel.completedHabits * largeFactor,
-          child: Container(
-            color: uiModel.color[300],
-          ),
-        ),
-        Expanded(
-          flex:
-              1 +
-              uiModel.habitsCount * largeFactor -
-              uiModel.completedHabits * largeFactor,
-          child: Container(
-            color: uiModel.color[100],
-          ),
-        ),
-      ],
     );
   }
 }

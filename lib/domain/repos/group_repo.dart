@@ -35,4 +35,6 @@ abstract class GroupRepo {
   });
 
   Future<void> refresh();
+
+  Future<int?> getClosestRefresh();
 }

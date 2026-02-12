@@ -21,21 +21,9 @@ class RefreshSchedulerRepoImpl extends RefreshSchedulerRepo {
   @override
   void reschedule() async {
     _timer?.cancel();
-    final groups = await groupRepo.getGroupsListStream().first;
+
     final nowInSec = DateTime.now().millisecondsSinceEpoch ~/ 1000;
-
-    int? closestRefresh;
-
-    for (final group in groups) {
-      if (group.durationInSec > 0) {
-        final duration = group.durationInSec;
-        final nextRefresh = ((nowInSec / duration).floor() + 1) * duration;
-
-        if (closestRefresh == null || nextRefresh < closestRefresh) {
-          closestRefresh = nextRefresh;
-        }
-      }
-    }
+    int? closestRefresh = await groupRepo.getClosestRefresh();
 
     if (closestRefresh != null) {
       final delay = closestRefresh - nowInSec;
