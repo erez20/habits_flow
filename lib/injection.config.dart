@@ -13,6 +13,8 @@ import 'package:get_it/get_it.dart' as _i174;
 import 'package:habits_flow/data/db/database.dart' as _i118;
 import 'package:habits_flow/data/repos/group_repo_impl.dart' as _i38;
 import 'package:habits_flow/data/repos/habit_repo_impl.dart' as _i375;
+import 'package:habits_flow/data/repos/refresh_scheduler_repo_impl.dart'
+    as _i186;
 import 'package:habits_flow/data/sources/groups/group_local_source.dart'
     as _i25;
 import 'package:habits_flow/data/sources/groups/group_local_source_impl.dart'
@@ -23,6 +25,7 @@ import 'package:habits_flow/data/sources/habits/habit_local_source_impl.dart'
     as _i995;
 import 'package:habits_flow/domain/repos/group_repo.dart' as _i136;
 import 'package:habits_flow/domain/repos/habit_repo.dart' as _i877;
+import 'package:habits_flow/domain/repos/refresh_scheduler_repo.dart' as _i184;
 import 'package:habits_flow/domain/use_cases/group/add_dummy_habit_to_first_group_use_case.dart'
     as _i349;
 import 'package:habits_flow/domain/use_cases/group/add_group_use_case.dart'
@@ -88,10 +91,6 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i1073.HabitsOfGroupStreamUseCase>(
       () => _i1073.HabitsOfGroupStreamUseCase(gh<_i877.HabitRepo>()),
     );
-    gh.factory<_i315.RefreshAllUseCase>(
-      () =>
-          _i315.RefreshAllUseCase(gh<_i136.GroupRepo>(), gh<_i877.HabitRepo>()),
-    );
     gh.factory<_i262.AddHabitUseCase>(
       () => _i262.AddHabitUseCase(
         habitRepo: gh<_i877.HabitRepo>(),
@@ -103,6 +102,9 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.factory<_i587.RemoveLastDummyGroupUseCase>(
       () => _i587.RemoveLastDummyGroupUseCase(repo: gh<_i136.GroupRepo>()),
+    );
+    gh.lazySingleton<_i184.RefreshSchedulerRepo>(
+      () => _i186.RefreshSchedulerRepoImpl(groupRepo: gh<_i136.GroupRepo>()),
     );
     gh.factory<_i655.AddGroupUseCase>(
       () => _i655.AddGroupUseCase(groupRepo: gh<_i136.GroupRepo>()),
@@ -116,6 +118,13 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.factory<_i779.GroupsListStreamUseCase>(
       () => _i779.GroupsListStreamUseCase(groupRepo: gh<_i136.GroupRepo>()),
+    );
+    gh.factory<_i315.RefreshAllUseCase>(
+      () => _i315.RefreshAllUseCase(
+        groupRepo: gh<_i136.GroupRepo>(),
+        habitRepo: gh<_i877.HabitRepo>(),
+        refreshSchedulerRepo: gh<_i184.RefreshSchedulerRepo>(),
+      ),
     );
     gh.factory<_i967.AllGroupsCubit>(
       () => _i967.AllGroupsCubit(
