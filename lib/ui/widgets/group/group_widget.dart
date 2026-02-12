@@ -17,15 +17,18 @@ class GroupWidget extends StatelessWidget {
     Fimber.d("build: GroupWidget");
     return BlocBuilder<GroupCubit, GroupState>(
       builder: (context, state) {
+        final cubit = context.read<GroupCubit>();
         var uiModel = state.uiModel;
         return SizedBox(
-          height: 54,
+          height: 60,
           child: InkWell(
             onTap: onTap,
             child: Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 12.0,
-                vertical: 8.0,
+              padding: const EdgeInsets.only(
+                left: 12.0,
+                right: 12.0,
+                top: 8,
+                bottom: 8.0,
               ),
               child: Column(
                 crossAxisAlignment: .start,
@@ -33,7 +36,7 @@ class GroupWidget extends StatelessWidget {
                   Row(
                     children: [
                       Text(
-                        "${uiModel.title}",
+                        uiModel.title,
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
@@ -48,7 +51,13 @@ class GroupWidget extends StatelessWidget {
                           fontWeight: FontWeight.normal,
                           color: Color(0xFF6B7280), // Light mode
                         ),
+
                       ),
+                      Expanded(child: SizedBox()),
+                      InkWell(
+                        child:  Icon(Icons.delete_outlined, color: Color(0xFF111827), size: 24,),
+                        onTap: () => _handleDelete(context,cubit.deleteGroup),
+                      )
                     ],
                   ),
                   SizedBox(height: 8),
@@ -60,11 +69,37 @@ class GroupWidget extends StatelessWidget {
                         : 0,
                     minHeight: 4,
                     borderRadius: BorderRadius.circular(1),
+
                   ),
                 ],
               ),
             ),
           ),
+        );
+      },
+    );
+  }
+
+  void _handleDelete(BuildContext context, void Function() deleteGroup) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Delete Group'),
+          content: Text('Are you sure you want to delete this group?'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () {
+                deleteGroup();
+                Navigator.of(context).pop();
+              },
+              child: Text('Delete'),
+            ),
+          ],
         );
       },
     );

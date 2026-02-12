@@ -2,6 +2,8 @@ import 'package:fimber/fimber.dart' show Fimber;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:habits_flow/domain/entities/group_entity.dart';
+import 'package:habits_flow/domain/use_cases/group/delete_group_use_case.dart';
+import 'package:habits_flow/injection.dart';
 
 import 'group_cubit.dart';
 import 'group_widget.dart';
@@ -26,7 +28,11 @@ class _GroupProviderState extends State<GroupProvider> {
   @override
   void initState() {
     super.initState();
-    _cubit = GroupCubit(entity: widget.group);
+    var deleteGroupUseCase = getIt<DeleteGroupUseCase>();
+    _cubit = GroupCubit(
+      entity: widget.group,
+      deleteGroupUseCase: deleteGroupUseCase,
+    );
     Fimber.d("initState: GroupProvider ${widget.group.toString()}");
   }
 
@@ -35,7 +41,7 @@ class _GroupProviderState extends State<GroupProvider> {
     Fimber.d("build: GroupProvider ${widget.group.toString()}");
     return BlocProvider.value(
       value: _cubit,
-      child: GroupWidget(onTap:widget.onTap),
+      child: GroupWidget(onTap: widget.onTap),
     );
   }
 
