@@ -24,13 +24,6 @@ class ActiveHabitsAppBar extends StatelessWidget
       backgroundColor: Colors.blueGrey[700],
       actions: [
         IconButton(
-          onPressed: context.read<ActiveHabitsScreenCubit>().refreshTemp,
-          icon: Icon(
-            Icons.recent_actors,
-            color: Colors.red,
-          ),
-        ),
-        IconButton(
           onPressed: context.read<ActiveHabitsScreenCubit>().expandAll,
           icon: Icon(
             Icons.expand,
@@ -49,7 +42,8 @@ class ActiveHabitsAppBar extends StatelessWidget
         IconButton(
           onPressed: () => _addGroupModal(
             context: context,
-            onConfirm: ({required uiModel}) => cubit.addGroup(uiModel: uiModel),
+            onConfirm: ({required uiModel}) =>
+                cubit.addGroup(uiModel: uiModel),
           ),
           icon: Icon(
             Icons.add,
