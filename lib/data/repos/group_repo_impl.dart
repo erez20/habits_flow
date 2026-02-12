@@ -121,4 +121,9 @@ class GroupRepoImpl extends GroupRepo {
       return Failure(error: DatabaseError(message: e.toString()));
     }
   }
+
+  @override
+  Future<void> refresh() {
+    return groupLocalSource.refresh();
+  }
 }

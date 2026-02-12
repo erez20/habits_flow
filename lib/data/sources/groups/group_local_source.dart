@@ -27,4 +27,6 @@ abstract class GroupLocalSource {
   Future<void> removeLastDummy();
 
   Future<void> addDummyHabitToFirstGroup();
+
+  Future<void> refresh();
 }

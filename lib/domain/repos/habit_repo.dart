@@ -31,4 +31,6 @@ abstract class HabitRepo {
   Stream<List<HabitEntity>> habitsOfGroupStream(String groupId);
 
   Future<DomainResponse<double>> getNextHabitWeight(String groupId);
+
+  Future<void> refresh();
 }

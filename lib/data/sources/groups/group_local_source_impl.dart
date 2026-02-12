@@ -10,8 +10,14 @@ import 'package:uuid/uuid.dart';
 @Injectable(as: GroupLocalSource)
 class GroupLocalSourceImpl implements GroupLocalSource {
   final AppDatabase db;
+  final _refreshController = BehaviorSubject<void>();
 
   GroupLocalSourceImpl(this.db);
+
+  @override
+  Future<void> refresh() async {
+    _refreshController.add(null);
+  }
 
   @override
   Future<GroupEntity> createGroup({
@@ -127,7 +133,11 @@ class GroupLocalSourceImpl implements GroupLocalSource {
       leftOuterJoin(db.habits, db.habits.groupId.equalsExp(db.groups.id)),
     ]);
 
-    return query.watch().switchMap((rows) {
+    return Rx.combineLatest2(
+      query.watch(),
+      _refreshController.stream.startWith(null),
+      (rows, _) => rows,
+    ).switchMap((rows) {
       final groupHabits = <Group, List<Habit>>{};
       for (final row in rows) {
         final group = row.readTable(db.groups);

@@ -102,4 +102,9 @@ class HabitRepoImpl extends HabitRepo {
       return Failure(error: DatabaseError(message: e.toString()));
     }
   }
+
+  @override
+  Future<void> refresh() {
+    return habitsLocalSource.refresh();
+  }
 }

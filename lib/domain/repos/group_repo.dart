@@ -33,4 +33,6 @@ abstract class GroupRepo {
   Future<DomainResponse<void>> generateDummyGroupName({
     required String groupId,
   });
+
+  Future<void> refresh();
 }

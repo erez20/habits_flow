@@ -34,4 +34,7 @@ abstract class HabitLocalSource {
   Stream<HabitEntity> habitStream(String habitId);
 
   Stream<int> watchHabitCompletionCount(String habitId, int durationInSec);
+
+  /// Triggers a refresh of time-dependent habit data.
+  Future<void> refresh();
 }

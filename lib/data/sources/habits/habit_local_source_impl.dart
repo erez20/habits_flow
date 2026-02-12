@@ -9,8 +9,14 @@ import 'package:uuid/uuid.dart';
 @Injectable(as: HabitLocalSource)
 class HabitLocalSourceImpl implements HabitLocalSource {
   final AppDatabase db;
+  final _refreshController = BehaviorSubject<void>();
 
   HabitLocalSourceImpl(this.db);
+
+  @override
+  Future<void> refresh() async {
+    _refreshController.add(null);
+  }
 
   @override
   Future<HabitEntity> createHabit({
@@ -153,7 +159,11 @@ class HabitLocalSourceImpl implements HabitLocalSource {
     ])
       ..where(db.habits.groupId.equals(groupId));
 
-    return query.watch().switchMap((rows) {
+    return Rx.combineLatest2(
+      query.watch(),
+      _refreshController.startWith(null),
+      (rows, _) => rows,
+    ).switchMap((rows) {
       if (rows.isEmpty) {
         return Stream.value([]);
       }
@@ -194,7 +204,11 @@ class HabitLocalSourceImpl implements HabitLocalSource {
     ])..where(db.habits.id.equals(habitId)))
         .watchSingle();
 
-    return habitWithGroupStream.switchMap((row) {
+    return Rx.combineLatest2(
+      habitWithGroupStream,
+      _refreshController.startWith(null),
+      (row, _) => row,
+    ).switchMap((row) {
       final habit = row.readTable(db.habits);
       final group = row.readTable(db.groups);
 
