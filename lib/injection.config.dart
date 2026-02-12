@@ -45,6 +45,8 @@ import 'package:habits_flow/domain/use_cases/habit/perform_habit_use_case.dart'
     as _i82;
 import 'package:habits_flow/domain/use_cases/habit/reset_habit_use_case.dart'
     as _i1072;
+import 'package:habits_flow/domain/use_cases/shared/refresh_all_use_case.dart'
+    as _i315;
 import 'package:habits_flow/ui/screens/active_habits/di/active_habits_manager.dart'
     as _i28;
 import 'package:habits_flow/ui/widgets/all_groups/all_groups_cubit.dart'
@@ -85,6 +87,10 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.factory<_i1073.HabitsOfGroupStreamUseCase>(
       () => _i1073.HabitsOfGroupStreamUseCase(gh<_i877.HabitRepo>()),
+    );
+    gh.factory<_i315.RefreshAllUseCase>(
+      () =>
+          _i315.RefreshAllUseCase(gh<_i136.GroupRepo>(), gh<_i877.HabitRepo>()),
     );
     gh.factory<_i262.AddHabitUseCase>(
       () => _i262.AddHabitUseCase(
