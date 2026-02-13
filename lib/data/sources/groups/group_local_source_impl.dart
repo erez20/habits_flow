@@ -95,7 +95,10 @@ class GroupLocalSourceImpl implements GroupLocalSource {
     }
 
     final habits = await (db.select(db.habits)
-          ..where((tbl) => tbl.groupId.equals(groupId)))
+          ..where((tbl) => tbl.groupId.equals(groupId))
+          ..orderBy([
+            (h) => OrderingTerm(expression: h.weight, mode: OrderingMode.asc),
+          ]))
         .get();
 
     final habitCompletionCounts = await Future.wait(
@@ -131,7 +134,10 @@ class GroupLocalSourceImpl implements GroupLocalSource {
   Stream<List<GroupEntity>> getGroupsListStream() {
     final query = db.select(db.groups).join([
       leftOuterJoin(db.habits, db.habits.groupId.equalsExp(db.groups.id)),
-    ]);
+    ])
+      ..orderBy([
+        OrderingTerm(expression: db.groups.weight, mode: OrderingMode.asc),
+      ]);
 
     return Rx.combineLatest2(
       query.watch(),
@@ -157,6 +163,7 @@ class GroupLocalSourceImpl implements GroupLocalSource {
       for (final entry in groupHabits.entries) {
         final group = entry.key;
         final habits = entry.value;
+        habits.sort((a, b) => a.weight.compareTo(b.weight));
         for (final habit in habits) {
           habitCompletionStreams[habit.id] =
               db.watchHabitCompletionCount(habit.id, group.durationInSec);
@@ -264,3 +271,4 @@ class GroupLocalSourceImpl implements GroupLocalSource {
     }
   }
 }
+

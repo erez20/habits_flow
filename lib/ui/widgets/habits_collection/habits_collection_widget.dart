@@ -9,6 +9,7 @@ import 'package:habits_flow/ui/widgets/create_habit/create_habit_provider.dart';
 import 'package:habits_flow/ui/widgets/habit/habit_provider.dart';
 import 'package:habits_flow/ui/widgets/habits_collection/habits_collection_cubit.dart';
 import 'package:habits_flow/ui/widgets/habits_collection/habits_collection_state.dart';
+import 'package:reorderables/reorderables.dart';
 
 class HabitsCollectionWidget extends StatefulWidget {
   const HabitsCollectionWidget({super.key});
@@ -35,30 +36,36 @@ class _HabitsCollectionWidgetState extends State<HabitsCollectionWidget> {
           },
           onDrawingStarts: cubit.onDrawingStarts,
           child: Padding(
-            padding: const EdgeInsets.only(bottom: 16),
-            child: Wrap(
-              key: _wrapKey,
-              alignment: WrapAlignment.start,
-              spacing: Constants.habitsSep,
-              runSpacing: Constants.habitsSep,
-              children: [
-                ...state.habits.map((habit) {
-                  return MetaData(
-                    behavior: HitTestBehavior.opaque,
-                    metaData: habit,
-                    child: HabitProvider(
-                      key: ValueKey(habit.id),
-                      habit: habit,
-                    ),
-                  );
-                }),
-                CreateHabitProvider(
-                  groupUIModel: GroupUIModel.fromEntity(state.group),
-                ),
-              ],
-            ),
+          padding: const EdgeInsets.only(bottom: 16),
+          child: ReorderableWrap(
+            key: _wrapKey,
+            alignment: WrapAlignment.start,
+            spacing: Constants.habitsSep,
+            runSpacing: Constants.habitsSep,
+            // This is required for the animation to track items
+            onReorder: (oldIndex, newIndex) {
+              // Optional: Only if you want to support manual dragging too
+             // context.read<HabitBloc>().add(MoveHabitEvent(oldIndex, newIndex));
+            },
+            children: [
+              ...state.habits.map((habit) {
+                return MetaData(
+                  key: ValueKey(habit.id), // Key MUST be on the direct child of ReorderableWrap
+                  behavior: HitTestBehavior.opaque,
+                  metaData: habit,
+                  child: HabitProvider(
+                    habit: habit,
+                  ),
+                );
+              }),
+              // The "Create" button stays at the end; ReorderableWrap handles static children well
+              CreateHabitProvider(
+                key: const ValueKey('create_button'),
+                groupUIModel: GroupUIModel.fromEntity(state.group),
+              ),
+            ],
           ),
-        );
+        ),);
       },
     );
   }

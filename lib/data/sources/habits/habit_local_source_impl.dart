@@ -157,7 +157,10 @@ class HabitLocalSourceImpl implements HabitLocalSource {
     final query = db.select(db.habits).join([
       innerJoin(db.groups, db.groups.id.equalsExp(db.habits.groupId)),
     ])
-      ..where(db.habits.groupId.equals(groupId));
+      ..where(db.habits.groupId.equals(groupId))
+      ..orderBy([
+        OrderingTerm(expression: db.habits.weight, mode: OrderingMode.asc),
+      ]);
 
     return Rx.combineLatest2(
       query.watch(),
