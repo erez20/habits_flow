@@ -8,7 +8,6 @@ import 'package:habits_flow/ui/widgets/test_dashboard/test_dashboard_provider.da
 import 'active_habits_screen_cubit.dart' show ActiveHabitsScreenCubit;
 import 'active_habits_screen_state.dart' show ActiveHabitsScreenState;
 
-
 class ActiveHabitsScreen extends StatelessWidget {
   const ActiveHabitsScreen({super.key});
 
@@ -20,24 +19,28 @@ class ActiveHabitsScreen extends StatelessWidget {
       body: BlocBuilder<ActiveHabitsScreenCubit, ActiveHabitsScreenState>(
         buildWhen: (previous, current) => previous.uiModel != current.uiModel,
         builder: (context, state) {
-
           var isDisabled = state.uiModel != null;
-          return IgnorePointer(
-            ignoring: isDisabled,
-            child: AnimatedColorFiltered(
-              isDisabled: isDisabled,
-              child: SafeArea(
-                child: Column(
-                  children: [
-                    AllGroupsProvider(),
-                    Container(
-                      height: 130,
-                      color: Colors.red,
-                      child: TestDashboardProvider(),
+          return SafeArea(
+            child: Stack(
+              children: [
+                IgnorePointer(
+                  ignoring: isDisabled,
+                  child: AnimatedColorFiltered(
+                    isDisabled: isDisabled,
+                    child: Column(
+                      children: [
+                        AllGroupsProvider(),
+                        Container(
+                          height: 130,
+                          color: Colors.red,
+                          child: TestDashboardProvider(),
+                        ),
+                      ],
                     ),
-                  ],
+                  ),
                 ),
-              ),
+                if (isDisabled) JoystickWidget(),
+              ],
             ),
           );
         },
@@ -46,3 +49,38 @@ class ActiveHabitsScreen extends StatelessWidget {
   }
 }
 
+class JoystickWidget extends StatelessWidget {
+  const JoystickWidget({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(top: 16.0),
+          child: Align(
+            alignment: Alignment.topCenter,
+            child: Icon(Icons.keyboard_arrow_up_rounded, size: 80),
+          ),
+        ),
+        Align(
+          alignment: Alignment.centerRight,
+          child: Icon(Icons.keyboard_arrow_right_rounded, size: 80),
+        ),
+        Padding(
+          padding: const EdgeInsets.only(bottom: 16.0),
+          child: Align(
+            alignment: Alignment.bottomCenter,
+            child: Icon(Icons.keyboard_arrow_down_rounded, size: 80),
+          ),
+        ),
+        Align(
+          alignment: Alignment.centerLeft,
+          child: Icon(Icons.keyboard_arrow_left_rounded, size: 80),
+        ),
+      ],
+    );
+  }
+}
