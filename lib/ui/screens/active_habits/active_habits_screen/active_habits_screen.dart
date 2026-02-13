@@ -17,35 +17,30 @@ class ActiveHabitsScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.grey[200],
       appBar: AppBarBuilder(),
-      body: Stack(
-        children: [
+      body: BlocBuilder<ActiveHabitsScreenCubit, ActiveHabitsScreenState>(
+        buildWhen: (previous, current) => previous.uiModel != current.uiModel,
+        builder: (context, state) {
 
-          BlocBuilder<ActiveHabitsScreenCubit, ActiveHabitsScreenState>(
-            buildWhen: (previous, current) => previous.uiModel != current.uiModel,
-            builder: (context, state) {
-
-              var isDisabled = state.uiModel != null;
-              return IgnorePointer(
-                ignoring: isDisabled,
-                child: AnimatedColorFiltered(
-                  isDisabled: isDisabled,
-                  child: SafeArea(
-                    child: Column(
-                      children: [
-                        AllGroupsProvider(),
-                        Container(
-                          height: 130,
-                          color: Colors.red,
-                          child: TestDashboardProvider(),
-                        ),
-                      ],
+          var isDisabled = state.uiModel != null;
+          return IgnorePointer(
+            ignoring: isDisabled,
+            child: AnimatedColorFiltered(
+              isDisabled: isDisabled,
+              child: SafeArea(
+                child: Column(
+                  children: [
+                    AllGroupsProvider(),
+                    Container(
+                      height: 130,
+                      color: Colors.red,
+                      child: TestDashboardProvider(),
                     ),
-                  ),
+                  ],
                 ),
-              );
-            },
-          ),
-        ],
+              ),
+            ),
+          );
+        },
       ),
     );
   }
