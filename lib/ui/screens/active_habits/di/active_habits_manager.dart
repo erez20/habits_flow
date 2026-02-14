@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:habits_flow/domain/entities/habit_entity.dart';
+import 'package:injectable/injectable.dart';
 import 'package:rxdart/rxdart.dart';
 
 abstract class ActiveHabitsManager {

@@ -235,5 +235,54 @@ class HabitLocalSourceImpl implements HabitLocalSource {
   Stream<int> watchHabitCompletionCount(String habitId, int durationInSec) {
     return db.watchHabitCompletionCount(habitId, durationInSec);
   }
-}
 
+  @override
+  Future<void> reorderHabit(
+      {required String habitId, required int steps}) async {
+    final habit =
+        await (db.select(db.habits)..where((tbl) => tbl.id.equals(habitId)))
+            .getSingle();
+    final groupId = habit.groupId;
+    if (groupId == null) {
+      throw Exception('Habit has no group');
+    }
+
+    final habits = await (db.select(db.habits)
+          ..where((tbl) => tbl.groupId.equals(groupId))
+          ..orderBy([(t) =>
+            OrderingTerm(expression: t.weight, mode: OrderingMode.asc)
+          ]))
+        .get();
+    final currentPosition = habits.indexWhere((h) => h.id == habitId);
+
+    final newWeight = _calculateNewWeight(habits, currentPosition, steps);
+
+    await (db.update(db.habits)..where((tbl) => tbl.id.equals(habitId)))
+        .write(HabitsCompanion(weight: Value(newWeight)));
+  }
+
+  double _calculateNewWeight(List<Habit> habits, int currentPosition, int steps) {
+    if (habits.isEmpty) {
+      return 1.0;
+    }
+    final newPosition = currentPosition + steps;
+    if (newPosition <= 0) {
+      // Move to the beginning
+      return habits.first.weight / 2;
+    } else if (newPosition >= habits.length - 1) {
+      // Move to the end
+      return habits.last.weight + 1;
+    } else {
+      // Move in between
+      if (steps < 0) { // Moving up
+        final prevWeight = habits[newPosition - 1].weight;
+        final nextWeight = habits[newPosition].weight;
+        return (prevWeight + nextWeight) / 2;
+      } else { // Moving down
+        final prevWeight = habits[newPosition].weight;
+        final nextWeight = habits[newPosition + 1].weight;
+        return (prevWeight + nextWeight) / 2;
+      }
+    }
+  }
+}

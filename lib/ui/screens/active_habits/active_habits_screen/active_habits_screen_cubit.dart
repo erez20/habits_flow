@@ -4,6 +4,7 @@ import 'package:fimber/fimber.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:habits_flow/domain/entities/habit_entity.dart';
 import 'package:habits_flow/domain/use_cases/group/add_group_use_case.dart';
+import 'package:habits_flow/domain/use_cases/habit/reorder_habit_use_case.dart';
 import 'package:habits_flow/domain/use_cases/habit/reset_habit_use_case.dart';
 import 'package:habits_flow/domain/use_cases/shared/refresh_all_use_case.dart';
 import 'package:habits_flow/ui/common/colors/app_colors.dart';
@@ -18,17 +19,24 @@ class ActiveHabitsScreenCubit extends Cubit<ActiveHabitsScreenState> {
   final AddGroupUseCase addGroupUseCase;
   final ResetHabitUseCase resetHabitUseCase;
   final RefreshAllUseCase refreshAllUseCase;
+  final ReorderHabitUseCase reorderHabitUseCase;
+
 
   ActiveHabitsScreenCubit({
     required this.manager,
     required this.addGroupUseCase,
     required this.resetHabitUseCase,
     required this.refreshAllUseCase,
+    required this.reorderHabitUseCase,
   }) : super(ActiveHabitsScreenState.init()) {
     init();
   }
 
   late final StreamSubscription<HabitEntity?> _habitSelectedStreamSubscription;
+
+  void moveRequest ({required String habitId, required int steps}) {
+     reorderHabitUseCase.exec(ReorderHabitUseCaseParams(habitId: habitId, steps: steps));
+  }
 
 
   void init() {

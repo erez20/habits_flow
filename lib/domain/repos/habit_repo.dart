@@ -32,5 +32,10 @@ abstract class HabitRepo {
 
   Future<DomainResponse<double>> getNextHabitWeight(String groupId);
 
+  Future<DomainResponse<void>> reorderHabit({
+    required String habitId,
+    required int steps,
+  });
+
   Future<void> refresh();
 }

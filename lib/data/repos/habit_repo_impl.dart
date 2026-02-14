@@ -104,6 +104,20 @@ class HabitRepoImpl extends HabitRepo {
   }
 
   @override
+  Future<DomainResponse<void>> reorderHabit(
+      {required String habitId, required int steps}) async {
+    try {
+      await habitsLocalSource.reorderHabit(
+        habitId: habitId,
+        steps: steps,
+      );
+      return const Success(null);
+    } on Exception catch (e) {
+      return Failure(error: DatabaseError(message: e.toString()));
+    }
+  }
+
+  @override
   Future<void> refresh() {
     return habitsLocalSource.refresh();
   }

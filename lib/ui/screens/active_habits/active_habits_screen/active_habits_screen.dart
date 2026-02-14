@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart' show BlocBuilder;
+import 'package:flutter_bloc/flutter_bloc.dart' show BlocBuilder, ReadContext;
+import 'package:habits_flow/ui/common/constants.dart';
 import 'package:habits_flow/ui/screens/active_habits/app_bar/app_bar_builder.dart';
 import 'package:habits_flow/ui/widgets/all_groups/all_groups_provider.dart';
 import 'package:habits_flow/ui/widgets/common/animated_color_filter/animated_color_filter.dart';
+import 'package:habits_flow/ui/widgets/common/joystick/joystick_widget.dart';
 import 'package:habits_flow/ui/widgets/test_dashboard/test_dashboard_provider.dart';
 
 import 'active_habits_screen_cubit.dart' show ActiveHabitsScreenCubit;
@@ -19,7 +21,9 @@ class ActiveHabitsScreen extends StatelessWidget {
       body: BlocBuilder<ActiveHabitsScreenCubit, ActiveHabitsScreenState>(
         buildWhen: (previous, current) => previous.uiModel != current.uiModel,
         builder: (context, state) {
-          var isDisabled = state.uiModel != null;
+          final cubit = context.read<ActiveHabitsScreenCubit>();
+          final uiModel = state.uiModel;
+          final isDisabled = uiModel != null;
           return SafeArea(
             child: Stack(
               children: [
@@ -39,7 +43,11 @@ class ActiveHabitsScreen extends StatelessWidget {
                     ),
                   ),
                 ),
-                if (isDisabled) JoystickWidget(),
+                if (isDisabled)
+                  JoystickWidget(
+                    habitId: uiModel.habitId,
+                    moveRequest: cubit.moveRequest,
+                  ),
               ],
             ),
           );
@@ -49,38 +57,3 @@ class ActiveHabitsScreen extends StatelessWidget {
   }
 }
 
-class JoystickWidget extends StatelessWidget {
-  const JoystickWidget({
-    super.key,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        Padding(
-          padding: const EdgeInsets.only(top: 16.0),
-          child: Align(
-            alignment: Alignment.topCenter,
-            child: Icon(Icons.keyboard_arrow_up_rounded, size: 80),
-          ),
-        ),
-        Align(
-          alignment: Alignment.centerRight,
-          child: Icon(Icons.keyboard_arrow_right_rounded, size: 80),
-        ),
-        Padding(
-          padding: const EdgeInsets.only(bottom: 16.0),
-          child: Align(
-            alignment: Alignment.bottomCenter,
-            child: Icon(Icons.keyboard_arrow_down_rounded, size: 80),
-          ),
-        ),
-        Align(
-          alignment: Alignment.centerLeft,
-          child: Icon(Icons.keyboard_arrow_left_rounded, size: 80),
-        ),
-      ],
-    );
-  }
-}

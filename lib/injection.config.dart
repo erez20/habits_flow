@@ -46,6 +46,8 @@ import 'package:habits_flow/domain/use_cases/habit/habits_of_group_stream_use_ca
     as _i1073;
 import 'package:habits_flow/domain/use_cases/habit/perform_habit_use_case.dart'
     as _i82;
+import 'package:habits_flow/domain/use_cases/habit/reorder_habit_use_case.dart'
+    as _i618;
 import 'package:habits_flow/domain/use_cases/habit/reset_habit_use_case.dart'
     as _i1072;
 import 'package:habits_flow/domain/use_cases/shared/refresh_all_use_case.dart'
@@ -102,6 +104,9 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.factory<_i587.RemoveLastDummyGroupUseCase>(
       () => _i587.RemoveLastDummyGroupUseCase(repo: gh<_i136.GroupRepo>()),
+    );
+    gh.factory<_i618.ReorderHabitUseCase>(
+      () => _i618.ReorderHabitUseCase(repo: gh<_i877.HabitRepo>()),
     );
     gh.lazySingleton<_i184.RefreshSchedulerRepo>(
       () => _i186.RefreshSchedulerRepoImpl(groupRepo: gh<_i136.GroupRepo>()),

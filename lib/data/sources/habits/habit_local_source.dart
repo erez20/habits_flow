@@ -29,6 +29,11 @@ abstract class HabitLocalSource {
     required String habitId,
   });
 
+  Future<void> reorderHabit({
+    required String habitId,
+    required int steps,
+  });
+
   Stream<List<HabitEntity>> habitsOfGroupStream(String groupId);
 
   Stream<HabitEntity> habitStream(String habitId);
