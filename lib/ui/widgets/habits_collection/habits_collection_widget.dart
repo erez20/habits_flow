@@ -9,7 +9,7 @@ import 'package:habits_flow/ui/widgets/create_habit/create_habit_provider.dart';
 import 'package:habits_flow/ui/widgets/habit/habit_provider.dart';
 import 'package:habits_flow/ui/widgets/habits_collection/habits_collection_cubit.dart';
 import 'package:habits_flow/ui/widgets/habits_collection/habits_collection_state.dart';
-import 'package:reorderables/reorderables.dart';
+import 'package:flutter_reorderable_grid_view/widgets/reorderable_builder.dart';
 
 class HabitsCollectionWidget extends StatefulWidget {
   const HabitsCollectionWidget({super.key});
@@ -19,14 +19,30 @@ class HabitsCollectionWidget extends StatefulWidget {
 }
 
 class _HabitsCollectionWidgetState extends State<HabitsCollectionWidget> {
-  // This key is essential for the DrawingLayer to locate the RenderBox of the Wrap
   final GlobalKey _wrapKey = GlobalKey();
 
   @override
   Widget build(BuildContext context) {
     var cubit = context.read<HabitsCollectionCubit>();
+
     return BlocBuilder<HabitsCollectionCubit, HabitCollectionState>(
       builder: (context, state) {
+
+        final generatedChildren = [
+          ...state.habits.map((habit) {
+            return MetaData(
+              key: ValueKey(habit.id), // CRITICAL: Key goes here
+              behavior: HitTestBehavior.opaque,
+              metaData: habit,
+              child: HabitProvider(habit: habit),
+            );
+          }),
+          CreateHabitProvider(
+            key: const ValueKey('create_button'),
+            groupUIModel: GroupUIModel.fromEntity(state.group),
+          ),
+        ];
+
         return DrawingLayerWidget(
           onWidgetHit: (data) {
             Fimber.d("onWidgetHit $data");
@@ -36,36 +52,31 @@ class _HabitsCollectionWidgetState extends State<HabitsCollectionWidget> {
           },
           onDrawingStarts: cubit.onDrawingStarts,
           child: Padding(
-          padding: const EdgeInsets.only(bottom: 16),
-          child: ReorderableWrap(
-            key: _wrapKey,
-            alignment: WrapAlignment.start,
-            spacing: Constants.habitsSep,
-            runSpacing: Constants.habitsSep,
-            // This is required for the animation to track items
-            onReorder: (oldIndex, newIndex) {
-              // Optional: Only if you want to support manual dragging too
-             // context.read<HabitBloc>().add(MoveHabitEvent(oldIndex, newIndex));
-            },
-            children: [
-              ...state.habits.map((habit) {
-                return MetaData(
-                  key: ValueKey(habit.id), // Key MUST be on the direct child of ReorderableWrap
-                  behavior: HitTestBehavior.opaque,
-                  metaData: habit,
-                  child: HabitProvider(
-                    habit: habit,
-                  ),
+            padding: const EdgeInsets.only(bottom: 16),
+
+            // 2. Wrap with ReorderableBuilder for animations
+            child: ReorderableBuilder(
+              enableDraggable: true,
+              // This duration controls the implicit slide when state changes
+              positionDuration: const Duration(milliseconds: 300),
+              onReorder: (reorderedListFunction) {
+                // Handled by BLoC state changes via Joystick, leave empty
+              },
+              builder: (animatedChildren) {
+                return GridView.count(
+                  key: _wrapKey,
+                  shrinkWrap: true, // Replaces Wrap's natural sizing
+                  physics: const NeverScrollableScrollPhysics(),
+                  crossAxisCount: Constants.habitsPerRow, // Your specific column count
+                  mainAxisSpacing: Constants.habitsSep,
+                  crossAxisSpacing: Constants.habitsSep,
+                  children: animatedChildren,
                 );
-              }),
-              // The "Create" button stays at the end; ReorderableWrap handles static children well
-              CreateHabitProvider(
-                key: const ValueKey('create_button'),
-                groupUIModel: GroupUIModel.fromEntity(state.group),
-              ),
-            ],
+              },
+              children: generatedChildren,
+            ),
           ),
-        ),);
+        );
       },
     );
   }
