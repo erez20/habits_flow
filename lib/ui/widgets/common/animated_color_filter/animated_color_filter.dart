@@ -18,7 +18,7 @@ class AnimatedColorFiltered extends StatelessWidget {
       builder: (context, value, child) {
         return ColorFiltered(
           colorFilter: ColorFilter.mode(
-            Colors.grey.withValues(alpha: 0.4 * value),
+            Colors.deepPurple.withValues(alpha: 0.2 * value),
             BlendMode.srcATop,
           ),
           child: child,

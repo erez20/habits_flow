@@ -36,12 +36,14 @@ class JoystickWidget extends StatelessWidget {
           alignment: Alignment.centerLeft,
           icon: Icons.keyboard_arrow_left_rounded,
           onTap: () => moveRequest(habitId: habitId, steps: -1),
+          padding: EdgeInsets.only(left: 16),
         ),
         // RIGHT
         _JoystickButton(
           alignment: Alignment.centerRight,
-          icon: Icons.keyboard_arrow_right_rounded,
+          icon: Icons.keyboard_arrow_right_outlined,
           onTap: () => moveRequest(habitId: habitId, steps: 1),
+          padding: EdgeInsets.only(right: 16),
         ),
       ],
     );
@@ -58,7 +60,7 @@ class _JoystickButton extends StatelessWidget {
     required this.alignment,
     required this.icon,
     required this.onTap,
-    this.padding = EdgeInsets.zero,
+    required this.padding ,
   });
 
   @override
@@ -68,17 +70,20 @@ class _JoystickButton extends StatelessWidget {
       child: Padding(
         padding: padding,
         child: SizedBox(
-          width: 100,
-          height: 100,
+          width: 88,
+          height: 88,
           child: Material(
             color: Colors.transparent,
             child: InkWell(
               onTap: onTap,
               customBorder: const CircleBorder(),
-              child: Icon(
-                icon,
-                size: 80,
-                color: Colors.white.withOpacity(0.9),
+              child: Container(
+                decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.white.withOpacity(0.5)),
+                child: Icon(
+                  icon,
+                  size: 80,
+                  color: Colors.purple,
+                ),
               ),
             ),
           ),
