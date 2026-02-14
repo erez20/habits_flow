@@ -22,6 +22,7 @@ class HabitsCollectionCubit extends Cubit<HabitCollectionState> {
          HabitCollectionState(
            habits: [],
            group: group,
+           init: true
          ),
        ) {
     init();
@@ -33,7 +34,7 @@ class HabitsCollectionCubit extends Cubit<HabitCollectionState> {
     _habitsSubscription = habitsOfGroupStreamUseCase.stream(group.id).listen((
       event,
     ) {
-      emit(state.copyWith(habits: event));
+      emit(state.copyWith(habits: event, init: false));
     });
   }
 

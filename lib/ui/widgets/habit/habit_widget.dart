@@ -30,7 +30,7 @@ class HabitWidget extends StatelessWidget {
             width: side,
             height: side,
             decoration: BoxDecoration(
-              color: state.habit.isUncompleted ? materialColor[50] : materialColor[500],
+              color: state.habit.isUncompleted ? materialColor[50] : materialColor[400],
               border: Border.all(
                 color: AppColorsConst.border,
                 width: 2,
