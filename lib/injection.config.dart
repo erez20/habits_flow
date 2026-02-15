@@ -38,6 +38,8 @@ import 'package:habits_flow/domain/use_cases/group/groups_list_stream_use_case.d
     as _i779;
 import 'package:habits_flow/domain/use_cases/group/remove_last_dummy_group_use_case.dart'
     as _i587;
+import 'package:habits_flow/domain/use_cases/group/reorder_groups_use_case.dart'
+    as _i368;
 import 'package:habits_flow/domain/use_cases/habit/add_habit_use_case.dart'
     as _i262;
 import 'package:habits_flow/domain/use_cases/habit/habit_stream_use_case.dart'
@@ -75,6 +77,7 @@ extension GetItInjectableX on _i174.GetIt {
       () =>
           _i375.HabitRepoImpl(habitsLocalSource: gh<_i545.HabitLocalSource>()),
     );
+    gh.factory<_i28.ActiveHabitsManager>(() => _i28.ActiveHabitsManagerImpl());
     gh.factory<_i271.HabitStreamUseCase>(
       () => _i271.HabitStreamUseCase(habitRepo: gh<_i877.HabitRepo>()),
     );
@@ -111,6 +114,9 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i184.RefreshSchedulerRepo>(
       () => _i186.RefreshSchedulerRepoImpl(groupRepo: gh<_i136.GroupRepo>()),
     );
+    gh.factory<_i368.ReorderGroupsUseCase>(
+      () => _i368.ReorderGroupsUseCase(gh<_i136.GroupRepo>()),
+    );
     gh.factory<_i655.AddGroupUseCase>(
       () => _i655.AddGroupUseCase(groupRepo: gh<_i136.GroupRepo>()),
     );
@@ -134,6 +140,7 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i967.AllGroupsCubit>(
       () => _i967.AllGroupsCubit(
         groupsListStreamUseCase: gh<_i779.GroupsListStreamUseCase>(),
+        reorderGroupsUseCase: gh<_i368.ReorderGroupsUseCase>(),
         manager: gh<_i28.ActiveHabitsManager>(),
       ),
     );

@@ -144,4 +144,14 @@ class GroupRepoImpl extends GroupRepo {
   Future<void> refresh() {
     return groupLocalSource.refresh();
   }
+
+  @override
+  Future<DomainResponse<void>> reorder(List<GroupEntity> groups) async {
+    try {
+      await groupLocalSource.reorder(groups);
+      return const Success(null);
+    } on Exception catch (e) {
+      return Failure(error: DatabaseError(message: e.toString()));
+    }
+  }
 }

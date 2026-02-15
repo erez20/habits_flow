@@ -57,7 +57,9 @@ class GroupWidget extends StatelessWidget {
                       InkWell(
                         child:  Icon(Icons.delete_outlined, color: Color(0xFF111827), size: 24,),
                         onTap: () => _handleDelete(context,cubit.deleteGroup),
-                      )
+                      ),
+                      SizedBox(width: 8),
+                      Icon(Icons.drag_handle, color: Color(0xFF111827), size: 24,),
                     ],
                   ),
                   SizedBox(height: 8),

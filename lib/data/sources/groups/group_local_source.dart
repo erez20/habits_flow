@@ -29,4 +29,6 @@ abstract class GroupLocalSource {
   Future<void> addDummyHabitToFirstGroup();
 
   Future<void> refresh();
+
+  Future<void> reorder(List<GroupEntity> groups);
 }

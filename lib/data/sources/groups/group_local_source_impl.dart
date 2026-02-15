@@ -270,5 +270,19 @@ class GroupLocalSourceImpl implements GroupLocalSource {
       await db.into(db.habits).insert(companion);
     }
   }
+
+  @override
+  Future<void> reorder(List<GroupEntity> groups) async {
+    await db.batch((batch) {
+      for (int i = 0; i < groups.length; i++) {
+        final group = groups[i];
+        batch.update(
+          db.groups,
+          GroupsCompanion(weight: Value(i)),
+          where: (tbl) => tbl.id.equals(group.id),
+        );
+      }
+    });
+  }
 }
 

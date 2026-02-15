@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:habits_flow/ui/common/constants.dart';
+import 'package:habits_flow/ui/screens/active_habits/di/active_habits_manager.dart';
 import 'package:habits_flow/ui/widgets/all_groups/all_groups_cubit.dart';
 import 'package:habits_flow/ui/widgets/group/group_provider.dart';
 import 'package:habits_flow/ui/widgets/habits_collection/habits_collection_provider.dart';
@@ -13,59 +14,69 @@ class AllGroupsWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final cubit = context.read<AllGroupsCubit>();
+    final manager = context.read<ActiveHabitsManager>();
+
     return Expanded(
       child: BlocBuilder<AllGroupsCubit, AllGroupsState>(
         builder: (context, state) {
-          return CustomScrollView(
-            slivers: [
-              for (final group in state.groupList)
-                SliverPadding(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: Constants.mainPageHorizontalPadding,
-                    vertical: 4,
+          return ReorderableListView.builder(
+            itemCount: state.groupList.length,
+            onReorder: (oldIndex, newIndex) =>
+                cubit.reorderGroups(oldIndex, newIndex),
+            proxyDecorator: (child, index, animation) {
+              return Material(
+                key: ValueKey("dragged_group_${state.groupList[index].id}"),
+                elevation: 4.0,
+                child: RepositoryProvider.value(
+                  value: manager,
+                  child: child,
+                ),
+              );
+            },
+            itemBuilder: (context, index) {
+              final group = state.groupList[index];
+              return Padding(
+                key: ValueKey(group.id),
+                padding: EdgeInsets.symmetric(
+                  horizontal: Constants.mainPageHorizontalPadding,
+                  vertical: 4,
+                ),
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(8.0),
                   ),
-                  sliver: SliverToBoxAdapter(
-                    child: Container(
-                      // This is the white container
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(8.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      ReorderableDragStartListener(
+                        index: index,
+                        child: GroupProvider(
+                          group: group,
+                          onTap: () => cubit.toggleGroup(group.id),
+                        ),
                       ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          // The Group Header
-                          GroupProvider(
-                            group: group,
-                            onTap: () => cubit.toggleGroup(group.id),
-                          ),
-
-                          // The Habits List (if expanded)
-                          AnimatedSwitcher(
-                            duration: const Duration(milliseconds: 150),
-                            transitionBuilder:
-                                (Widget child, Animation<double> animation) {
-                              return SizeTransition(
-                                sizeFactor: animation,
-                                child: child,
-                              );
-                            },
-                            child: state.expandedGroupIds.contains(group.id)
-                                ? HabitsCollectionProvider(group: group)
-                                : const SizedBox.shrink(),
-                          ),
-                        ],
+                      AnimatedSwitcher(
+                        duration: const Duration(milliseconds: 150),
+                        transitionBuilder:
+                            (Widget child, Animation<double> animation) {
+                          return SizeTransition(
+                            sizeFactor: animation,
+                            child: child,
+                          );
+                        },
+                        child: state.expandedGroupIds.contains(group.id)
+                            ? HabitsCollectionProvider(group: group)
+                            : const SizedBox.shrink(),
                       ),
-                    ),
+                    ],
                   ),
                 ),
-            ],
+              );
+            },
           );
         },
       ),
     );
   }
 }
-
-
-

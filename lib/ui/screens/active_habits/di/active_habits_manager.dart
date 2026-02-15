@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:habits_flow/domain/entities/habit_entity.dart';
 import 'package:injectable/injectable.dart';
+
 import 'package:rxdart/rxdart.dart';
 
 abstract class ActiveHabitsManager {
@@ -22,6 +23,7 @@ abstract class ActiveHabitsManager {
   void dispose();
 }
 
+@Injectable(as: ActiveHabitsManager)
 class ActiveHabitsManagerImpl implements ActiveHabitsManager {
   final BehaviorSubject<String> _drawOverHabit = BehaviorSubject<String>();
   final BehaviorSubject<HabitEntity?> _habitSelected = BehaviorSubject<HabitEntity?>();
