@@ -18,25 +18,35 @@ class HabitSelectedAppBar extends StatelessWidget
     final accent = uiModel.color[700];
     return PopScope(
       canPop: false,
-      onPopInvokedWithResult: (_,__) => cubit.clearSelection(),
+      onPopInvokedWithResult: (_, __) => cubit.clearSelection(),
       child: AppBar(
         backgroundColor: Colors.white,
         actionsPadding: EdgeInsets.symmetric(horizontal: 16),
         leading: IconButton(
-          icon:  Icon(Icons.close, color: accent,),
+          icon: Icon(
+            Icons.close,
+            color: accent,
+          ),
           onPressed: () => cubit.clearSelection(),
         ),
-          title: Text(uiModel.title, style:  TextStyle(color: accent),),
-          actions: [
-            IconButton(
-              icon:  Icon(Icons.restore, color: accent),
-              onPressed:  cubit.resetHabit,
+        title: Text(
+          uiModel.title,
+          style: TextStyle(color: accent),
+        ),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.restore, color: accent),
+            onPressed: cubit.resetHabit,
+          ),
+          IconButton(
+            icon: Icon(Icons.delete_outlined, color: accent),
+            onPressed: () => _handleDelete(
+              context: context,
+              deleteHabit: cubit.deleteHabit,
+              uiModel: uiModel,
             ),
-            IconButton(
-              icon:  Icon(Icons.delete_outlined, color: accent),
-              onPressed: () => _handleDelete(context),
-            ),
-          ],
+          ),
+        ],
       ),
     );
   }
@@ -44,10 +54,34 @@ class HabitSelectedAppBar extends StatelessWidget
   @override
   Size get preferredSize => const Size.fromHeight(kToolbarHeight);
 
-
-
-  void _handleDelete(BuildContext context) {}
-
-
+  void _handleDelete({
+    required BuildContext context,
+    required void Function(String habitId) deleteHabit,
+    required SelectedHabitUiModel uiModel,
+  }) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("delete habit?"),
+          content: Text(
+            "Are you sure you want to delete ${uiModel.title}?",
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () {
+                deleteHabit(uiModel.habitId);
+                Navigator.of(context).pop();
+              },
+              child: Text('Delete'),
+            ),
+          ],
+        );
+      },
+    );
+  }
 }
-

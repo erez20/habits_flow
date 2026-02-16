@@ -34,9 +34,13 @@ class HabitRepoImpl extends HabitRepo {
   }
 
   @override
-  Future<DomainResponse<void>> deleteHabit({required String habitId}) {
-    // TODO: implement deleteHabit
-    throw UnimplementedError();
+  Future<DomainResponse<void>> deleteHabit({required String habitId}) async {
+    try {
+      habitsLocalSource.deleteHabit(habitId: habitId);
+      return const Success(null);
+    } on Exception catch (e) {
+      return Failure(error: DatabaseError(message: e.toString()));
+    }
   }
 
   @override

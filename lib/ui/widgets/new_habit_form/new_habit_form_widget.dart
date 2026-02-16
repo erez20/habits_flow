@@ -15,6 +15,19 @@ class NewHabitFormWidget extends StatefulWidget {
 
 class _NewHabitFormWidgetState extends State<NewHabitFormWidget> {
   final _formKey = GlobalKey<FormBuilderState>();
+  late final FocusNode _titleFocusNode;
+
+  @override
+  void initState() {
+    super.initState();
+    _titleFocusNode = FocusNode();
+  }
+
+  @override
+  void dispose() {
+    _titleFocusNode.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -22,9 +35,6 @@ class _NewHabitFormWidgetState extends State<NewHabitFormWidget> {
       listener: (context, state) {
         if (state.isSuccess) {
           Navigator.of(context).pop();
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Habit created successfully!')),
-          );
         }
         if (state.errorMessage.isNotEmpty) {
           ScaffoldMessenger.of(context).showSnackBar(
@@ -106,7 +116,9 @@ class _NewHabitFormWidgetState extends State<NewHabitFormWidget> {
   FormBuilderTextField _title() {
     return FormBuilderTextField(
       name: 'title',
-      maxLength: 20,
+      maxLength: 28,
+      focusNode: _titleFocusNode,
+      autofocus: false, //for now, no focus request
       decoration: InputDecoration(
         labelText: 'Title',
         prefixIcon: Icon(Icons.title),

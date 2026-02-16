@@ -4,6 +4,7 @@ import 'package:fimber/fimber.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:habits_flow/domain/entities/habit_entity.dart';
 import 'package:habits_flow/domain/use_cases/group/add_group_use_case.dart';
+import 'package:habits_flow/domain/use_cases/habit/delete_habit_use_case.dart';
 import 'package:habits_flow/domain/use_cases/habit/reorder_habit_use_case.dart';
 import 'package:habits_flow/domain/use_cases/habit/reset_habit_use_case.dart';
 import 'package:habits_flow/domain/use_cases/shared/refresh_all_use_case.dart';
@@ -20,6 +21,8 @@ class ActiveHabitsScreenCubit extends Cubit<ActiveHabitsScreenState> {
   final ResetHabitUseCase resetHabitUseCase;
   final RefreshAllUseCase refreshAllUseCase;
   final ReorderHabitUseCase reorderHabitUseCase;
+  final DeleteHabitUseCase deleteHabitUseCase;
+
 
 
   ActiveHabitsScreenCubit({
@@ -28,6 +31,7 @@ class ActiveHabitsScreenCubit extends Cubit<ActiveHabitsScreenState> {
     required this.resetHabitUseCase,
     required this.refreshAllUseCase,
     required this.reorderHabitUseCase,
+    required this.deleteHabitUseCase,
   }) : super(ActiveHabitsScreenState.init()) {
     init();
   }
@@ -81,17 +85,22 @@ class ActiveHabitsScreenCubit extends Cubit<ActiveHabitsScreenState> {
     clearSelection();
   }
 
-  @override
-  Future<void> close() {
-    _habitSelectedStreamSubscription.cancel();
-    return super.close();
-  }
-
   void expandAll() {
     manager.collapseExpandAll(shouldExpand: true);
   }
 
   void collapseAll() {
     manager.collapseExpandAll(shouldExpand: false);
+  }
+
+  void deleteHabit(String habitId) {
+    deleteHabitUseCase.exec(habitId);
+    clearSelection();
+  }
+
+  @override
+  Future<void> close() {
+    _habitSelectedStreamSubscription.cancel();
+    return super.close();
   }
 }
