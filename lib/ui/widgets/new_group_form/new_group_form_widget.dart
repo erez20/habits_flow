@@ -139,15 +139,20 @@ class _NewGroupFormWidgetState extends State<NewGroupFormWidget> {
                       int.tryParse(formData['duration_value'] ?? '0') ?? 0;
                   final durationType = formData['duration_type'] as DurationType;
 
-                  int durationInSeconds = 0;
-                  if (durationType == DurationType.months) {
-                    durationInSeconds = durationValue * 30 * 24 * 3600;
-                  } else if (durationType == DurationType.days) {
-                    durationInSeconds = durationValue * 24 * 3600;
-                  } else if (durationType == DurationType.hours) {
-                    durationInSeconds = durationValue * 3600;
-                  } else if (durationType == DurationType.seconds) {
-                    durationInSeconds = durationValue;
+                  int durationInSeconds;
+                  switch (durationType) {
+                    case DurationType.months:
+                      durationInSeconds = durationValue * 30 * 24 * 3600;
+                      break;
+                    case DurationType.days:
+                      durationInSeconds = durationValue * 24 * 3600;
+                      break;
+                    case DurationType.hours:
+                      durationInSeconds = durationValue * 3600;
+                      break;
+                    case DurationType.seconds:
+                      durationInSeconds = durationValue;
+                      break;
                   }
 
                   if (durationInSeconds == 0) {

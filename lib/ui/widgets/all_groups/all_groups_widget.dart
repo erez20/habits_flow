@@ -49,7 +49,7 @@ class _EmptyGroupsWidget extends StatelessWidget {
             fontWeight: FontWeight.normal,
             color: Colors.blueGrey[800],
           ),
-          textAlign: .center,
+          textAlign: TextAlign.center,
         ),
       ),
     );

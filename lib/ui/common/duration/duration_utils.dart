@@ -27,11 +27,7 @@ extension DurationFormatter on int {
     if (weeks > 0) parts.add("${weeks}W");
     if (days > 0) parts.add("${days}D");
     if (hours > 0) parts.add("${hours}H");
-
-
     if (minutes > 0) parts.add("${minutes}Min");
-
-
     if (seconds > 0) parts.add("${seconds}S");
 
 
