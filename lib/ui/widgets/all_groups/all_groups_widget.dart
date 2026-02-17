@@ -44,7 +44,9 @@ class _EmptyGroupsWidget extends StatelessWidget {
         padding: const EdgeInsets.all(32.0),
         child: Text(
           "Habits Flow!\nTrack and organize your habits, no matter the frequency. To begin, create your first habit group (+) and start building a better you.",
-          style: TextStyle(fontSize: 32,                          fontWeight: FontWeight.normal,
+          style: TextStyle(
+            fontSize: 24,
+            fontWeight: FontWeight.normal,
             color: Colors.blueGrey[800],
           ),
           textAlign: .center,
