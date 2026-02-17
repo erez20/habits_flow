@@ -31,6 +31,7 @@ class ActiveHabitsScreen extends StatelessWidget {
                   ignoring: isDisabled,
                   child: AnimatedColorFiltered(
                     isDisabled: isDisabled,
+                    color: uiModel?.color??Colors.blue,
                     child: Column(
                       children: [
                         AllGroupsProvider(),
@@ -46,6 +47,7 @@ class ActiveHabitsScreen extends StatelessWidget {
                 if (isDisabled)
                   JoystickWidget(
                     habitId: uiModel.habitId,
+                    color: uiModel.color,
                     moveRequest: cubit.moveRequest,
                   ),
               ],

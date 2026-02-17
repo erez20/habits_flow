@@ -4,11 +4,12 @@ class AnimatedColorFiltered extends StatelessWidget {
   const AnimatedColorFiltered({
     super.key,
     required this.child,
-    required this.isDisabled,
+    required this.isDisabled, required this.color,
   });
 
-  final Widget child;
   final bool isDisabled;
+  final MaterialColor color;
+  final Widget child;
 
   @override
   Widget build(BuildContext context) {
@@ -18,7 +19,7 @@ class AnimatedColorFiltered extends StatelessWidget {
       builder: (context, value, child) {
         return ColorFiltered(
           colorFilter: ColorFilter.mode(
-            Colors.deepPurple.withValues(alpha: 0.2 * value),
+            color.withValues(alpha: 0.2 * value),
             BlendMode.srcATop,
           ),
           child: child,
