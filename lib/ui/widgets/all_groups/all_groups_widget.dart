@@ -19,64 +19,110 @@ class AllGroupsWidget extends StatelessWidget {
     return Expanded(
       child: BlocBuilder<AllGroupsCubit, AllGroupsState>(
         builder: (context, state) {
-          return ReorderableListView.builder(
-            itemCount: state.groupList.length,
-            onReorder: (oldIndex, newIndex) =>
-                cubit.reorderGroups(oldIndex, newIndex),
-            proxyDecorator: (child, index, animation) {
-              return Material(
-                key: ValueKey("dragged_group_${state.groupList[index].id}"),
-                elevation: 4.0,
-                child: RepositoryProvider.value(
-                  value: manager,
-                  child: child,
-                ),
-              );
-            },
-            itemBuilder: (context, index) {
-              final group = state.groupList[index];
-              return Padding(
-                key: ValueKey(group.id),
-                padding: EdgeInsets.symmetric(
-                  horizontal: Constants.mainPageHorizontalPadding,
-                  vertical: 4,
-                ),
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(8.0),
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      ReorderableDragStartListener(
-                        index: index,
-                        child: GroupProvider(
-                          group: group,
-                          onTap: () => cubit.toggleGroup(group.id),
-                        ),
-                      ),
-                      AnimatedSwitcher(
-                        duration: const Duration(milliseconds: 150),
-                        transitionBuilder:
-                            (Widget child, Animation<double> animation) {
-                          return SizeTransition(
-                            sizeFactor: animation,
-                            child: child,
-                          );
-                        },
-                        child: state.expandedGroupIds.contains(group.id)
-                            ? HabitsCollectionProvider(group: group)
-                            : const SizedBox.shrink(),
-                      ),
-                    ],
-                  ),
-                ),
-              );
-            },
-          );
+          if (state.isEmpty) {
+            return _EmptyGroupsWidget();
+          } else {
+            return _GroupsListWidget(
+              state: state,
+              cubit: cubit,
+              manager: manager,
+            );
+          }
         },
       ),
+    );
+  }
+}
+
+class _EmptyGroupsWidget extends StatelessWidget {
+  const _EmptyGroupsWidget({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(32.0),
+        child: Text(
+          "Habits Flow!\nTrack and organize your habits, no matter the frequency. To begin, create your first habit group (+) and start building a better you.",
+          style: TextStyle(fontSize: 32,                          fontWeight: FontWeight.normal,
+            color: Colors.blueGrey[800],
+          ),
+          textAlign: .center,
+        ),
+      ),
+    );
+  }
+}
+
+class _GroupsListWidget extends StatelessWidget {
+  const _GroupsListWidget({
+    super.key,
+    required this.state,
+    required this.cubit,
+    required this.manager,
+  });
+
+  final AllGroupsState state;
+  final AllGroupsCubit cubit;
+  final ActiveHabitsManager manager;
+
+  @override
+  Widget build(BuildContext context) {
+    return ReorderableListView.builder(
+      itemCount: state.groupList.length,
+      onReorder: (oldIndex, newIndex) =>
+          cubit.reorderGroups(oldIndex, newIndex),
+      proxyDecorator: (child, index, animation) {
+        return Material(
+          key: ValueKey("dragged_group_${state.groupList[index].id}"),
+          elevation: 4.0,
+          child: RepositoryProvider.value(
+            value: manager,
+            child: child,
+          ),
+        );
+      },
+      itemBuilder: (context, index) {
+        final group = state.groupList[index];
+        return Padding(
+          key: ValueKey(group.id),
+          padding: EdgeInsets.symmetric(
+            horizontal: Constants.mainPageHorizontalPadding,
+            vertical: 4,
+          ),
+          child: Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(8.0),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                ReorderableDragStartListener(
+                  index: index,
+                  child: GroupProvider(
+                    group: group,
+                    onTap: () => cubit.toggleGroup(group.id),
+                  ),
+                ),
+                AnimatedSwitcher(
+                  duration: const Duration(milliseconds: 150),
+                  transitionBuilder:
+                      (Widget child, Animation<double> animation) {
+                        return SizeTransition(
+                          sizeFactor: animation,
+                          child: child,
+                        );
+                      },
+                  child: state.expandedGroupIds.contains(group.id)
+                      ? HabitsCollectionProvider(group: group)
+                      : const SizedBox.shrink(),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 }

@@ -15,7 +15,6 @@ class CreateHabitWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final cubit = context.read<CreateHabitCubit>();
-    final habitsSep = Constants.habitsSep;
     final size = Constants.habitSide(context);
     return InkWell(
       onTap: () => _addHabitModal(

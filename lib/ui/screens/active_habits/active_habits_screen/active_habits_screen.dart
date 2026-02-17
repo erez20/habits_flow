@@ -33,11 +33,6 @@ class ActiveHabitsScreen extends StatelessWidget {
                     child: Column(
                       children: [
                         AllGroupsProvider(),
-                        // Container(
-                        //   height: 130,
-                        //   color: Colors.red,
-                        //   child: TestDashboardProvider(),
-                        // ),
                       ],
                     ),
                   ),

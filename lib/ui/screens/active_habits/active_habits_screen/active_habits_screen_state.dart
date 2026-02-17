@@ -7,6 +7,7 @@ class ActiveHabitsScreenState extends Equatable {
   });
 
   final SelectedHabitUiModel? uiModel;
+
   @override
   List<Object?> get props => [uiModel];
 

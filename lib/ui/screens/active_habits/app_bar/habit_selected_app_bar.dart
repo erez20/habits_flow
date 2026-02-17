@@ -18,7 +18,7 @@ class HabitSelectedAppBar extends StatelessWidget
     final accent = uiModel.color[900];
     return PopScope(
       canPop: false,
-      onPopInvokedWithResult: (_, __) => cubit.clearSelection(),
+      onPopInvokedWithResult: (_, _) => cubit.clearSelection(),
       child: AppBar(
         backgroundColor: Colors.white,
         actionsPadding: EdgeInsets.symmetric(horizontal: 16),

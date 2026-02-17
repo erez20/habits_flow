@@ -58,7 +58,7 @@ class HabitCubit extends Cubit<HabitState> {
   void performHabit() async {
     Fimber.d('perform habit ${habit.id}');
     await performHabitUseCase.exec(
-      PerformHabitUseCaseParams(habitId: habit.id),
+      PerformHabitUseCaseParams(habitId: habit.id, isCompleted: state.habit.isCompleted),
     );
   }
 

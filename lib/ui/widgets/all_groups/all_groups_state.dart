@@ -14,6 +14,9 @@ class AllGroupsState extends Equatable{
   @override
   List<Object?> get props => [groupList, expandedGroupIds];
 
+  bool get isEmpty => groupList.isEmpty;
+
+
   AllGroupsState copyWith({
     List<GroupEntity>? groupList,
     List<String>? expandedGroupIds,

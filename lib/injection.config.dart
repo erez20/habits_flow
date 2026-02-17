@@ -60,8 +60,6 @@ import 'package:habits_flow/ui/screens/active_habits/di/active_habits_manager.da
     as _i28;
 import 'package:habits_flow/ui/widgets/all_groups/all_groups_cubit.dart'
     as _i967;
-import 'package:habits_flow/ui/widgets/test_dashboard/test_dashboard_cubit.dart'
-    as _i312;
 import 'package:injectable/injectable.dart' as _i526;
 
 extension GetItInjectableX on _i174.GetIt {
@@ -147,17 +145,6 @@ extension GetItInjectableX on _i174.GetIt {
         groupsListStreamUseCase: gh<_i779.GroupsListStreamUseCase>(),
         reorderGroupsUseCase: gh<_i368.ReorderGroupsUseCase>(),
         manager: gh<_i28.ActiveHabitsManager>(),
-      ),
-    );
-    gh.factory<_i312.TestDashboardCubit>(
-      () => _i312.TestDashboardCubit(
-        addHabitUseCase: gh<_i262.AddHabitUseCase>(),
-        addGroupUseCase: gh<_i655.AddGroupUseCase>(),
-        generateDummyGroupNameUseCase:
-            gh<_i715.GenerateDummyGroupNameUseCase>(),
-        removeLastDummyGroupUseCase: gh<_i587.RemoveLastDummyGroupUseCase>(),
-        addDummyHabitToFirstGroupUseCase:
-            gh<_i349.AddDummyHabitToFirstGroupUseCase>(),
       ),
     );
     return this;

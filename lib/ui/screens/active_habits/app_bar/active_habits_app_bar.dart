@@ -15,7 +15,7 @@ class ActiveHabitsAppBar extends StatelessWidget
     final cubit = context.read<ActiveHabitsScreenCubit>();
     return AppBar(
       title: const Text(
-        'Active Habits',
+        'Habit Flow',
         style: TextStyle(
           color: Colors.white,
         ),
