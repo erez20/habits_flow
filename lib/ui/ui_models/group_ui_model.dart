@@ -10,6 +10,7 @@ class GroupUIModel extends Equatable {
   final int weight;
   final MaterialColor color;
   final List<HabitEntity> habits;
+  final int durationInSec;
 
   const GroupUIModel({
     required this.id,
@@ -17,6 +18,7 @@ class GroupUIModel extends Equatable {
     required this.weight,
     required this.color,
     required this.habits,
+    required this.durationInSec,
   });
 
   factory GroupUIModel.fromEntity(GroupEntity entity) {
@@ -26,6 +28,7 @@ class GroupUIModel extends Equatable {
       weight: entity.weight,
       color: AppColors.getMaterialColor(entity.groupColor),
       habits: entity.habits,
+      durationInSec: entity.durationInSec,
     );
   }
 
@@ -34,15 +37,9 @@ class GroupUIModel extends Equatable {
   int get completedHabits => habits.where((habit) => habit.isCompleted).length;
 
   @override
-  List<Object?> get props => [id, title, weight, habits, color];
+  List<Object?> get props => [id, title, weight, habits, color, durationInSec];
 
   String get hashKey =>
-      Object.hash(id, title, weight, color, Object.hashAll(habits)).toString();
+      Object.hash(id, title, weight, color, Object.hashAll(habits),durationInSec).toString();
 
-  @override
-  String toString() {
-    return 'GroupEntity(id: ${id.substring(id.length - 6)}, title: $title)';
-  }
-
-  String get shortId => id.substring(id.length - 6);
 }

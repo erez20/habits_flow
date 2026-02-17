@@ -15,7 +15,7 @@ class HabitSelectedAppBar extends StatelessWidget
   @override
   Widget build(BuildContext context) {
     final cubit = context.read<ActiveHabitsScreenCubit>();
-    final accent = uiModel.color[700];
+    final accent = uiModel.color[900];
     return PopScope(
       canPop: false,
       onPopInvokedWithResult: (_, __) => cubit.clearSelection(),
@@ -26,20 +26,22 @@ class HabitSelectedAppBar extends StatelessWidget
           icon: Icon(
             Icons.close,
             color: accent,
+            size: 32,
           ),
           onPressed: () => cubit.clearSelection(),
         ),
         title: Text(
           uiModel.title,
-          style: TextStyle(color: accent),
+          overflow: TextOverflow.ellipsis,
+          style: TextStyle(color: accent, fontSize: 32),
         ),
         actions: [
           IconButton(
-            icon: Icon(Icons.restore, color: accent),
+            icon: Icon(Icons.restore, color: accent, size: 32,),
             onPressed: cubit.resetHabit,
           ),
           IconButton(
-            icon: Icon(Icons.delete_outlined, color: accent),
+            icon: Icon(Icons.delete_outlined, color: accent, size: 32,),
             onPressed: () => _handleDelete(
               context: context,
               deleteHabit: cubit.deleteHabit,

@@ -116,7 +116,7 @@ class _NewHabitFormWidgetState extends State<NewHabitFormWidget> {
   FormBuilderTextField _title() {
     return FormBuilderTextField(
       name: 'title',
-      maxLength: 28,
+      maxLength: 20,
       focusNode: _titleFocusNode,
       autofocus: false, //for now, no focus request
       decoration: InputDecoration(

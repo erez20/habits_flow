@@ -1,6 +1,7 @@
 import 'package:fimber/fimber.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:habits_flow/ui/common/duration/duration_utils.dart';
 import 'package:habits_flow/ui/widgets/group/group_cubit.dart';
 import 'package:habits_flow/ui/widgets/group/group_state.dart';
 
@@ -43,7 +44,14 @@ class GroupWidget extends StatelessWidget {
                           color: Color(0xFF111827), // Light mode
                         ),
                       ),
-
+                      Text(
+                        " ${uiModel.durationInSec.toFormattedDuration()}",
+                        style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.normal,
+                          color: Color(0xFF6B7280), // Light mode
+                        ),
+                      ),
                       Text(
                         " ${uiModel.completedHabits}/${uiModel.habitsCount}",
                         style: TextStyle(
@@ -51,15 +59,23 @@ class GroupWidget extends StatelessWidget {
                           fontWeight: FontWeight.normal,
                           color: Color(0xFF6B7280), // Light mode
                         ),
-
                       ),
+
                       Expanded(child: SizedBox()),
                       InkWell(
-                        child:  Icon(Icons.delete_outlined, color: Color(0xFF111827), size: 24,),
-                        onTap: () => _handleDelete(context,cubit.deleteGroup),
+                        child: Icon(
+                          Icons.delete_outlined,
+                          color: Color(0xFF111827),
+                          size: 24,
+                        ),
+                        onTap: () => _handleDelete(context, cubit.deleteGroup),
                       ),
                       SizedBox(width: 8),
-                      Icon(Icons.drag_handle, color: Color(0xFF111827), size: 24,),
+                      Icon(
+                        Icons.drag_handle,
+                        color: Color(0xFF111827),
+                        size: 24,
+                      ),
                     ],
                   ),
                   SizedBox(height: 8),
@@ -71,7 +87,6 @@ class GroupWidget extends StatelessWidget {
                         : 0,
                     minHeight: 4,
                     borderRadius: BorderRadius.circular(1),
-
                   ),
                 ],
               ),

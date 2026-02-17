@@ -44,11 +44,15 @@ class HabitWidget extends StatelessWidget {
               borderRadius: BorderRadius.circular(12),
             ),
             child: Stack(
+              alignment: Alignment.center,
               children: [
-                Center(
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 4.0),
                   child: Text(
                     state.habit.title,
+                    maxLines: 2,
                     textAlign: TextAlign.center,
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ),
                 if (completionCount > 0)
