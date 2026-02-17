@@ -20,7 +20,7 @@ class AnimatedColorFiltered extends StatelessWidget {
         return ColorFiltered(
           colorFilter: ColorFilter.mode(
             color.withValues(alpha: 0.2 * value),
-            BlendMode.srcATop,
+            BlendMode.srcOver,
           ),
           child: child,
         );

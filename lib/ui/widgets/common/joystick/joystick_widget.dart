@@ -94,7 +94,7 @@ class _JoystickButton extends StatelessWidget {
                 child: Icon(
                   icon,
                   size: 80,
-                  color: color,
+                  color: color[800],
                 ),
               ),
             ),

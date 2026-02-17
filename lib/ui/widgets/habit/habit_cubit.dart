@@ -34,6 +34,9 @@ class HabitCubit extends Cubit<HabitState> {
 
   late final StreamSubscription<void> _drownSubscription;
 
+  late final StreamSubscription<bool> _isSelectedSubscription;
+
+
   void init() {
     _streamSubscription = habitStreamUseCase
         .stream(HabitStreamUseCaseParams(habitId: habit.id))
@@ -45,6 +48,10 @@ class HabitCubit extends Cubit<HabitState> {
 
     _drownSubscription = manager.listenToDrownHabit(habit.id).listen((event) {
       performHabit();
+    });
+
+     _isSelectedSubscription = manager.listenIsSHabitSelected(habit.id).listen((isSelected) {
+      emit(state.copyWith(isSelected: isSelected));
     });
   }
 
@@ -63,6 +70,7 @@ class HabitCubit extends Cubit<HabitState> {
   Future<void> close() {
     _streamSubscription.cancel();
     _drownSubscription.cancel();
+    _isSelectedSubscription.cancel();
     return super.close();
   }
 }

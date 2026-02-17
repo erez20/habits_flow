@@ -25,15 +25,21 @@ class HabitWidget extends StatelessWidget {
       child: BlocBuilder<HabitCubit, HabitState>(
         builder: (context, state) {
           var completionCount = state.habit.completionCount;
-          var materialColor = AppColors.getMaterialColor(state.habit.groupColor); //use ui model!!!
+          var materialColor = AppColors.getMaterialColor(
+            state.habit.groupColor,
+          ); //use ui model!!!
           return Container(
             width: side,
             height: side,
             decoration: BoxDecoration(
-              color: state.habit.isUncompleted ? materialColor[50] : materialColor[400],
+              color: state.habit.isUncompleted
+                  ? materialColor[50]
+                  : materialColor[400],
               border: Border.all(
-                color: AppColorsConst.border,
-                width: 2,
+                color: state.isSelected
+                    ? AppColorsConst.selectedBorder
+                    : AppColorsConst.border,
+                width: state.isSelected ? 4 : 2,
               ),
               borderRadius: BorderRadius.circular(12),
             ),
@@ -45,11 +51,8 @@ class HabitWidget extends StatelessWidget {
                     textAlign: TextAlign.center,
                   ),
                 ),
-                if (completionCount >0) Positioned(
-                  top: 2,
-                  right: 2,
-                  child: Text("$completionCount")
-                ),
+                if (completionCount > 0)
+                  Positioned(top: 2, right: 2, child: Text("$completionCount")),
               ],
             ),
           );

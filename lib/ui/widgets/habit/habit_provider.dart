@@ -32,7 +32,6 @@ class HabitProvider extends StatelessWidget {
       create: (context) => HabitCubit(
         habitRepo: habitRepo,
         habit: habit,
-
         habitStreamUseCase: habitStreamUseCase,
         performHabitUseCase: performHabitUseCase,
         manager: manager,

@@ -14,6 +14,8 @@ abstract class ActiveHabitsManager {
 
   Stream<bool> get listenToCollapseExpandAll;
 
+  Stream<bool> listenIsSHabitSelected(String habitId);
+
   void collapseExpandAll({required bool shouldExpand});
 
   void habitSelected({required HabitEntity habit});
@@ -39,6 +41,9 @@ class ActiveHabitsManagerImpl implements ActiveHabitsManager {
 
   @override
   Stream<HabitEntity?> get listenToHabitSelected => _habitSelected.stream;
+
+  @override
+  Stream<bool>  listenIsSHabitSelected(String habitId) => _habitSelected.stream.map((e) => e?.id == habitId);
 
   @override
   void habitSelected({required HabitEntity habit}) =>

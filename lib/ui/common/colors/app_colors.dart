@@ -36,4 +36,5 @@ class AppColors {
 
 class AppColorsConst {
   static  final border =Colors.grey[700]!;
+  static  final selectedBorder =Colors.grey[900]!;
 }
