@@ -28,11 +28,18 @@ class AllGroupsCubit extends Cubit<AllGroupsState> {
   }
 
   void init() {
+    //TODO change the null
     _groupsListSubscription = groupsListStreamUseCase.stream(null).listen((
       event,
     ) {
-      emit(state.copyWith(groupList: event));
-    });
+      final expandedGroupIds = List<String>.from(state.expandedGroupIds);
+      if (state.groupList.length < event.length) {
+        expandedGroupIds.add(event.last.id);
+      }
+      emit(state.copyWith(groupList: event, expandedGroupIds: expandedGroupIds));
+
+      }
+    );
     _groupsExpandCollapseAllSubscription = manager.listenToCollapseExpandAll
         .listen((shouldExpand) {
           if (shouldExpand) {
