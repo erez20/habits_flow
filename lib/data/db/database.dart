@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:drift/drift.dart';
 import 'package:drift_flutter/drift_flutter.dart';
+import 'package:fimber/fimber.dart' show Fimber;
 import 'package:injectable/injectable.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as p;
@@ -97,24 +98,35 @@ class AppDatabase extends _$AppDatabase {
     return driftDatabase(name: 'habits_flow_db');
   }
 
+  Future<File> _getDbFile() async {
+    final dbFolder = await getApplicationDocumentsDirectory();
+    return File(p.join(dbFolder.path, 'habits_flow_db.sqlite'));
+  }
+
   //import / export
-  Future<File> _getDatabaseFile() async {
+  Future<File> _getBackupFile() async {
     final dbFolder = await getApplicationDocumentsDirectory();
     final now = DateTime.now();
-    var timestamp = "${now.year}${now.month.toString().padLeft(2, '0')}${now.day.toString().padLeft(2, '0')}_${now.hour.toString().padLeft(2, '0')}${now.minute.toString().padLeft(2, '0')}";
+    var timestamp =
+        "${now.year}${now.month.toString().padLeft(2, '0')}${now.day.toString().padLeft(2, '0')}_${now.hour.toString().padLeft(2, '0')}${now.minute.toString().padLeft(2, '0')}";
 
     return File(p.join(dbFolder.path, 'habits_$timestamp.sqlite'));
   }
 
   Future<File> generateBackup() async {
     await customStatement('PRAGMA wal_checkpoint(TRUNCATE)');
-    return await _getDatabaseFile();
+    final dbFile = await _getDbFile();
+    final backupFile = await _getBackupFile();
+    await dbFile.copy(backupFile.path);
+
+    Fimber.i('Backup generated at ${backupFile.path}');
+    return backupFile;
   }
 
   Future<void> restoreBackup(String pickedFilePath) async {
     await close();
     //Overwrite the db file
-    final dbFile = await _getDatabaseFile();
+    final dbFile = await _getDbFile();
     await File(pickedFilePath).copy(dbFile.path);
 
     //TODO  3. Restart the app (or reinitialize the DB singleton)

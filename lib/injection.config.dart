@@ -11,10 +11,15 @@
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:get_it/get_it.dart' as _i174;
 import 'package:habits_flow/data/db/database.dart' as _i118;
+import 'package:habits_flow/data/repos/backup_repo_impl.dart' as _i769;
 import 'package:habits_flow/data/repos/group_repo_impl.dart' as _i38;
 import 'package:habits_flow/data/repos/habit_repo_impl.dart' as _i375;
 import 'package:habits_flow/data/repos/refresh_scheduler_repo_impl.dart'
     as _i186;
+import 'package:habits_flow/data/sources/backup/backup_local_source.dart'
+    as _i877;
+import 'package:habits_flow/data/sources/backup/backup_local_source_impl.dart'
+    as _i705;
 import 'package:habits_flow/data/sources/groups/group_local_source.dart'
     as _i25;
 import 'package:habits_flow/data/sources/groups/group_local_source_impl.dart'
@@ -23,6 +28,7 @@ import 'package:habits_flow/data/sources/habits/habit_local_source.dart'
     as _i545;
 import 'package:habits_flow/data/sources/habits/habit_local_source_impl.dart'
     as _i995;
+import 'package:habits_flow/domain/repos/backup_repo.dart' as _i600;
 import 'package:habits_flow/domain/repos/group_repo.dart' as _i136;
 import 'package:habits_flow/domain/repos/habit_repo.dart' as _i877;
 import 'package:habits_flow/domain/repos/refresh_scheduler_repo.dart' as _i184;
@@ -54,8 +60,12 @@ import 'package:habits_flow/domain/use_cases/habit/reorder_habit_use_case.dart'
     as _i618;
 import 'package:habits_flow/domain/use_cases/habit/reset_habit_use_case.dart'
     as _i1072;
+import 'package:habits_flow/domain/use_cases/shared/generate_backup_use_case.dart'
+    as _i182;
 import 'package:habits_flow/domain/use_cases/shared/refresh_all_use_case.dart'
     as _i315;
+import 'package:habits_flow/domain/use_cases/shared/restore_backup_use_case.dart'
+    as _i112;
 import 'package:habits_flow/ui/screens/active_habits/di/active_habits_manager.dart'
     as _i28;
 import 'package:habits_flow/ui/widgets/all_groups/all_groups_cubit.dart'
@@ -93,11 +103,19 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i25.GroupLocalSource>(
       () => _i646.GroupLocalSourceImpl(gh<_i118.AppDatabase>()),
     );
+    gh.factory<_i877.BackupLocalSource>(
+      () => _i705.BackupLocalSourceImpl(gh<_i118.AppDatabase>()),
+    );
     gh.lazySingleton<_i136.GroupRepo>(
       () => _i38.GroupRepoImpl(groupLocalSource: gh<_i25.GroupLocalSource>()),
     );
     gh.factory<_i1073.HabitsOfGroupStreamUseCase>(
       () => _i1073.HabitsOfGroupStreamUseCase(gh<_i877.HabitRepo>()),
+    );
+    gh.lazySingleton<_i600.BackupRepo>(
+      () => _i769.BackupRepoImpl(
+        backupLocalSource: gh<_i877.BackupLocalSource>(),
+      ),
     );
     gh.factory<_i262.AddHabitUseCase>(
       () => _i262.AddHabitUseCase(
@@ -132,6 +150,12 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.factory<_i779.GroupsListStreamUseCase>(
       () => _i779.GroupsListStreamUseCase(groupRepo: gh<_i136.GroupRepo>()),
+    );
+    gh.factory<_i182.GenerateBackupUseCase>(
+      () => _i182.GenerateBackupUseCase(backupRepo: gh<_i600.BackupRepo>()),
+    );
+    gh.factory<_i112.RestoreBackupUseCase>(
+      () => _i112.RestoreBackupUseCase(backupRepo: gh<_i600.BackupRepo>()),
     );
     gh.factory<_i315.RefreshAllUseCase>(
       () => _i315.RefreshAllUseCase(

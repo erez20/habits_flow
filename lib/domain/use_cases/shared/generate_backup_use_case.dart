@@ -6,7 +6,7 @@ import 'package:habits_flow/domain/use_cases/base/exec_use_case.dart';
 import 'package:injectable/injectable.dart';
 
 @Injectable()
-class GenerateBackupUseCase extends ExecUseCase<File, void> {
+class GenerateBackupUseCase extends ExecUseCase<void, void> {
   final BackupRepo backupRepo;
 
   GenerateBackupUseCase({required this.backupRepo});

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:habits_flow/ui/screens/active_habits/side_menu/side_menu_cubit.dart' show SideMenuCubit;
 
 
 class SideMenuWidget extends StatelessWidget {
@@ -8,6 +10,7 @@ class SideMenuWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final cubit = context.read<SideMenuCubit>();
     return Drawer(
       child: ListView(
         padding: EdgeInsets.zero,
@@ -25,7 +28,7 @@ class SideMenuWidget extends StatelessWidget {
             ),
 
           ),
-          ListTile(title: Text("Export Data",),),
+          ListTile(title: GestureDetector(onTap: cubit.exportDb,child: Text("Export Data",)),),
           // Add other Drawer items here
         ],
       ),
