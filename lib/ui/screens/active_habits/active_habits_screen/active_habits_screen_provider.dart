@@ -1,3 +1,4 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:habits_flow/domain/use_cases/group/add_group_use_case.dart';
@@ -10,6 +11,7 @@ import 'package:habits_flow/ui/screens/active_habits/di/active_habits_manager.da
 import 'active_habits_screen_cubit.dart';
 import 'active_habits_screen.dart';
 
+@RoutePage()
 class ActiveHabitsScreenProvider extends StatelessWidget {
   const ActiveHabitsScreenProvider({super.key});
 
