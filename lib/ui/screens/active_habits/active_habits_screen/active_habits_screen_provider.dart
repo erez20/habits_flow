@@ -10,6 +10,7 @@ import 'package:habits_flow/ui/screens/active_habits/di/active_habits_manager.da
 import 'active_habits_screen_cubit.dart';
 import 'active_habits_screen.dart';
 
+
 class ActiveHabitsScreenProvider extends StatelessWidget {
   const ActiveHabitsScreenProvider({super.key});
 

@@ -6,8 +6,8 @@ import 'package:habits_flow/ui/screens/active_habits/active_habits_screen/active
 import 'active_habits_app_bar.dart';
 import 'habit_selected_app_bar.dart';
 
-class AppBarBuilder extends StatelessWidget implements PreferredSizeWidget {
-  const AppBarBuilder({super.key});
+class HabitsAppBarBuilder extends StatelessWidget implements PreferredSizeWidget {
+  const HabitsAppBarBuilder({super.key});
 
   @override
   Widget build(BuildContext context) {
