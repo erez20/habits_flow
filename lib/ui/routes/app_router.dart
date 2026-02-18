@@ -3,7 +3,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:habits_flow/ui/routes/app_router.gr.dart';
 
 
-@AutoRouterConfig()
+@AutoRouterConfig(replaceInRouteName:'')
 class AppRouter extends RootStackRouter {
 
   @override
@@ -11,5 +11,5 @@ class AppRouter extends RootStackRouter {
 
   @override
   List<AutoRoute> get routes => [
-    AutoRoute(page: ActiveHabitsRouteProvider.page, initial: true),  ];
+    AutoRoute(page: ActiveHabitsProviderRoute.page, initial: true),  ];
 }
