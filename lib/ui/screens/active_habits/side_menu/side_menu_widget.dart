@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:habits_flow/app_cubit.dart';
 import 'package:habits_flow/ui/screens/active_habits/side_menu/side_menu_cubit.dart' show SideMenuCubit;
 
 
@@ -29,9 +30,8 @@ class SideMenuWidget extends StatelessWidget {
 
           ),
           ListTile(title: GestureDetector(onTap: cubit.exportDb,child: Text("Export Data",)),),
-          ListTile(title: GestureDetector(onTap: ()=> cubit.pickAndRestore(context),child: Text("Restore Backup",)),),
+          ListTile(title: GestureDetector(onTap: ()=> cubit.pickAndRestore(context.read<AppCubit>().restartApp),child: Text("Restore Backup",)),),
 
-          //TODO test import export!
         ],
       ),
     );

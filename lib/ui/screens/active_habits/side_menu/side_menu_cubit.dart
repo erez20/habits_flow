@@ -39,7 +39,7 @@ class SideMenuCubit extends Cubit<SideMenuState> {
     }
   }
 
-  Future<void> pickAndRestore(BuildContext context) async {
+  Future<void> pickAndRestore(VoidCallback restartApp) async {
     final result = await FilePicker.platform.pickFiles(
       type: FileType.any, // or FileType.custom, allowedExtensions: ['sqlite']
     );
@@ -49,9 +49,7 @@ class SideMenuCubit extends Cubit<SideMenuState> {
     final pickedFilePath = result.files.single.path!;
     final restoreResult = await restoreBackupUseCase.exec(pickedFilePath);
     if (restoreResult is Success) {
-      await getIt.reset();
-      configureDependencies();
-      AppRestarter.restart(context);
+      restartApp();
     }
   }
 }

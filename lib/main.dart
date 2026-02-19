@@ -1,9 +1,10 @@
-
-
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:habits_flow/core/logger/app_logger.dart';
 import 'package:habits_flow/main/injection.dart';
 
+import 'app_cubit.dart';
+import 'app_state.dart';
 import 'main/habits_flow_app.dart';
 
 void main() {
@@ -33,9 +34,16 @@ class _AppRestarterState extends State<AppRestarter> {
 
   @override
   Widget build(BuildContext context) {
-    return HabitsFlowApp(key: ValueKey(_key));
+    return BlocProvider(
+      create: (_) => AppCubit(),
+      child: BlocListener<AppCubit, AppState>(
+        listener: (context, state) {
+          if (state is AppRestarting) {
+            setState(() => _key++);
+          }
+        },
+        child: HabitsFlowApp(key: ValueKey(_key)),
+      ),
+    );
   }
 }
-
-
-
