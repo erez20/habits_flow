@@ -4,7 +4,7 @@ import 'package:habits_flow/domain/entities/habit_entity.dart';
 import 'package:habits_flow/domain/repos/habit_repo.dart';
 import 'package:habits_flow/domain/use_cases/habit/habit_stream_use_case.dart';
 import 'package:habits_flow/domain/use_cases/habit/perform_habit_use_case.dart';
-import 'package:habits_flow/injection.dart';
+import 'package:habits_flow/main/injection.dart';
 import 'package:habits_flow/ui/common/constants.dart';
 import 'package:habits_flow/ui/screens/active_habits/di/active_habits_manager.dart';
 

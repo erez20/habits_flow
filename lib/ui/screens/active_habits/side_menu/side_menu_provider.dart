@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:habits_flow/domain/use_cases/shared/generate_backup_use_case.dart';
 import 'package:habits_flow/domain/use_cases/shared/restore_backup_use_case.dart';
-import 'package:habits_flow/injection.dart';
+import 'package:habits_flow/main/injection.dart';
 import 'side_menu_cubit.dart';
 import 'side_menu_widget.dart';
 
