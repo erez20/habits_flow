@@ -29,7 +29,7 @@ class SideMenuWidget extends StatelessWidget {
 
           ),
           ListTile(title: GestureDetector(onTap: cubit.exportDb,child: Text("Export Data",)),),
-          ListTile(title: GestureDetector(onTap: cubit.pickAndRestore,child: Text("Restore Backup",)),),
+          ListTile(title: GestureDetector(onTap: ()=> cubit.pickAndRestore(context),child: Text("Restore Backup",)),),
 
           //TODO test import export!
         ],

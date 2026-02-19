@@ -13,6 +13,7 @@ class RestoreBackupUseCase extends ExecUseCase<void, String> {
   Future<DomainResponse<void>> exec(String path) async {
     try {
       await backupRepo.restoreBackup(path);
+
       return Success(null);
     } catch (e) {
       return Failure(error: DatabaseError(message: e.toString()));

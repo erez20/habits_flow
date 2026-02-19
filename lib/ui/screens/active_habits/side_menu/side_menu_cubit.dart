@@ -1,7 +1,10 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:habits_flow/domain/responses/domain_response.dart';
 import 'package:habits_flow/domain/use_cases/shared/generate_backup_use_case.dart';
 import 'package:habits_flow/domain/use_cases/shared/restore_backup_use_case.dart';
+import 'package:habits_flow/main.dart';
+import 'package:habits_flow/main/injection.dart';
 import 'side_menu_state.dart';
 import 'package:share_plus/share_plus.dart'; // Share, XFile
 import 'package:file_picker/file_picker.dart'; // FilePicker
@@ -36,7 +39,7 @@ class SideMenuCubit extends Cubit<SideMenuState> {
     }
   }
 
-  Future<void> pickAndRestore() async {
+  Future<void> pickAndRestore(BuildContext context) async {
     final result = await FilePicker.platform.pickFiles(
       type: FileType.any, // or FileType.custom, allowedExtensions: ['sqlite']
     );
@@ -44,6 +47,11 @@ class SideMenuCubit extends Cubit<SideMenuState> {
     if (result == null) return; // user cancelled
 
     final pickedFilePath = result.files.single.path!;
-    restoreBackupUseCase.exec(pickedFilePath);
+    final restoreResult = await restoreBackupUseCase.exec(pickedFilePath);
+    if (restoreResult is Success) {
+      await getIt.reset();
+      configureDependencies();
+      AppRestarter.restart(context);
+    }
   }
 }
