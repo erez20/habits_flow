@@ -1,29 +1,35 @@
 import 'package:equatable/equatable.dart';
 import 'package:habits_flow/domain/entities/group_entity.dart';
 
-class AllGroupsState extends Equatable{
+class AllGroupsState extends Equatable {
   final List<GroupEntity> groupList;
   final List<String> expandedGroupIds;
-   const AllGroupsState({required this.groupList, required this.expandedGroupIds});
+  final bool isInit;
+
+  const AllGroupsState({
+    required this.groupList,
+    required this.expandedGroupIds,
+    required this.isInit,
+  });
 
   factory AllGroupsState.initial() {
-    return  AllGroupsState(groupList: [], expandedGroupIds: []);
+    return AllGroupsState(groupList: [], expandedGroupIds: [], isInit: true);
   }
 
-
   @override
-  List<Object?> get props => [groupList, expandedGroupIds];
+  List<Object?> get props => [groupList, expandedGroupIds, isInit];
 
   bool get isEmpty => groupList.isEmpty;
-
 
   AllGroupsState copyWith({
     List<GroupEntity>? groupList,
     List<String>? expandedGroupIds,
+    bool? isInit,
   }) {
     return AllGroupsState(
       groupList: groupList ?? this.groupList,
       expandedGroupIds: expandedGroupIds ?? this.expandedGroupIds,
+      isInit: isInit ?? this.isInit,
     );
   }
 

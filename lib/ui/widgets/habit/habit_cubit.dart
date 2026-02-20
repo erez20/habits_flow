@@ -50,7 +50,7 @@ class HabitCubit extends Cubit<HabitState> {
       performHabit();
     });
 
-     _isSelectedSubscription = manager.listenIsSHabitSelected(habit.id).listen((isSelected) {
+     _isSelectedSubscription = manager.listenIsHabitSelected(habit.id).listen((isSelected) {
       emit(state.copyWith(isSelected: isSelected));
     });
   }
