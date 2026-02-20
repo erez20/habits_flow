@@ -14,6 +14,13 @@ class ActiveHabitsAppBar extends StatelessWidget
   Widget build(BuildContext context) {
     final cubit = context.read<ActiveHabitsScreenCubit>();
     return AppBar(
+      leading: Builder(
+        builder: (context) => IconButton(
+          icon: Icon(Icons.menu, color: Colors.white),
+          onPressed: () => Scaffold.of(context).openDrawer(),
+        ),
+      ),
+
       title: const Text(
         'Habit Flow',
         style: TextStyle(

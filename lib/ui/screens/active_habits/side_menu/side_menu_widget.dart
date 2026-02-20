@@ -13,6 +13,7 @@ class SideMenuWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final cubit = context.read<SideMenuCubit>();
     return Drawer(
+      backgroundColor: Colors.grey[200],
       child: ListView(
         padding: EdgeInsets.zero,
         children:  [
