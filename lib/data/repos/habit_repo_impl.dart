@@ -18,6 +18,7 @@ class HabitRepoImpl extends HabitRepo {
     required String link,
     required double weight,
     required int groupColor,
+    required int points,
   }) async {
     try {
       final habit = await habitsLocalSource.createHabit(
@@ -26,6 +27,7 @@ class HabitRepoImpl extends HabitRepo {
         link: link,
         weight: weight,
         groupColor: groupColor,
+        points: points,
       );
       return Success(habit);
     } on Exception catch (e) {

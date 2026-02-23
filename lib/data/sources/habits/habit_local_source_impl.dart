@@ -25,6 +25,7 @@ class HabitLocalSourceImpl implements HabitLocalSource {
     required String link,
     required double weight,
     required int groupColor,
+    required int points,
   }) async {
     final id = const Uuid().v4();
     final companion = HabitsCompanion.insert(
@@ -34,6 +35,7 @@ class HabitLocalSourceImpl implements HabitLocalSource {
       link: Value(link),
       weight: Value(weight),
       createdAt: Value(DateTime.now()),
+      points: Value(points),
     );
 
     await db.into(db.habits).insert(companion);
@@ -46,6 +48,7 @@ class HabitLocalSourceImpl implements HabitLocalSource {
       weight: weight,
       completionCount: 0, //new habit
       groupColor: groupColor,
+      points: points,
     );
   }
 
@@ -194,6 +197,7 @@ class HabitLocalSourceImpl implements HabitLocalSource {
             link: h.habit.link,
             completionCount: counts[index],
             groupColor: h.groupColor,
+            points: h.habit.points,
           );
         });
       });
@@ -226,6 +230,7 @@ class HabitLocalSourceImpl implements HabitLocalSource {
           link: habit.link,
           completionCount: completionCount,
           groupColor: group.colorValue,
+          points: habit.points,
         );
       });
     });

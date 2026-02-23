@@ -22,11 +22,13 @@ class NewHabitFormCubit extends Cubit<NewHabitFormState> {
 
       final newUIModel = NewHabitFormUiModel(
         title: formData['title'],
-        info: formData['info']??"",
-        link: formData['link']??"",
+        info: formData['info'] ?? "",
+        link: formData['link'] ?? "",
+        points: formData['points'],
       );
       onConfirm(uiModel: newUIModel);
-      Fimber.d("Saving Entity: ${newUIModel.title} with info: ${newUIModel.info}");
+      Fimber.d(
+          "Saving Entity: ${newUIModel.title} with info: ${newUIModel.info}");
       emit(state.copyWith(isSubmitting: false, isSuccess: true));
     } catch (e) {
       emit(state.copyWith(isSubmitting: false, errorMessage: e.toString()));

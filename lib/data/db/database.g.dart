@@ -488,6 +488,16 @@ class $HabitsTable extends Habits with TableInfo<$HabitsTable, Habit> {
       'REFERENCES "groups" (id) ON DELETE CASCADE',
     ),
   );
+  static const VerificationMeta _pointsMeta = const VerificationMeta('points');
+  @override
+  late final GeneratedColumn<int> points = GeneratedColumn<int>(
+    'points',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(1),
+  );
   @override
   List<GeneratedColumn> get $columns => [
     id,
@@ -497,6 +507,7 @@ class $HabitsTable extends Habits with TableInfo<$HabitsTable, Habit> {
     weight,
     createdAt,
     groupId,
+    points,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -553,6 +564,12 @@ class $HabitsTable extends Habits with TableInfo<$HabitsTable, Habit> {
         groupId.isAcceptableOrUnknown(data['group_id']!, _groupIdMeta),
       );
     }
+    if (data.containsKey('points')) {
+      context.handle(
+        _pointsMeta,
+        points.isAcceptableOrUnknown(data['points']!, _pointsMeta),
+      );
+    }
     return context;
   }
 
@@ -590,6 +607,10 @@ class $HabitsTable extends Habits with TableInfo<$HabitsTable, Habit> {
         DriftSqlType.string,
         data['${effectivePrefix}group_id'],
       ),
+      points: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}points'],
+      )!,
     );
   }
 
@@ -607,6 +628,7 @@ class Habit extends DataClass implements Insertable<Habit> {
   final double weight;
   final DateTime createdAt;
   final String? groupId;
+  final int points;
   const Habit({
     required this.id,
     required this.title,
@@ -615,6 +637,7 @@ class Habit extends DataClass implements Insertable<Habit> {
     required this.weight,
     required this.createdAt,
     this.groupId,
+    required this.points,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -628,6 +651,7 @@ class Habit extends DataClass implements Insertable<Habit> {
     if (!nullToAbsent || groupId != null) {
       map['group_id'] = Variable<String>(groupId);
     }
+    map['points'] = Variable<int>(points);
     return map;
   }
 
@@ -642,6 +666,7 @@ class Habit extends DataClass implements Insertable<Habit> {
       groupId: groupId == null && nullToAbsent
           ? const Value.absent()
           : Value(groupId),
+      points: Value(points),
     );
   }
 
@@ -658,6 +683,7 @@ class Habit extends DataClass implements Insertable<Habit> {
       weight: serializer.fromJson<double>(json['weight']),
       createdAt: serializer.fromJson<DateTime>(json['createdAt']),
       groupId: serializer.fromJson<String?>(json['groupId']),
+      points: serializer.fromJson<int>(json['points']),
     );
   }
   @override
@@ -671,6 +697,7 @@ class Habit extends DataClass implements Insertable<Habit> {
       'weight': serializer.toJson<double>(weight),
       'createdAt': serializer.toJson<DateTime>(createdAt),
       'groupId': serializer.toJson<String?>(groupId),
+      'points': serializer.toJson<int>(points),
     };
   }
 
@@ -682,6 +709,7 @@ class Habit extends DataClass implements Insertable<Habit> {
     double? weight,
     DateTime? createdAt,
     Value<String?> groupId = const Value.absent(),
+    int? points,
   }) => Habit(
     id: id ?? this.id,
     title: title ?? this.title,
@@ -690,6 +718,7 @@ class Habit extends DataClass implements Insertable<Habit> {
     weight: weight ?? this.weight,
     createdAt: createdAt ?? this.createdAt,
     groupId: groupId.present ? groupId.value : this.groupId,
+    points: points ?? this.points,
   );
   Habit copyWithCompanion(HabitsCompanion data) {
     return Habit(
@@ -700,6 +729,7 @@ class Habit extends DataClass implements Insertable<Habit> {
       weight: data.weight.present ? data.weight.value : this.weight,
       createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
       groupId: data.groupId.present ? data.groupId.value : this.groupId,
+      points: data.points.present ? data.points.value : this.points,
     );
   }
 
@@ -712,14 +742,15 @@ class Habit extends DataClass implements Insertable<Habit> {
           ..write('link: $link, ')
           ..write('weight: $weight, ')
           ..write('createdAt: $createdAt, ')
-          ..write('groupId: $groupId')
+          ..write('groupId: $groupId, ')
+          ..write('points: $points')
           ..write(')'))
         .toString();
   }
 
   @override
   int get hashCode =>
-      Object.hash(id, title, info, link, weight, createdAt, groupId);
+      Object.hash(id, title, info, link, weight, createdAt, groupId, points);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -730,7 +761,8 @@ class Habit extends DataClass implements Insertable<Habit> {
           other.link == this.link &&
           other.weight == this.weight &&
           other.createdAt == this.createdAt &&
-          other.groupId == this.groupId);
+          other.groupId == this.groupId &&
+          other.points == this.points);
 }
 
 class HabitsCompanion extends UpdateCompanion<Habit> {
@@ -741,6 +773,7 @@ class HabitsCompanion extends UpdateCompanion<Habit> {
   final Value<double> weight;
   final Value<DateTime> createdAt;
   final Value<String?> groupId;
+  final Value<int> points;
   final Value<int> rowid;
   const HabitsCompanion({
     this.id = const Value.absent(),
@@ -750,6 +783,7 @@ class HabitsCompanion extends UpdateCompanion<Habit> {
     this.weight = const Value.absent(),
     this.createdAt = const Value.absent(),
     this.groupId = const Value.absent(),
+    this.points = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   HabitsCompanion.insert({
@@ -760,6 +794,7 @@ class HabitsCompanion extends UpdateCompanion<Habit> {
     this.weight = const Value.absent(),
     this.createdAt = const Value.absent(),
     this.groupId = const Value.absent(),
+    this.points = const Value.absent(),
     this.rowid = const Value.absent(),
   }) : id = Value(id),
        title = Value(title);
@@ -771,6 +806,7 @@ class HabitsCompanion extends UpdateCompanion<Habit> {
     Expression<double>? weight,
     Expression<DateTime>? createdAt,
     Expression<String>? groupId,
+    Expression<int>? points,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
@@ -781,6 +817,7 @@ class HabitsCompanion extends UpdateCompanion<Habit> {
       if (weight != null) 'weight': weight,
       if (createdAt != null) 'created_at': createdAt,
       if (groupId != null) 'group_id': groupId,
+      if (points != null) 'points': points,
       if (rowid != null) 'rowid': rowid,
     });
   }
@@ -793,6 +830,7 @@ class HabitsCompanion extends UpdateCompanion<Habit> {
     Value<double>? weight,
     Value<DateTime>? createdAt,
     Value<String?>? groupId,
+    Value<int>? points,
     Value<int>? rowid,
   }) {
     return HabitsCompanion(
@@ -803,6 +841,7 @@ class HabitsCompanion extends UpdateCompanion<Habit> {
       weight: weight ?? this.weight,
       createdAt: createdAt ?? this.createdAt,
       groupId: groupId ?? this.groupId,
+      points: points ?? this.points,
       rowid: rowid ?? this.rowid,
     );
   }
@@ -831,6 +870,9 @@ class HabitsCompanion extends UpdateCompanion<Habit> {
     if (groupId.present) {
       map['group_id'] = Variable<String>(groupId.value);
     }
+    if (points.present) {
+      map['points'] = Variable<int>(points.value);
+    }
     if (rowid.present) {
       map['rowid'] = Variable<int>(rowid.value);
     }
@@ -847,6 +889,7 @@ class HabitsCompanion extends UpdateCompanion<Habit> {
           ..write('weight: $weight, ')
           ..write('createdAt: $createdAt, ')
           ..write('groupId: $groupId, ')
+          ..write('points: $points, ')
           ..write('rowid: $rowid')
           ..write(')'))
         .toString();
@@ -1530,6 +1573,7 @@ typedef $$HabitsTableCreateCompanionBuilder =
       Value<double> weight,
       Value<DateTime> createdAt,
       Value<String?> groupId,
+      Value<int> points,
       Value<int> rowid,
     });
 typedef $$HabitsTableUpdateCompanionBuilder =
@@ -1541,6 +1585,7 @@ typedef $$HabitsTableUpdateCompanionBuilder =
       Value<double> weight,
       Value<DateTime> createdAt,
       Value<String?> groupId,
+      Value<int> points,
       Value<int> rowid,
     });
 
@@ -1627,6 +1672,11 @@ class $$HabitsTableFilterComposer
 
   ColumnFilters<DateTime> get createdAt => $composableBuilder(
     column: $table.createdAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get points => $composableBuilder(
+    column: $table.points,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -1718,6 +1768,11 @@ class $$HabitsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<int> get points => $composableBuilder(
+    column: $table.points,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   $$GroupsTableOrderingComposer get groupId {
     final $$GroupsTableOrderingComposer composer = $composerBuilder(
       composer: this,
@@ -1768,6 +1823,9 @@ class $$HabitsTableAnnotationComposer
 
   GeneratedColumn<DateTime> get createdAt =>
       $composableBuilder(column: $table.createdAt, builder: (column) => column);
+
+  GeneratedColumn<int> get points =>
+      $composableBuilder(column: $table.points, builder: (column) => column);
 
   $$GroupsTableAnnotationComposer get groupId {
     final $$GroupsTableAnnotationComposer composer = $composerBuilder(
@@ -1854,6 +1912,7 @@ class $$HabitsTableTableManager
                 Value<double> weight = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
                 Value<String?> groupId = const Value.absent(),
+                Value<int> points = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => HabitsCompanion(
                 id: id,
@@ -1863,6 +1922,7 @@ class $$HabitsTableTableManager
                 weight: weight,
                 createdAt: createdAt,
                 groupId: groupId,
+                points: points,
                 rowid: rowid,
               ),
           createCompanionCallback:
@@ -1874,6 +1934,7 @@ class $$HabitsTableTableManager
                 Value<double> weight = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
                 Value<String?> groupId = const Value.absent(),
+                Value<int> points = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => HabitsCompanion.insert(
                 id: id,
@@ -1883,6 +1944,7 @@ class $$HabitsTableTableManager
                 weight: weight,
                 createdAt: createdAt,
                 groupId: groupId,
+                points: points,
                 rowid: rowid,
               ),
           withReferenceMapper: (p0) => p0

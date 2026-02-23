@@ -26,6 +26,8 @@ class Habits extends Table {
   TextColumn get groupId =>
       text().nullable().references(Groups, #id, onDelete: KeyAction.cascade)();
 
+  IntColumn get points => integer().withDefault(const Constant(1))();
+
   @override
   Set<Column> get primaryKey => {id};
 }
@@ -67,16 +69,19 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());
 
   @override
-  int get schemaVersion => 5;
+  int get schemaVersion => 6;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
-    onUpgrade: (m, from, to) async {
-      if (from < 5) {
-        await m.addColumn(habitPerformances, habitPerformances.timeKey);
-      }
-    },
-  );
+        onUpgrade: (m, from, to) async {
+          if (from < 5) {
+            await m.addColumn(habitPerformances, habitPerformances.timeKey);
+          }
+          if (from < 6) {
+            await m.addColumn(habits, habits.points);
+          }
+        },
+      );
 
   Stream<int> watchHabitCompletionCount(String habitId, int durationInSec) {
     final timeKey =
