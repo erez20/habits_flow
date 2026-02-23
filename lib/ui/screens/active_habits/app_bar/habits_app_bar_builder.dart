@@ -12,12 +12,12 @@ class HabitsAppBarBuilder extends StatelessWidget implements PreferredSizeWidget
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<ActiveHabitsScreenCubit, ActiveHabitsScreenState>(
-      buildWhen: (previous, current) => previous.uiModel != current.uiModel,
+      buildWhen: (previous, current) => previous.uiModel != current.uiModel || previous.totalPoints != current.totalPoints,
       builder: (context, state) {
         var uiModel = state.uiModel;
         return uiModel != null
             ? HabitSelectedAppBar(uiModel: uiModel)
-            : ActiveHabitsAppBar();
+            : ActiveHabitsAppBar(totalPoints: state.totalPoints);
       },
     );
   }

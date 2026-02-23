@@ -37,6 +37,7 @@ class ActiveHabitsScreenCubit extends Cubit<ActiveHabitsScreenState> {
   }
 
   late final StreamSubscription<HabitEntity?> _habitSelectedStreamSubscription;
+  late final StreamSubscription<int> _totalPointsStreamSubscription;
 
   void moveRequest ({required String habitId, required int steps}) {
      reorderHabitUseCase.exec(ReorderHabitUseCaseParams(habitId: habitId, steps: steps));
@@ -57,6 +58,9 @@ class ActiveHabitsScreenCubit extends Cubit<ActiveHabitsScreenState> {
           ),
         );
       }
+    });
+    _totalPointsStreamSubscription = manager.listenToTotalPoints.listen((totalPoints) {
+      emit(state.copyWith(totalPoints: totalPoints));
     });
   }
 
@@ -101,6 +105,7 @@ class ActiveHabitsScreenCubit extends Cubit<ActiveHabitsScreenState> {
   @override
   Future<void> close() {
     _habitSelectedStreamSubscription.cancel();
+    _totalPointsStreamSubscription.cancel();
     return super.close();
   }
 }

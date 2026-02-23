@@ -33,6 +33,9 @@ class AllGroupsCubit extends Cubit<AllGroupsState> {
     _groupsListSubscription = groupsListStreamUseCase.stream(null).listen((
       event,
     ) {
+      final totalPoints = event.fold<int>(0, (sum, group) => sum + group.points);
+      manager.updateTotalPoints(totalPoints);
+      
       final expandedGroupIds = List<String>.from(state.expandedGroupIds);
       var groupWasAdded = state.groupList.length < event.length;
       if (!state.isInit && groupWasAdded) {

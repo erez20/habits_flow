@@ -8,7 +8,10 @@ class ActiveHabitsAppBar extends StatelessWidget
     implements PreferredSizeWidget {
   const ActiveHabitsAppBar({
     super.key,
+    required this.totalPoints,
   });
+
+  final int totalPoints;
 
   @override
   Widget build(BuildContext context) {
@@ -21,8 +24,8 @@ class ActiveHabitsAppBar extends StatelessWidget
         ),
       ),
 
-      title: const Text(
-        'Habit Flow',
+      title:  Text(
+        'Habit Flow: $totalPoints',
         style: TextStyle(
           color: Colors.white,
         ),
@@ -37,7 +40,6 @@ class ActiveHabitsAppBar extends StatelessWidget
             color: Colors.white,
           ),
         ),
-
         IconButton(
           onPressed: context.read<ActiveHabitsScreenCubit>().collapseAll,
           icon: Icon(
@@ -45,7 +47,6 @@ class ActiveHabitsAppBar extends StatelessWidget
             color: Colors.white,
           ),
         ),
-
         IconButton(
           onPressed: () => _addGroupModal(
             context: context,
