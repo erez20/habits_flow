@@ -50,6 +50,8 @@ import 'package:habits_flow/domain/use_cases/habit/add_habit_use_case.dart'
     as _i262;
 import 'package:habits_flow/domain/use_cases/habit/delete_habit_use_case.dart'
     as _i318;
+import 'package:habits_flow/domain/use_cases/habit/edit_habit_use_case.dart'
+    as _i889;
 import 'package:habits_flow/domain/use_cases/habit/habit_stream_use_case.dart'
     as _i271;
 import 'package:habits_flow/domain/use_cases/habit/habits_of_group_stream_use_case.dart'
@@ -88,6 +90,9 @@ extension GetItInjectableX on _i174.GetIt {
           _i375.HabitRepoImpl(habitsLocalSource: gh<_i545.HabitLocalSource>()),
     );
     gh.factory<_i28.ActiveHabitsManager>(() => _i28.ActiveHabitsManagerImpl());
+    gh.factory<_i889.EditHabitUseCase>(
+      () => _i889.EditHabitUseCase(habitRepo: gh<_i877.HabitRepo>()),
+    );
     gh.factory<_i271.HabitStreamUseCase>(
       () => _i271.HabitStreamUseCase(habitRepo: gh<_i877.HabitRepo>()),
     );

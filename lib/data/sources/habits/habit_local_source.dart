@@ -10,6 +10,8 @@ abstract class HabitLocalSource {
     required int points,
   });
 
+  Future<void> updateHabit({required HabitEntity habit});
+
   Future<void> deleteHabit({required String habitId});
 
   Future<void> performHabit({

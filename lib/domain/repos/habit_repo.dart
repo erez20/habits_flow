@@ -13,6 +13,10 @@ abstract class HabitRepo {
     required int points,
   });
 
+  Future<DomainResponse<void>> updateHabit({
+    required HabitEntity habit,
+  });
+
   Future<DomainResponse<void>> deleteHabit({
     required String habitId,
   });

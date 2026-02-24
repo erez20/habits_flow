@@ -74,3 +74,4 @@ class HabitCubit extends Cubit<HabitState> {
     return super.close();
   }
 }
+
