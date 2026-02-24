@@ -9,9 +9,11 @@ class ActiveHabitsAppBar extends StatelessWidget
   const ActiveHabitsAppBar({
     super.key,
     required this.totalPoints,
+    required this.totalCompletions,
   });
 
   final int totalPoints;
+  final int totalCompletions;
 
   @override
   Widget build(BuildContext context) {
@@ -24,8 +26,9 @@ class ActiveHabitsAppBar extends StatelessWidget
         ),
       ),
 
-      title:  Text(
-        'Habit Flow: $totalPoints',
+      title: Text(
+        //TODO differet trophy
+        "✅ $totalCompletions 🏆 $totalPoints",
         style: TextStyle(
           color: Colors.white,
         ),

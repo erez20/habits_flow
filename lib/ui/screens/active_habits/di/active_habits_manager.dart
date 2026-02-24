@@ -16,7 +16,11 @@ abstract class ActiveHabitsManager {
 
   Stream<int> get listenToTotalPoints;
 
+  Stream<int> get listenToTotalCompletions;
+
   void updateTotalPoints(int totalPoints);
+
+  void updateTotalCompletion(int totalPoints);
 
   Stream<bool> listenIsHabitSelected(String habitId);
 
@@ -36,6 +40,7 @@ class ActiveHabitsManagerImpl implements ActiveHabitsManager {
       BehaviorSubject<HabitEntity?>();
   final BehaviorSubject<bool> _collapseExpandAll = BehaviorSubject<bool>();
   final BehaviorSubject<int> _totalPoints = BehaviorSubject<int>.seeded(0);
+  final BehaviorSubject<int> _totalCompletions = BehaviorSubject<int>.seeded(0);
 
   @override
   Stream<String> listenToDrownHabit(String id) =>
@@ -58,6 +63,7 @@ class ActiveHabitsManagerImpl implements ActiveHabitsManager {
   void dispose() {
     _drawOverHabit.close();
     _habitSelected.close();
+    _totalCompletions.close();
     _totalPoints.close();
   }
 
@@ -76,7 +82,15 @@ class ActiveHabitsManagerImpl implements ActiveHabitsManager {
   Stream<int> get listenToTotalPoints => _totalPoints.stream;
 
   @override
+  Stream<int> get listenToTotalCompletions => _totalCompletions.stream;
+
+  @override
   void updateTotalPoints(int totalPoints) {
     _totalPoints.add(totalPoints);
+  }
+
+  @override
+  void updateTotalCompletion(int totalCompletions) {
+    _totalCompletions.add(totalCompletions);
   }
 }
