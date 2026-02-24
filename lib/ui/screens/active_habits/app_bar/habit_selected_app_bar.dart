@@ -41,6 +41,10 @@ class HabitSelectedAppBar extends StatelessWidget
             onPressed: cubit.resetHabit,
           ),
           IconButton(
+            icon: Icon(Icons.edit, color: accent, size: 24,),
+            onPressed: () => cubit.editHabit(context, uiModel),
+          ),
+          IconButton(
             icon: Icon(Icons.delete_outlined, color: accent, size: 24,),
             onPressed: () => _handleDelete(
               context: context,
@@ -76,7 +80,7 @@ class HabitSelectedAppBar extends StatelessWidget
             ),
             TextButton(
               onPressed: () {
-                deleteHabit(uiModel.habitId);
+                deleteHabit(uiModel.id);
                 Navigator.of(context).pop();
               },
               child: Text('Delete'),

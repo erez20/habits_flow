@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
-import 'package:habits_flow/domain/entities/habit_entity.dart';
+import 'package:habits_flow/ui/ui_models/selected_habit_ui_model.dart';
 
 import 'edit_habit_form_cubit.dart';
 import 'edit_habit_form_state.dart';
 
 class EditHabitFormWidget extends StatefulWidget {
-  final HabitEntity habit;
-  const EditHabitFormWidget({super.key, required this.habit});
+  final SelectedHabitUiModel uiModel;
+  const EditHabitFormWidget({super.key, required this.uiModel});
 
   @override
   State<EditHabitFormWidget> createState() => _EditHabitFormWidgetState();
@@ -66,10 +66,10 @@ class _EditHabitFormWidgetState extends State<EditHabitFormWidget> {
                 child: FormBuilder(
                   key: _formKey,
                   initialValue: {
-                    'title': widget.habit.title,
-                    'info': widget.habit.info,
-                    'link': widget.habit.link,
-                    'points': widget.habit.points,
+                    'title': widget.uiModel.title,
+                    'info': widget.uiModel.info,
+                    'link': widget.uiModel.link,
+                    'points': widget.uiModel.points,
                   },
                   child: Column(
                     mainAxisSize: MainAxisSize.min,

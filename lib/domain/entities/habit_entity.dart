@@ -1,13 +1,13 @@
 import 'package:equatable/equatable.dart';
 class HabitEntity extends Equatable{
-  final String id;
-  final String title;
-  final String info;
-  final String link;
-  final double weight;
-  final int completionCount;
-  final int groupColor;
-  final int points;
+    final String id;
+    final String title;
+    final String info;
+    final String link;
+    final double weight;
+    final int completionCount;
+    final int groupColor;
+    final int points;
 
   const HabitEntity({
     required this.id,

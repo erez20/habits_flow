@@ -41,7 +41,7 @@ class ActiveHabitsScreen extends StatelessWidget {
                 ),
                 if (isDisabled)
                   JoystickWidget(
-                    habitId: uiModel.habitId,
+                    habitId: uiModel.id,
                     color: uiModel.color,
                     moveRequest: cubit.moveRequest,
                   ),

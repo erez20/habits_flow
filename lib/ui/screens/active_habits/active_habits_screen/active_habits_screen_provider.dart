@@ -2,13 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:habits_flow/domain/use_cases/group/add_group_use_case.dart';
 import 'package:habits_flow/domain/use_cases/habit/delete_habit_use_case.dart';
+import 'package:habits_flow/domain/use_cases/habit/edit_habit_use_case.dart';
 import 'package:habits_flow/domain/use_cases/habit/reorder_habit_use_case.dart';
 import 'package:habits_flow/domain/use_cases/habit/reset_habit_use_case.dart';
 import 'package:habits_flow/domain/use_cases/shared/refresh_all_use_case.dart';
 import 'package:habits_flow/main/injection.dart';
 import 'package:habits_flow/ui/screens/active_habits/di/active_habits_manager.dart';
-import 'active_habits_screen_cubit.dart';
+
 import 'active_habits_screen.dart';
+import 'active_habits_screen_cubit.dart';
 
 
 class ActiveHabitsScreenProvider extends StatelessWidget {
@@ -29,6 +31,7 @@ class ActiveHabitsScreenProvider extends StatelessWidget {
           refreshAllUseCase: refreshAllUseCase,
           reorderHabitUseCase: reorderHabitUseCase,
           deleteHabitUseCase: getIt<DeleteHabitUseCase>(),
+          editHabitUseCase: getIt<EditHabitUseCase>(),
         );
       },
       child: const ActiveHabitsScreen(),
