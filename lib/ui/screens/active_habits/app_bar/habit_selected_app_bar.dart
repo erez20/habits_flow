@@ -33,15 +33,15 @@ class HabitSelectedAppBar extends StatelessWidget
         title: Text(
           uiModel.title,
           overflow: TextOverflow.ellipsis,
-          style: TextStyle(color: accent, fontSize: 32),
+          style: TextStyle(color: accent, fontSize: 24),
         ),
         actions: [
           IconButton(
-            icon: Icon(Icons.restore, color: accent, size: 32,),
+            icon: Icon(Icons.restore, color: accent, size: 24,),
             onPressed: cubit.resetHabit,
           ),
           IconButton(
-            icon: Icon(Icons.delete_outlined, color: accent, size: 32,),
+            icon: Icon(Icons.delete_outlined, color: accent, size: 24,),
             onPressed: () => _handleDelete(
               context: context,
               deleteHabit: cubit.deleteHabit,

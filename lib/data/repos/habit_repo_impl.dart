@@ -46,6 +46,16 @@ class HabitRepoImpl extends HabitRepo {
   }
 
   @override
+  Future<DomainResponse<void>> updateHabit({required HabitEntity habit}) async {
+    try {
+      await habitsLocalSource.updateHabit(habit: habit);
+      return const Success(null);
+    } on Exception catch (e) {
+      return Failure(error: DatabaseError(message: e.toString()));
+    }
+  }
+
+  @override
   Stream<DomainResponse<HabitEntity>> habitStream({required String habitId}) {
     return habitsLocalSource
         .habitStream(habitId)

@@ -53,6 +53,17 @@ class HabitLocalSourceImpl implements HabitLocalSource {
   }
 
   @override
+  Future<void> updateHabit({required HabitEntity habit}) async {
+    await (db.update(db.habits)..where((tbl) => tbl.id.equals(habit.id)))
+        .write(HabitsCompanion(
+      title: Value(habit.title),
+      info: Value(habit.info),
+      link: Value(habit.link),
+      points: Value(habit.points),
+    ));
+  }
+
+  @override
   Future<void> deleteHabit({required String habitId}) async {
     await (db.delete(db.habits)..where((tbl) => tbl.id.equals(habitId))).go();
   }

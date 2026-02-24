@@ -22,6 +22,7 @@ class HabitWidget extends StatelessWidget {
     return GestureDetector(
       onTap: cubit.performHabit,
       onLongPress: cubit.onLongPress,
+      onDoubleTap: () => cubit.onDoubleTap(context),
       child: BlocBuilder<HabitCubit, HabitState>(
         builder: (context, state) {
           var completionCount = state.habit.completionCount;
