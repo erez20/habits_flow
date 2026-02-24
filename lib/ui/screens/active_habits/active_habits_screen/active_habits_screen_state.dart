@@ -7,17 +7,16 @@ class ActiveHabitsScreenState extends Equatable {
     required this.uiModel,
     required this.totalPoints,
     required this.totalCompletions,
-    this.selectedHabit,
   });
 
   final SelectedHabitUiModel? uiModel;
   final int totalPoints;
   final int totalCompletions;
-  final HabitEntity? selectedHabit;
+
 
 
   @override
-  List<Object?> get props => [uiModel, totalPoints, totalCompletions, selectedHabit];
+  List<Object?> get props => [uiModel, totalPoints, totalCompletions];
 
   factory ActiveHabitsScreenState.init() =>
       const ActiveHabitsScreenState(uiModel: null, totalPoints: 0, totalCompletions: 0);
@@ -35,7 +34,6 @@ class ActiveHabitsScreenState extends Equatable {
       uiModel: clearUiModel ? null : (uiModel ?? this.uiModel),
       totalPoints: totalPoints ?? this.totalPoints,
       totalCompletions: totalCompletions ?? this.totalCompletions,
-      selectedHabit: clearUiModel ? null : (selectedHabit ?? this.selectedHabit),
     );
   }
 }
