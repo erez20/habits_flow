@@ -70,61 +70,67 @@ class _GroupsListWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ReorderableListView.builder(
-      itemCount: state.groupList.length,
-      onReorder: (oldIndex, newIndex) =>
-          cubit.reorderGroups(oldIndex, newIndex),
-      proxyDecorator: (child, index, animation) {
-        return Material(
-          key: ValueKey("dragged_group_${state.groupList[index].id}"),
-          elevation: 4.0,
-          child: RepositoryProvider.value(
-            value: manager,
-            child: child,
-          ),
-        );
-      },
-      itemBuilder: (context, index) {
-        final group = state.groupList[index];
-        return Padding(
-          key: ValueKey(group.id),
-          padding: EdgeInsets.symmetric(
-            horizontal: Constants.mainPageHorizontalPadding,
-            vertical: 4,
-          ),
-          child: Container(
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(8.0),
+    return  RawScrollbar(
+      thumbVisibility: true, // Forces it to always display
+      thumbColor: Colors.blueGrey[300]?.withValues(alpha:  0.6),
+      thickness: 16,
+      radius: Radius.circular(8),
+      child: ReorderableListView.builder(
+        itemCount: state.groupList.length,
+        onReorder: (oldIndex, newIndex) =>
+            cubit.reorderGroups(oldIndex, newIndex),
+        proxyDecorator: (child, index, animation) {
+          return Material(
+            key: ValueKey("dragged_group_${state.groupList[index].id}"),
+            elevation: 4.0,
+            child: RepositoryProvider.value(
+              value: manager,
+              child: child,
             ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                ReorderableDragStartListener(
-                  index: index,
-                  child: GroupProvider(
-                    group: group,
-                    onTap: () => cubit.toggleGroup(group.id),
+          );
+        },
+        itemBuilder: (context, index) {
+          final group = state.groupList[index];
+          return Padding(
+            key: ValueKey(group.id),
+            padding: EdgeInsets.symmetric(
+              horizontal: Constants.mainPageHorizontalPadding,
+              vertical: 4,
+            ),
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(8.0),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  ReorderableDragStartListener(
+                    index: index,
+                    child: GroupProvider(
+                      group: group,
+                      onTap: () => cubit.toggleGroup(group.id),
+                    ),
                   ),
-                ),
-                AnimatedSwitcher(
-                  duration: const Duration(milliseconds: 150),
-                  transitionBuilder:
-                      (Widget child, Animation<double> animation) {
-                        return SizeTransition(
-                          sizeFactor: animation,
-                          child: child,
-                        );
-                      },
-                  child: state.expandedGroupIds.contains(group.id)
-                      ? HabitsCollectionProvider(group: group)
-                      : const SizedBox.shrink(),
-                ),
-              ],
+                  AnimatedSwitcher(
+                    duration: const Duration(milliseconds: 150),
+                    transitionBuilder:
+                        (Widget child, Animation<double> animation) {
+                          return SizeTransition(
+                            sizeFactor: animation,
+                            child: child,
+                          );
+                        },
+                    child: state.expandedGroupIds.contains(group.id)
+                        ? HabitsCollectionProvider(group: group)
+                        : const SizedBox.shrink(),
+                  ),
+                ],
+              ),
             ),
-          ),
-        );
-      },
+          );
+        },
+      ),
     );
   }
 }
