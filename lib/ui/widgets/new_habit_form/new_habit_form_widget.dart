@@ -76,6 +76,8 @@ class _NewHabitFormWidgetState extends State<NewHabitFormWidget> {
                       _info(),
                       const SizedBox(height: 16),
                       _link(),
+                      const SizedBox(height: 16),
+                      _points(),
                       const SizedBox(height: 32),
                       _submit(state, cubit),
                       const SizedBox(height: 16),
@@ -108,8 +110,8 @@ class _NewHabitFormWidgetState extends State<NewHabitFormWidget> {
     return Text(
       'Add New Habit',
       style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-        fontWeight: FontWeight.bold,
-      ),
+            fontWeight: FontWeight.bold,
+          ),
     );
   }
 
@@ -142,7 +144,6 @@ class _NewHabitFormWidgetState extends State<NewHabitFormWidget> {
       maxLines: 5,
       minLines: 3,
       keyboardType: TextInputType.multiline,
-
       decoration: InputDecoration(
         labelText: 'Information',
         prefixIcon: Icon(Icons.info_outline),
@@ -154,8 +155,32 @@ class _NewHabitFormWidgetState extends State<NewHabitFormWidget> {
         fillColor: Colors.grey[200],
       ),
       validator: FormBuilderValidators.compose([
-
         FormBuilderValidators.maxLength(200, checkNullOrEmpty: false),
+      ]),
+    );
+  }
+
+  FormBuilderDropdown<int> _points() {
+    return FormBuilderDropdown<int>(
+      name: 'points',
+      decoration: InputDecoration(
+        labelText: 'Points',
+        prefixIcon: const Icon(Icons.star),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8.0),
+        ),
+        filled: true,
+        fillColor: Colors.grey[200],
+      ),
+      initialValue: 1,
+      items: List.generate(20, (index) => index + 1)
+          .map((value) => DropdownMenuItem(
+                value: value,
+                child: Text(value.toString()),
+              ))
+          .toList(),
+      validator: FormBuilderValidators.compose([
+        FormBuilderValidators.required(),
       ]),
     );
   }
@@ -166,7 +191,6 @@ class _NewHabitFormWidgetState extends State<NewHabitFormWidget> {
       child: FilledButton(
         style: FilledButton.styleFrom(
           backgroundColor: Colors.blueGrey[800],
-
           padding: const EdgeInsets.symmetric(vertical: 16),
         ),
         onPressed: state.isSubmitting

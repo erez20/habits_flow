@@ -60,6 +60,20 @@ class GroupWidget extends StatelessWidget {
                           color: Color(0xFF6B7280), // Light mode
                         ),
                       ),
+                      const SizedBox(width: 4),
+                      Icon(
+                        Icons.star,
+                        color: Colors.amber,
+                        size: 12,
+                      ),
+                      Text(
+                        " ${uiModel.points}",
+                        style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.normal,
+                          color: Color(0xFF6B7280), // Light mode
+                        ),
+                      ),
 
                       Expanded(child: SizedBox()),
                       InkWell(

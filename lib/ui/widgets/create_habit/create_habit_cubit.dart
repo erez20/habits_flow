@@ -17,7 +17,7 @@ class CreateHabitCubit extends Cubit<CreateHabitState> {
 
   }) : super(CreateHabitState.init());
 
-  void addHabit({required NewHabitFormUiModel uiModel}) async{
+  void addHabit({required NewHabitFormUiModel uiModel}) async {
     addHabitUseCase.exec(
       AddHabitUseCaseParams(
         groupId: groupUIModel.id,
@@ -25,6 +25,7 @@ class CreateHabitCubit extends Cubit<CreateHabitState> {
         info: uiModel.info,
         link: uiModel.link,
         groupColor: AppColors.getColorValue(groupUIModel.color),
+        points: uiModel.points,
       ),
     );
   }

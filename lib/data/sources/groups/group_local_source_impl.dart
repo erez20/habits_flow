@@ -117,6 +117,7 @@ class GroupLocalSourceImpl implements GroupLocalSource {
         weight: h.weight,
         completionCount: habitCompletionCounts[index],
         groupColor: group.colorValue,
+        points: h.points
       );
     }).toList();
 
@@ -208,8 +209,10 @@ class GroupLocalSourceImpl implements GroupLocalSource {
                   info: h.info,
                   link: h.link,
                   weight: h.weight,
+                  points: h.points,
                   completionCount: habitIdToCount[h.id] ?? 0,
                   groupColor: group.colorValue,
+
                 );
               }).toList(),
             );

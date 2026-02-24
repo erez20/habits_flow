@@ -29,6 +29,7 @@ class AddHabitUseCase extends ExecUseCase<void, AddHabitUseCaseParams> {
       link: params.link,
       weight: newWeight,
       groupColor: params.groupColor,
+      points: params.points,
     );
 
     if (habitResp case Failure(:final error)) {
@@ -56,7 +57,7 @@ class AddHabitUseCaseParams {
   final String info;
   final String link;
   final int groupColor;
-
+  final int points;
 
   AddHabitUseCaseParams({
     required this.groupId,
@@ -64,5 +65,6 @@ class AddHabitUseCaseParams {
     required this.info,
     required this.link,
     required this.groupColor,
+    required this.points,
   });
 }

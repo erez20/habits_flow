@@ -37,6 +37,8 @@ class ActiveHabitsScreenCubit extends Cubit<ActiveHabitsScreenState> {
   }
 
   late final StreamSubscription<HabitEntity?> _habitSelectedStreamSubscription;
+  late final StreamSubscription<int> _totalPointsStreamSubscription;
+  late final StreamSubscription<int> _totalCompletionsStreamSubscription;
 
   void moveRequest ({required String habitId, required int steps}) {
      reorderHabitUseCase.exec(ReorderHabitUseCaseParams(habitId: habitId, steps: steps));
@@ -58,6 +60,14 @@ class ActiveHabitsScreenCubit extends Cubit<ActiveHabitsScreenState> {
         );
       }
     });
+    _totalPointsStreamSubscription = manager.listenToTotalPoints.listen((totalPoints) {
+      emit(state.copyWith(totalPoints: totalPoints));
+    });
+
+    _totalCompletionsStreamSubscription = manager.listenToTotalCompletions.listen((totalCompletions) {
+      emit(state.copyWith(totalCompletions: totalCompletions));
+    });
+
   }
 
   void addGroup({required NewGroupFormUIModel uiModel}) {
@@ -101,6 +111,8 @@ class ActiveHabitsScreenCubit extends Cubit<ActiveHabitsScreenState> {
   @override
   Future<void> close() {
     _habitSelectedStreamSubscription.cancel();
+    _totalPointsStreamSubscription.cancel();
+    _totalCompletionsStreamSubscription.cancel();
     return super.close();
   }
 }

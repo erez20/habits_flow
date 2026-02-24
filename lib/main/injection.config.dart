@@ -88,17 +88,8 @@ extension GetItInjectableX on _i174.GetIt {
           _i375.HabitRepoImpl(habitsLocalSource: gh<_i545.HabitLocalSource>()),
     );
     gh.factory<_i28.ActiveHabitsManager>(() => _i28.ActiveHabitsManagerImpl());
-    gh.factory<_i318.DeleteHabitUseCase>(
-      () => _i318.DeleteHabitUseCase(habitRepo: gh<_i877.HabitRepo>()),
-    );
     gh.factory<_i271.HabitStreamUseCase>(
       () => _i271.HabitStreamUseCase(habitRepo: gh<_i877.HabitRepo>()),
-    );
-    gh.factory<_i82.PerformHabitUseCase>(
-      () => _i82.PerformHabitUseCase(habitRepo: gh<_i877.HabitRepo>()),
-    );
-    gh.factory<_i1072.ResetHabitUseCase>(
-      () => _i1072.ResetHabitUseCase(habitRepo: gh<_i877.HabitRepo>()),
     );
     gh.factory<_i25.GroupLocalSource>(
       () => _i646.GroupLocalSourceImpl(gh<_i118.AppDatabase>()),
@@ -119,6 +110,24 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.factory<_i262.AddHabitUseCase>(
       () => _i262.AddHabitUseCase(
+        habitRepo: gh<_i877.HabitRepo>(),
+        groupRepo: gh<_i136.GroupRepo>(),
+      ),
+    );
+    gh.factory<_i318.DeleteHabitUseCase>(
+      () => _i318.DeleteHabitUseCase(
+        habitRepo: gh<_i877.HabitRepo>(),
+        groupRepo: gh<_i136.GroupRepo>(),
+      ),
+    );
+    gh.factory<_i82.PerformHabitUseCase>(
+      () => _i82.PerformHabitUseCase(
+        habitRepo: gh<_i877.HabitRepo>(),
+        groupRepo: gh<_i136.GroupRepo>(),
+      ),
+    );
+    gh.factory<_i1072.ResetHabitUseCase>(
+      () => _i1072.ResetHabitUseCase(
         habitRepo: gh<_i877.HabitRepo>(),
         groupRepo: gh<_i136.GroupRepo>(),
       ),
