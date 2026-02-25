@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:habits_flow/domain/entities/group_entity.dart';
 import 'package:habits_flow/domain/entities/habit_entity.dart';
 import 'package:habits_flow/ui/common/colors/app_colors.dart';
+import 'package:habits_flow/ui/widgets/edit_group_form/edit_group_form_widget.dart';
 
 class GroupUIModel extends Equatable {
   final String id;
@@ -40,12 +41,53 @@ class GroupUIModel extends Equatable {
   int get completedHabits => habits.where((habit) => habit.isCompleted).length;
 
   @override
-  List<Object?> get props =>
-      [id, title, weight, habits, color, durationInSec, points];
+  List<Object?> get props => [
+    id,
+    title,
+    weight,
+    habits,
+    color,
+    durationInSec,
+    points,
+  ];
 
   String get hashKey => Object.hash(
-      id, title, weight, color, Object.hashAll(habits), durationInSec, points)
-      .toString();
+    id,
+    title,
+    weight,
+    color,
+    Object.hashAll(habits),
+    durationInSec,
+    points,
+  ).toString();
+
+  String get durationValue {
+    const int secInHour = 3600;
+    const int secInDay = 86400;
+    const int secInMonth = 2592000;
+    return switch (durationInSec) {
+      _ when durationInSec > 0 && durationInSec % secInMonth == 0 =>
+        "${durationInSec ~/ secInMonth}",
+      _ when durationInSec > 0 && durationInSec % secInDay == 0 => '${durationInSec ~/ secInDay}',
+      _ when durationInSec > 0 && durationInSec % secInHour == 0 =>
+        '${durationInSec ~/ secInHour}',
+      _  => "$durationInSec",
+    };
+  }
+
+  EditGroupDurationType get  durationType {
+    const int secInHour = 3600;
+    const int secInDay = 86400;
+    const int secInMonth = 2592000;
+    return switch (durationInSec) {
+      _ when durationInSec > 0 && durationInSec % secInMonth == 0 =>
+      EditGroupDurationType.months,
+      _ when durationInSec > 0 && durationInSec % secInDay == 0 => EditGroupDurationType.days,
+      _ when durationInSec > 0 && durationInSec % secInHour == 0 =>
+      EditGroupDurationType.hours,
+      _  => EditGroupDurationType.seconds,
+    };
+  }
 
   GroupEntity toEntity() {
     return GroupEntity(
