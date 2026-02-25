@@ -5,6 +5,7 @@ import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:habits_flow/ui/common/colors/app_colors.dart';
 import 'package:habits_flow/ui/ui_models/group_ui_model.dart';
+import 'package:habits_flow/ui/widgets/common/duration_type/duration_type.dart';
 
 import 'edit_group_form_cubit.dart';
 import 'edit_group_form_state.dart';
@@ -56,7 +57,9 @@ class _EditGroupFormWidgetState extends State<EditGroupFormWidget> {
                   key: _formKey,
                   initialValue: {
                     'title': widget.uiModel.title,
-
+                    'duration_value': widget.uiModel.durationValue,
+                    'duration_type': widget.uiModel.durationType,
+                    'group_color': widget.uiModel.color,
 
                   },
                   child: Column(
@@ -144,20 +147,20 @@ class _EditGroupFormWidgetState extends State<EditGroupFormWidget> {
             final formData = _formKey.currentState!.value;
             final durationValue =
                 int.tryParse(formData['duration_value'] ?? '0') ?? 0;
-            final durationType = formData['duration_type'] as EditGroupDurationType;
+            final durationType = formData['duration_type'] as DurationType;
 
             int durationInSeconds;
             switch (durationType) {
-              case EditGroupDurationType.months:
+              case DurationType.months:
                 durationInSeconds = durationValue * 30 * 24 * 3600;
                 break;
-              case EditGroupDurationType.days:
+              case DurationType.days:
                 durationInSeconds = durationValue * 24 * 3600;
                 break;
-              case EditGroupDurationType.hours:
+              case DurationType.hours:
                 durationInSeconds = durationValue * 3600;
                 break;
-              case EditGroupDurationType.seconds:
+              case DurationType.seconds:
                 durationInSeconds = durationValue;
                 break;
             }
@@ -246,7 +249,7 @@ class _DurationInSec extends StatefulWidget {
 }
 
 class _DurationInSecState extends State<_DurationInSec> {
-  late EditGroupDurationType _selectedDuration;
+  late DurationType _selectedDuration;
 
   @override
   void initState() {
@@ -260,25 +263,25 @@ class _DurationInSecState extends State<_DurationInSec> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Center(
-          child: SegmentedButton<EditGroupDurationType>(
+          child: SegmentedButton<DurationType>(
             segments: const [
               ButtonSegment(
-                value: EditGroupDurationType.months,
+                value: DurationType.months,
                 label: Text('Months'),
                 icon: Icon(Icons.calendar_today),
               ),
               ButtonSegment(
-                value: EditGroupDurationType.days,
+                value: DurationType.days,
                 label: Text('Days'),
                 icon: Icon(Icons.calendar_view_day),
               ),
               ButtonSegment(
-                value: EditGroupDurationType.hours,
+                value: DurationType.hours,
                 label: Text('Hours'),
                 icon: Icon(Icons.access_time),
               ),
               if (kDebugMode) ButtonSegment(
-                value: EditGroupDurationType.seconds,
+                value: DurationType.seconds,
                 label: Text('Seconds'),
                 icon: Icon(Icons.timer),
               ),
@@ -316,13 +319,13 @@ class _DurationInSecState extends State<_DurationInSec> {
               if (value == null) return null;
               final number = int.tryParse(value);
               if (number == null) return 'Invalid number';
-              if (_selectedDuration == EditGroupDurationType.hours &&
+              if (_selectedDuration == DurationType.hours &&
                   (number < 1 || number > 23)) {
                 return 'Hours must be between 1 and 23';
               }
-              if ((_selectedDuration == EditGroupDurationType.days ||
-                  _selectedDuration == EditGroupDurationType.months ||
-                  _selectedDuration == EditGroupDurationType.seconds) &&
+              if ((_selectedDuration == DurationType.days ||
+                  _selectedDuration == DurationType.months ||
+                  _selectedDuration == DurationType.seconds) &&
                   number < 1) {
                 return 'Must be at least 1';
               }
@@ -330,7 +333,7 @@ class _DurationInSecState extends State<_DurationInSec> {
             },
           ]),
         ),
-        FormBuilderField<EditGroupDurationType>(
+        FormBuilderField<DurationType>(
           name: 'duration_type',
           builder: (field) => const SizedBox.shrink(),
         ),
@@ -339,9 +342,3 @@ class _DurationInSecState extends State<_DurationInSec> {
   }
 }
 
-enum EditGroupDurationType {
-  months,
-  days,
-  hours,
-  seconds,
-}
