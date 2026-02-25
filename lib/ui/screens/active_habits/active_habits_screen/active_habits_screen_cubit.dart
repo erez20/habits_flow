@@ -110,6 +110,8 @@ class ActiveHabitsScreenCubit extends Cubit<ActiveHabitsScreenState> {
     clearSelection();
   }
 
+
+  //TODO MUST remove from here
   void editHabit(BuildContext context,SelectedHabitUiModel uiModel) {
       showModalBottomSheet(
         context: context,

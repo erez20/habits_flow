@@ -38,6 +38,8 @@ import 'package:habits_flow/domain/use_cases/group/add_group_use_case.dart'
     as _i655;
 import 'package:habits_flow/domain/use_cases/group/delete_group_use_case.dart'
     as _i227;
+import 'package:habits_flow/domain/use_cases/group/edit_group_use_case.dart'
+    as _i622;
 import 'package:habits_flow/domain/use_cases/group/generate_dummy_group_name_use_case.dart'
     as _i715;
 import 'package:habits_flow/domain/use_cases/group/groups_list_stream_use_case.dart'
@@ -139,6 +141,9 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.factory<_i349.AddDummyHabitToFirstGroupUseCase>(
       () => _i349.AddDummyHabitToFirstGroupUseCase(repo: gh<_i136.GroupRepo>()),
+    );
+    gh.factory<_i622.EditGroupUseCase>(
+      () => _i622.EditGroupUseCase(repo: gh<_i136.GroupRepo>()),
     );
     gh.factory<_i587.RemoveLastDummyGroupUseCase>(
       () => _i587.RemoveLastDummyGroupUseCase(repo: gh<_i136.GroupRepo>()),

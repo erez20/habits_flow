@@ -39,4 +39,6 @@ abstract class GroupRepo {
   Future<int?> getClosestRefresh();
 
   Future<DomainResponse<void>> reorder(List<GroupEntity> groups);
+
+  Future<DomainResponse<void>> updateGroup(GroupEntity group);
 }
