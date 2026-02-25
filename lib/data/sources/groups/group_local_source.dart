@@ -31,4 +31,6 @@ abstract class GroupLocalSource {
   Future<void> refresh();
 
   Future<void> reorder(List<GroupEntity> groups);
+
+  Future<void> updateGroup({required GroupEntity group});
 }

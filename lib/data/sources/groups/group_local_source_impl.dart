@@ -287,5 +287,17 @@ class GroupLocalSourceImpl implements GroupLocalSource {
       }
     });
   }
+
+  @override
+  Future<void> updateGroup({required GroupEntity group}) async {
+    await (db.update(db.groups)..where((tbl) => tbl.id.equals(group.id)))
+        .write(GroupsCompanion(
+      id: Value(group.id),
+      title: Value(group.title),
+      weight: Value(group.weight),
+      colorValue: Value(group.groupColor),
+      durationInSec: Value(group.durationInSec),
+    ));
+  }
 }
 

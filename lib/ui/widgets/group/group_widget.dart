@@ -78,6 +78,15 @@ class GroupWidget extends StatelessWidget {
                       Expanded(child: SizedBox()),
                       InkWell(
                         child: Icon(
+                          Icons.edit,
+                          color: Color(0xFF111827),
+                          size: 24,
+                        ),
+                        onTap: () => _handleEdit(context, cubit.editGroup),
+                      ),
+                      SizedBox(width: 8),
+                      InkWell(
+                        child: Icon(
                           Icons.delete_outlined,
                           color: Color(0xFF111827),
                           size: 24,
@@ -134,5 +143,18 @@ class GroupWidget extends StatelessWidget {
         );
       },
     );
+  }
+
+  void _handleEdit(BuildContext context, void Function() editGroup) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      builder: (_) => EditGroupFormProvider(
+        uiModel: uiModel,
+        onUpdate: editGroup,
+      ),);
+
+
+
   }
 }

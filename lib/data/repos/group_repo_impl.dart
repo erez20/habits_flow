@@ -154,4 +154,15 @@ class GroupRepoImpl extends GroupRepo {
       return Failure(error: DatabaseError(message: e.toString()));
     }
   }
+
+  @override
+  Future<DomainResponse<void>> updateGroup(GroupEntity group) async {
+    try {
+      await groupLocalSource.updateGroup(group: group);
+      return const Success(null);
+    } on Exception catch (e) {
+      return Failure(error: DatabaseError(message: e.toString()));
+    }
+  }
+
 }

@@ -47,4 +47,14 @@ class GroupUIModel extends Equatable {
       id, title, weight, color, Object.hashAll(habits), durationInSec, points)
       .toString();
 
+  GroupEntity toEntity() {
+    return GroupEntity(
+      id: id,
+      title: title,
+      weight: weight,
+      groupColor: AppColors.getColorValue(color),
+      habits: habits,
+      durationInSec: durationInSec,
+    );
+  }
 }

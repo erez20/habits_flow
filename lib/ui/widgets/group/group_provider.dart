@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:habits_flow/domain/entities/group_entity.dart';
 import 'package:habits_flow/domain/use_cases/group/delete_group_use_case.dart';
+import 'package:habits_flow/domain/use_cases/group/edit_group_use_case.dart';
 import 'package:habits_flow/main/injection.dart';
 
 import 'group_cubit.dart';
@@ -28,10 +29,14 @@ class _GroupProviderState extends State<GroupProvider> {
   @override
   void initState() {
     super.initState();
-    var deleteGroupUseCase = getIt<DeleteGroupUseCase>();
+    final deleteGroupUseCase = getIt<DeleteGroupUseCase>();
+    final editGroupUseCase = getIt<EditGroupUseCase>();
+
     _cubit = GroupCubit(
       entity: widget.group,
       deleteGroupUseCase: deleteGroupUseCase,
+      editGroupUseCase: editGroupUseCase,
+
     );
     Fimber.d("initState: GroupProvider ${widget.group.toString()}");
   }
