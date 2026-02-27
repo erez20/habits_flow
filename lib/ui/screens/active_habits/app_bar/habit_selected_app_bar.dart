@@ -125,6 +125,9 @@ class HabitSelectedAppBar extends StatelessWidget
       context: context,
       builder: (BuildContext context) {
         return Dialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16.0),
+          ),
           child: Stack(
             children: [
               Padding(
@@ -135,13 +138,26 @@ class HabitSelectedAppBar extends StatelessWidget
                   children: [
                     Text(
                       uiModel.title,
-                      style: Theme.of(context).textTheme.headlineSmall,
+                      style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                            color: uiModel.color[900],
+                            fontWeight: FontWeight.bold,
+                          ),
                     ),
                     const SizedBox(height: 24),
                     if (uiModel.info.isNotEmpty)
-                      Text(
-                        uiModel.info,
-                        style: const TextStyle(fontSize: 16),
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Icon(Icons.info_outline,
+                              color: uiModel.color[700], size: 20),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: Text(
+                              uiModel.info,
+                              style: const TextStyle(fontSize: 16),
+                            ),
+                          ),
+                        ],
                       ),
                     if (uiModel.info.isNotEmpty && uiModel.link.isNotEmpty)
                       const SizedBox(height: 16),
@@ -150,12 +166,22 @@ class HabitSelectedAppBar extends StatelessWidget
                         onTap: () async {
                           await onLinkTapped(uiModel.link);
                         },
-                        child: Text(
-                          uiModel.link,
-                          style: TextStyle(
-                            color: uiModel.color,
-                            decoration: TextDecoration.underline,
-                          ),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Icon(Icons.link,
+                                color: uiModel.color[700], size: 20),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: Text(
+                                uiModel.link,
+                                style: TextStyle(
+                                  color: uiModel.color,
+                                  decoration: TextDecoration.underline,
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                   ],
