@@ -10,10 +10,12 @@ import 'package:habits_flow/ui/widgets/group/group_state.dart';
 
 class GroupWidget extends StatelessWidget {
   final VoidCallback onTap;
+  final int index;
 
   const GroupWidget({
     super.key,
     required this.onTap,
+    required this.index,
   });
 
   @override
@@ -98,10 +100,13 @@ class GroupWidget extends StatelessWidget {
                         onTap: () => _handleDelete(context, cubit.deleteGroup),
                       ),
                       SizedBox(width: 8),
-                      Icon(
-                        Icons.drag_handle,
-                        color: Color(0xFF111827),
-                        size: 24,
+                      ReorderableDragStartListener(
+                        index: index,
+                        child: Icon(
+                          Icons.drag_handle,
+                          color: Color(0xFF111827),
+                          size: 24,
+                        ),
                       ),
                     ],
                   ),

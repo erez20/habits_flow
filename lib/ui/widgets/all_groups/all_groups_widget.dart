@@ -76,6 +76,7 @@ class _GroupsListWidget extends StatelessWidget {
       thickness: 16,
       radius: Radius.circular(8),
       child: ReorderableListView.builder(
+        buildDefaultDragHandles: false,
         itemCount: state.groupList.length,
         onReorder: (oldIndex, newIndex) =>
             cubit.reorderGroups(oldIndex, newIndex),
@@ -105,12 +106,10 @@ class _GroupsListWidget extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  ReorderableDragStartListener(
+                  GroupProvider(
+                    group: group,
+                    onTap: () => cubit.toggleGroup(group.id),
                     index: index,
-                    child: GroupProvider(
-                      group: group,
-                      onTap: () => cubit.toggleGroup(group.id),
-                    ),
                   ),
                   AnimatedSwitcher(
                     duration: const Duration(milliseconds: 150),
