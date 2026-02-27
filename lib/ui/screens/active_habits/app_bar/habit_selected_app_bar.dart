@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:habits_flow/ui/screens/active_habits/active_habits_screen/active_habits_screen_cubit.dart';
 import 'package:habits_flow/ui/ui_models/selected_habit_ui_model.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class HabitSelectedAppBar extends StatelessWidget
     implements PreferredSizeWidget {
