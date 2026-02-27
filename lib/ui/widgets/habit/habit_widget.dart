@@ -24,7 +24,7 @@ class HabitWidget extends StatelessWidget {
       onLongPress: cubit.onLongPress,
       child: BlocBuilder<HabitCubit, HabitState>(
         builder: (context, state) {
-          var completionCount = state.habit.completionCount;
+          //var completionCount = state.habit.completionCount;
           var materialColor = AppColors.getMaterialColor(
             state.habit.groupColor,
           ); //use ui model!!!
@@ -55,8 +55,8 @@ class HabitWidget extends StatelessWidget {
                     overflow: TextOverflow.ellipsis,
                   ),
                 ),
-                if (completionCount > 0)
-                  Positioned(top: 2, right: 2, child: Text("$completionCount")),
+                // if (completionCount > 0)
+                //   Positioned(top: 2, right: 2, child: Text("$completionCount")),
               ],
             ),
           );
