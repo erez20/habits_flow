@@ -15,6 +15,7 @@ import 'package:habits_flow/ui/screens/active_habits/di/active_habits_manager.da
 import 'package:habits_flow/ui/ui_models/new_group_form_ui_model.dart';
 import 'package:habits_flow/ui/ui_models/selected_habit_ui_model.dart';
 import 'package:habits_flow/ui/widgets/edit_habit_form/edit_habit_form_provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import 'active_habits_screen_state.dart';
 
@@ -127,6 +128,13 @@ class ActiveHabitsScreenCubit extends Cubit<ActiveHabitsScreenState> {
       );
   }
 
+  Future<void> onLinkTapped(String url) async{
+    final uri = Uri.parse("$url");
+    var res = await canLaunchUrl(uri);
+    if (res) {
+      await launchUrl (uri);
+    }
+  }
   @override
   Future<void> close() {
     _habitSelectedStreamSubscription.cancel();

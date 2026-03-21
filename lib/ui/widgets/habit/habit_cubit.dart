@@ -18,7 +18,7 @@ class HabitCubit extends Cubit<HabitState> {
   final PerformHabitUseCase performHabitUseCase;
   final ActiveHabitsManager manager;
 
-  HabitCubit({
+   HabitCubit({
     required this.habitRepo,
     required this.habit,
     required this.habitStreamUseCase,
@@ -63,7 +63,7 @@ class HabitCubit extends Cubit<HabitState> {
   }
 
   void onLongPress() {
-    manager.habitSelected(habit: habit);
+    manager.habitSelected(habit: state.habit);
   }
 
   @override

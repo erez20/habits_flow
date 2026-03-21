@@ -1,3 +1,4 @@
+import 'package:fimber/fimber.dart' show Fimber;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:habits_flow/ui/screens/active_habits/active_habits_screen/active_habits_screen_cubit.dart';
@@ -33,19 +34,43 @@ class HabitSelectedAppBar extends StatelessWidget
         title: Text(
           uiModel.title,
           overflow: TextOverflow.ellipsis,
-          style: TextStyle(color: accent, fontSize: 24),
+          style: TextStyle(color: accent, fontSize: 20),
         ),
         actions: [
           IconButton(
-            icon: Icon(Icons.restore, color: accent, size: 24,),
+            icon: Icon(
+              Icons.restore,
+              color: accent,
+              size: 24,
+            ),
             onPressed: cubit.resetHabit,
           ),
           IconButton(
-            icon: Icon(Icons.edit, color: accent, size: 24,),
+            icon: Icon(
+              Icons.edit,
+              color: accent,
+              size: 24,
+            ),
             onPressed: () => cubit.editHabit(context, uiModel),
           ),
           IconButton(
-            icon: Icon(Icons.delete_outlined, color: accent, size: 24,),
+            icon: Icon(
+              Icons.info_outline,
+              color: accent,
+              size: 24,
+            ),
+            onPressed: () => _handleInfo(
+              context: context,
+              uiModel: uiModel,
+              onLinkTapped: cubit.onLinkTapped,
+            ),
+          ),
+          IconButton(
+            icon: Icon(
+              Icons.delete_outlined,
+              color: accent,
+              size: 24,
+            ),
             onPressed: () => _handleDelete(
               context: context,
               deleteHabit: cubit.deleteHabit,
@@ -86,6 +111,93 @@ class HabitSelectedAppBar extends StatelessWidget
               child: Text('Delete'),
             ),
           ],
+        );
+      },
+    );
+  }
+
+  void _handleInfo({
+    required BuildContext context,
+    required SelectedHabitUiModel uiModel,
+    required Future<void> Function(String url) onLinkTapped,
+  }) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Dialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16.0),
+          ),
+          child: Stack(
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(24.0),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      uiModel.title,
+                      style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                            color: Colors.blueGrey[800],
+                            fontWeight: FontWeight.bold,
+                          ),
+                    ),
+                    const SizedBox(height: 24),
+                    if (uiModel.info.isNotEmpty)
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Icon(Icons.info_outline,
+                              color: uiModel.color[700], size: 20),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: Text(
+                              uiModel.info,
+                              style: const TextStyle(fontSize: 16),
+                            ),
+                          ),
+                        ],
+                      ),
+                    if (uiModel.info.isNotEmpty && uiModel.link.isNotEmpty)
+                      const SizedBox(height: 16),
+                    if (uiModel.link.isNotEmpty)
+                      InkWell(
+                        onTap: () async {
+                          Fimber.d("link tapped--${uiModel.link}");
+                          await onLinkTapped(uiModel.link);
+                        },
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Icon(Icons.link,
+                                color: uiModel.color[700], size: 20),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: Text(
+                                "Link",
+                                style: TextStyle(
+                                  color: Colors.blueGrey[800],
+                                  decoration: TextDecoration.underline,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+              Positioned(
+                top: 8,
+                right: 8,
+                child: IconButton(
+                  icon: const Icon(Icons.close),
+                  onPressed: () => Navigator.of(context).pop(),
+                ),
+              ),
+            ],
+          ),
         );
       },
     );

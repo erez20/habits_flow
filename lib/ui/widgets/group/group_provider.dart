@@ -12,10 +12,12 @@ import 'group_widget.dart';
 class GroupProvider extends StatefulWidget {
   final GroupEntity group;
   final VoidCallback onTap;
+  final int index;
 
   const GroupProvider({
     required this.group,
     required this.onTap,
+    required this.index,
     super.key,
   });
 
@@ -46,7 +48,7 @@ class _GroupProviderState extends State<GroupProvider> {
     Fimber.d("build: GroupProvider ${widget.group.toString()}");
     return BlocProvider.value(
       value: _cubit,
-      child: GroupWidget(onTap: widget.onTap),
+      child: GroupWidget(onTap: widget.onTap, index: widget.index),
     );
   }
 

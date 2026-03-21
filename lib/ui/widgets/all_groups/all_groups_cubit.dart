@@ -75,12 +75,21 @@ class AllGroupsCubit extends Cubit<AllGroupsState> {
 
   void toggleGroup(String id) {
     final expandedGroupIds = List<String>.from(state.expandedGroupIds);
-    if (expandedGroupIds.contains(id)) {
-      expandedGroupIds.remove(id);
-    } else {
+    final isExpanding = !expandedGroupIds.contains(id);
+
+    if (isExpanding) {
       expandedGroupIds.add(id);
+    } else {
+      expandedGroupIds.remove(id);
     }
-    emit(state.copyWith(expandedGroupIds: expandedGroupIds));
+    emit(state.copyWith(
+      expandedGroupIds: expandedGroupIds,
+      groupJustToggled: isExpanding ? id : null,
+    ));
+  }
+
+  void groupExpansionScrolled() {
+    emit(state.copyWith(clearGroupJustToggled: true));
   }
 
   void collapseAll() {

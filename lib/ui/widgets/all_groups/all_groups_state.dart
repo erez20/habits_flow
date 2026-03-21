@@ -5,19 +5,26 @@ class AllGroupsState extends Equatable {
   final List<GroupEntity> groupList;
   final List<String> expandedGroupIds;
   final bool isInit;
+  final String? groupJustToggled;
 
   const AllGroupsState({
     required this.groupList,
     required this.expandedGroupIds,
     required this.isInit,
+    this.groupJustToggled,
   });
 
   factory AllGroupsState.initial() {
-    return AllGroupsState(groupList: [], expandedGroupIds: [], isInit: true);
+    return const AllGroupsState(
+      groupList: [],
+      expandedGroupIds: [],
+      isInit: true,
+      groupJustToggled: null,
+    );
   }
 
   @override
-  List<Object?> get props => [groupList, expandedGroupIds, isInit];
+  List<Object?> get props => [groupList, expandedGroupIds, isInit, groupJustToggled];
 
   bool get isEmpty => groupList.isEmpty;
 
@@ -25,11 +32,15 @@ class AllGroupsState extends Equatable {
     List<GroupEntity>? groupList,
     List<String>? expandedGroupIds,
     bool? isInit,
+    String? groupJustToggled,
+    bool clearGroupJustToggled = false,
   }) {
     return AllGroupsState(
       groupList: groupList ?? this.groupList,
       expandedGroupIds: expandedGroupIds ?? this.expandedGroupIds,
       isInit: isInit ?? this.isInit,
+      groupJustToggled:
+          clearGroupJustToggled ? null : groupJustToggled ?? this.groupJustToggled,
     );
   }
 
