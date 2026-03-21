@@ -1,3 +1,4 @@
+import 'package:fimber/fimber.dart' show Fimber;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:habits_flow/ui/screens/active_habits/active_habits_screen/active_habits_screen_cubit.dart';
@@ -138,7 +139,7 @@ class HabitSelectedAppBar extends StatelessWidget
                     Text(
                       uiModel.title,
                       style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                            color: uiModel.color[900],
+                            color: Colors.blueGrey[800],
                             fontWeight: FontWeight.bold,
                           ),
                     ),
@@ -163,6 +164,7 @@ class HabitSelectedAppBar extends StatelessWidget
                     if (uiModel.link.isNotEmpty)
                       InkWell(
                         onTap: () async {
+                          Fimber.d("link tapped--${uiModel.link}");
                           await onLinkTapped(uiModel.link);
                         },
                         child: Row(
@@ -173,9 +175,9 @@ class HabitSelectedAppBar extends StatelessWidget
                             const SizedBox(width: 12),
                             Expanded(
                               child: Text(
-                                uiModel.link,
+                                "Link",
                                 style: TextStyle(
-                                  color: uiModel.color,
+                                  color: Colors.blueGrey[800],
                                   decoration: TextDecoration.underline,
                                 ),
                               ),

@@ -56,9 +56,8 @@ class _EmptyGroupsWidget extends StatelessWidget {
   }
 }
 
-class _GroupsListWidget extends StatelessWidget {
+class _GroupsListWidget extends StatefulWidget {
   const _GroupsListWidget({
-    super.key,
     required this.state,
     required this.cubit,
     required this.manager,
@@ -69,31 +68,71 @@ class _GroupsListWidget extends StatelessWidget {
   final ActiveHabitsManager manager;
 
   @override
+  State<_GroupsListWidget> createState() => _GroupsListWidgetState();
+}
+
+class _GroupsListWidgetState extends State<_GroupsListWidget> {
+  final Map<String, GlobalKey> _groupKeys = {};
+
+  @override
   Widget build(BuildContext context) {
-    return  RawScrollbar(
-      thumbVisibility: true, // Forces it to always display
-      thumbColor: Colors.blueGrey[300]?.withValues(alpha:  0.6),
-      thickness: 16,
-      radius: Radius.circular(8),
+    return BlocListener<AllGroupsCubit, AllGroupsState>(
+      listener: (context, state) {
+        if (state.groupJustToggled != null) {
+          final groupId = state.groupJustToggled!;
+          if (state.expandedGroupIds.contains(groupId)) {
+            final key = _groupKeys[groupId];
+            if (key != null) {
+              // Wait for the animation to finish
+              Future.delayed(const Duration(milliseconds: 170), () {
+                final context = key.currentContext;
+                if (context != null) {
+                  Scrollable.ensureVisible(
+                    context,
+                    duration: const Duration(milliseconds: 300),
+                    curve: Curves.easeInOut,
+                    alignment: 0.1,
+                  );
+                }
+                widget.cubit.groupExpansionScrolled();
+              });
+            }
+          }
+        }
+      },
       child: ReorderableListView.builder(
         buildDefaultDragHandles: false,
-        itemCount: state.groupList.length,
-        onReorder: (oldIndex, newIndex) =>
-            cubit.reorderGroups(oldIndex, newIndex),
+        itemCount: widget.state.groupList.length + 1, // +1 for padding
+        onReorder: (oldIndex, newIndex) {
+          // Adjust index for padding
+          if (newIndex > widget.state.groupList.length) {
+            newIndex = widget.state.groupList.length;
+          }
+          widget.cubit.reorderGroups(oldIndex, newIndex);
+        },
         proxyDecorator: (child, index, animation) {
           return Material(
-            key: ValueKey("dragged_group_${state.groupList[index].id}"),
+            key: ValueKey("dragged_group_${widget.state.groupList[index].id}"),
             elevation: 4.0,
             child: RepositoryProvider.value(
-              value: manager,
+              value: widget.manager,
               child: child,
             ),
           );
         },
         itemBuilder: (context, index) {
-          final group = state.groupList[index];
+          // Add padding at the end
+          if (index == widget.state.groupList.length) {
+            return const SizedBox(
+              key: ValueKey('bottom_padding'),
+              height: 16,
+            );
+          }
+
+          final group = widget.state.groupList[index];
+          _groupKeys.putIfAbsent(group.id, () => GlobalKey());
           return Padding(
-            key: ValueKey(group.id),
+            key: _groupKeys[group.id],
             padding: EdgeInsets.symmetric(
               horizontal: Constants.mainPageHorizontalPadding,
               vertical: 4,
@@ -108,19 +147,19 @@ class _GroupsListWidget extends StatelessWidget {
                 children: [
                   GroupProvider(
                     group: group,
-                    onTap: () => cubit.toggleGroup(group.id),
+                    onTap: () => widget.cubit.toggleGroup(group.id),
                     index: index,
                   ),
                   AnimatedSwitcher(
                     duration: const Duration(milliseconds: 150),
                     transitionBuilder:
                         (Widget child, Animation<double> animation) {
-                          return SizeTransition(
-                            sizeFactor: animation,
-                            child: child,
-                          );
-                        },
-                    child: state.expandedGroupIds.contains(group.id)
+                      return SizeTransition(
+                        sizeFactor: animation,
+                        child: child,
+                      );
+                    },
+                    child: widget.state.expandedGroupIds.contains(group.id)
                         ? HabitsCollectionProvider(group: group)
                         : const SizedBox.shrink(),
                   ),
