@@ -22,7 +22,7 @@ class RefreshSchedulerRepoImpl extends RefreshSchedulerRepo {
   void reschedule() async {
     _timer?.cancel();
 
-    final nowInSec = DateTime.now().millisecondsSinceEpoch ~/ 1000;
+    final nowInSec = DateTime.now().toUtc().millisecondsSinceEpoch ~/ 1000;
     int? closestRefresh = await groupRepo.getClosestRefresh();
 
     if (closestRefresh != null) {
