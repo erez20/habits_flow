@@ -11,5 +11,7 @@ class AppRouter extends RootStackRouter {
 
   @override
   List<AutoRoute> get routes => [
-    AutoRoute(page: ActiveHabitsProviderRoute.page, initial: true),  ];
+    AutoRoute(page: ActiveHabitsProviderRoute.page, initial: true),
+    AutoRoute(page: DummyScreenProviderRoute.page),
+  ];
 }

@@ -1,6 +1,8 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:habits_flow/ui/common/constants.dart';
+import 'package:habits_flow/ui/routes/app_router.gr.dart';
 import 'package:habits_flow/ui/screens/active_habits/di/active_habits_manager.dart';
 import 'package:habits_flow/ui/widgets/all_groups/all_groups_cubit.dart';
 import 'package:habits_flow/ui/widgets/group/group_provider.dart';
@@ -17,18 +19,34 @@ class AllGroupsWidget extends StatelessWidget {
     final manager = context.read<ActiveHabitsManager>();
 
     return Expanded(
-      child: BlocBuilder<AllGroupsCubit, AllGroupsState>(
-        builder: (context, state) {
-          if (state.isEmpty) {
-            return _EmptyGroupsWidget();
-          } else {
-            return _GroupsListWidget(
-              state: state,
-              cubit: cubit,
-              manager: manager,
-            );
-          }
-        },
+      child: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.symmetric(
+              horizontal: Constants.mainPageHorizontalPadding,
+              vertical: 8,
+            ),
+            child: ElevatedButton(
+              onPressed: () => context.pushRoute(const DummyScreenProviderRoute()),
+              child: const Text('Navigate to Dummy Screen'),
+            ),
+          ),
+          Expanded(
+            child: BlocBuilder<AllGroupsCubit, AllGroupsState>(
+              builder: (context, state) {
+                if (state.isEmpty) {
+                  return _EmptyGroupsWidget();
+                } else {
+                  return _GroupsListWidget(
+                    state: state,
+                    cubit: cubit,
+                    manager: manager,
+                  );
+                }
+              },
+            ),
+          ),
+        ],
       ),
     );
   }
