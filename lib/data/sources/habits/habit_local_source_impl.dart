@@ -168,49 +168,44 @@ class HabitLocalSourceImpl implements HabitLocalSource {
 
   @override
   Stream<List<HabitEntity>> habitsOfGroupStream(String groupId) {
-    final query = db.select(db.habits).join([
-      innerJoin(db.groups, db.groups.id.equalsExp(db.habits.groupId)),
-    ])
-      ..where(db.habits.groupId.equals(groupId))
-      ..orderBy([
-        OrderingTerm(expression: db.habits.weight, mode: OrderingMode.asc),
-      ]);
+    return _refreshController.startWith(null).switchMap((_) {
+      final nowInSec = DateTime.now().millisecondsSinceEpoch ~/ 1000;
 
-    return Rx.combineLatest2(
-      query.watch(),
-      _refreshController.startWith(null),
-      (rows, _) => rows,
-    ).switchMap((rows) {
-      if (rows.isEmpty) {
-        return Stream.value([]);
-      }
-      final habitEntities = rows.map((row) {
-        final habit = row.readTable(db.habits);
-        final group = row.readTable(db.groups);
-        return (
-          habit: habit,
-          groupColor: group.colorValue,
-          durationInSec: group.durationInSec
-        );
-      }).toList();
+      final countQuery = subqueryExpression<int>(
+        db.selectOnly(db.habitPerformances)
+          ..addColumns([db.habitPerformances.id.count()])
+          ..where(db.habitPerformances.habitId.equalsExp(db.habits.id) &
+              db.habitPerformances.timeKey.equalsExp(
+                  Variable(nowInSec) / db.groups.durationInSec))
+      );
 
-      final completionCountStreams = habitEntities
-          .map((h) => db.watchHabitCompletionCount(h.habit.id, h.durationInSec));
+      final query = db.select(db.habits).join([
+        innerJoin(db.groups, db.groups.id.equalsExp(db.habits.groupId)),
+      ])
+        ..where(db.habits.groupId.equals(groupId))
+        ..orderBy([
+          OrderingTerm(expression: db.habits.weight, mode: OrderingMode.asc),
+        ]);
 
-      return Rx.combineLatestList(completionCountStreams).map((counts) {
-        return List.generate(habitEntities.length, (index) {
-          final h = habitEntities[index];
+      query.addColumns([countQuery]);
+
+      return query.watch().map((rows) {
+        return rows.map((row) {
+          final habit = row.readTable(db.habits);
+          final group = row.readTable(db.groups);
+          final completionCount = row.read(countQuery) ?? 0;
+
           return HabitEntity(
-            id: h.habit.id,
-            title: h.habit.title,
-            weight: h.habit.weight,
-            info: h.habit.info,
-            link: h.habit.link,
-            completionCount: counts[index],
-            groupColor: h.groupColor,
-            points: h.habit.points,
+            id: habit.id,
+            title: habit.title,
+            weight: habit.weight,
+            info: habit.info,
+            link: habit.link,
+            completionCount: completionCount,
+            groupColor: group.colorValue,
+            points: habit.points,
           );
-        });
+        }).toList();
       });
     });
   }
