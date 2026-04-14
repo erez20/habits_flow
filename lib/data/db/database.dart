@@ -100,7 +100,12 @@ class AppDatabase extends _$AppDatabase {
   }
 
   static QueryExecutor _openConnection() {
-    return driftDatabase(name: 'habits_flow_db');
+    return driftDatabase(
+      name: 'habits_flow_db',
+      native: const DriftNativeOptions(
+        shareAcrossIsolates: true,
+      ),
+    );
   }
 
   Future<File> _getDbFile() async {
