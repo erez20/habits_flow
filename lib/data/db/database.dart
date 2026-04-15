@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:isolate';
 
 import 'package:drift/drift.dart';
 import 'package:drift_flutter/drift_flutter.dart';
@@ -100,7 +101,12 @@ class AppDatabase extends _$AppDatabase {
   }
 
   static QueryExecutor _openConnection() {
-    return driftDatabase(name: 'habits_flow_db');
+    return driftDatabase(
+      name: 'habits_flow_db',
+      native: const DriftNativeOptions(
+        shareAcrossIsolates: true,
+      ),
+    );
   }
 
   Future<File> _getDbFile() async {
@@ -122,7 +128,11 @@ class AppDatabase extends _$AppDatabase {
     await customStatement('PRAGMA wal_checkpoint(TRUNCATE)');
     final dbFile = await _getDbFile();
     final backupFile = await _getBackupFile();
-    await dbFile.copy(backupFile.path);
+    
+    // Run the file copy operation in a background isolate
+    await Isolate.run(() {
+      dbFile.copySync(backupFile.path);
+    });
 
     Fimber.i('Backup generated at ${backupFile.path}');
     return backupFile;
@@ -132,8 +142,12 @@ class AppDatabase extends _$AppDatabase {
     await close();
     //Overwrite the db file
     final dbFile = await _getDbFile();
-    await File(pickedFilePath).copy(dbFile.path);
+    
+    // Run the file copy operation in a background isolate
+    await Isolate.run(() {
+      File(pickedFilePath).copySync(dbFile.path);
+    });
 
-    //TODO  3. Restart the app (or reinitialize the DB singleton)
+    // The caller is responsible for re-initializing the DB singleton / restarting the app.
   }
 }

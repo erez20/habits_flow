@@ -65,23 +65,13 @@ class GroupLocalSourceImpl implements GroupLocalSource {
     await (db.update(db.habits)..where((tbl) => tbl.id.equals(habitId)))
         .write(HabitsCompanion(groupId: Value(groupId)));
 
-    final performances = await (db.select(db.habitPerformances)
+    await (db.update(db.habitPerformances)
           ..where((tbl) => tbl.habitId.equals(habitId)))
-        .get();
-
-    if (performances.isNotEmpty) {
-      db.batch((batch) {
-        for (final performance in performances) {
-          final newTimeKey =
-              (performance.performTime.millisecondsSinceEpoch ~/ 1000) ~/
-                  newGroup.durationInSec;
-          batch.replace(
-            db.habitPerformances,
-            performance.copyWith(timeKey: newTimeKey),
-          );
-        }
-      });
-    }
+        .write(
+      HabitPerformancesCompanion.custom(
+        timeKey: CustomExpression<int>('CAST(perform_time / ${newGroup.durationInSec} AS INTEGER)'),
+      ),
+    );
   }
 
   @override
@@ -133,92 +123,73 @@ class GroupLocalSourceImpl implements GroupLocalSource {
 
   @override
   Stream<List<GroupEntity>> getGroupsListStream() {
-    final query = db.select(db.groups).join([
-      leftOuterJoin(db.habits, db.habits.groupId.equalsExp(db.groups.id)),
-    ])
-      ..orderBy([
-        OrderingTerm(expression: db.groups.weight, mode: OrderingMode.asc),
-      ]);
+    return _refreshController.stream.startWith(null).switchMap((_) {
+      final nowInSec = DateTime.now().millisecondsSinceEpoch ~/ 1000;
 
-    return Rx.combineLatest2(
-      query.watch(),
-      _refreshController.stream.startWith(null),
-      (rows, _) => rows,
-    ).switchMap((rows) {
-      final groupHabits = <Group, List<Habit>>{};
-      for (final row in rows) {
-        final group = row.readTable(db.groups);
-        final habit = row.readTableOrNull(db.habits);
-        if (habit != null) {
-          groupHabits.putIfAbsent(group, () => []).add(habit);
-        } else {
-          groupHabits.putIfAbsent(group, () => []);
-        }
-      }
+      final countQuery = subqueryExpression<int>(
+        db.selectOnly(db.habitPerformances)
+          ..addColumns([db.habitPerformances.id.count()])
+          ..where(db.habitPerformances.habitId.equalsExp(db.habits.id) &
+              db.habitPerformances.timeKey.equalsExp(
+                  Variable(nowInSec) / db.groups.durationInSec))
+      );
 
-      if (groupHabits.isEmpty) {
-        return Stream.value([]);
-      }
+      final query = db.select(db.groups).join([
+        leftOuterJoin(db.habits, db.habits.groupId.equalsExp(db.groups.id)),
+      ])
+        ..orderBy([
+          OrderingTerm(expression: db.groups.weight, mode: OrderingMode.asc),
+          OrderingTerm(expression: db.habits.weight, mode: OrderingMode.asc),
+        ]);
 
-      final habitCompletionStreams = <String, Stream<int>>{};
-      for (final entry in groupHabits.entries) {
-        final group = entry.key;
-        final habits = entry.value;
-        habits.sort((a, b) => a.weight.compareTo(b.weight));
-        for (final habit in habits) {
-          habitCompletionStreams[habit.id] =
-              db.watchHabitCompletionCount(habit.id, group.durationInSec);
-        }
-      }
+      query.addColumns([countQuery]);
 
-      if (habitCompletionStreams.isEmpty) {
-        return Stream.value(groupHabits.keys.map((group) {
-          return GroupEntity(
-            id: group.id,
-            title: group.title,
-            weight: group.weight,
-            groupColor: group.colorValue,
-            durationInSec: group.durationInSec,
-            habits: const [],
-          );
-        }).toList());
-      }
-      
-      return Rx.combineLatest(
-        habitCompletionStreams.values,
-        (List<int> counts) {
-          final habitIdToCount = Map.fromIterables(
-            habitCompletionStreams.keys,
-            counts,
-          );
+      return query.watch().map((rows) {
+        final groupsMap = <String, GroupEntity>{};
+        final groupToHabits = <String, List<HabitEntity>>{};
 
-          return groupHabits.entries.map((entry) {
-            final group = entry.key;
-            final habits = entry.value;
+        for (final row in rows) {
+          final group = row.readTable(db.groups);
+          final habit = row.readTableOrNull(db.habits);
+          final completionCount = row.read(countQuery) ?? 0;
 
-            return GroupEntity(
+          if (!groupsMap.containsKey(group.id)) {
+            groupsMap[group.id] = GroupEntity(
               id: group.id,
               title: group.title,
               weight: group.weight,
               groupColor: group.colorValue,
               durationInSec: group.durationInSec,
-              habits: habits.where((h) => h != null).map((h) {
-                return HabitEntity(
-                  id: h!.id,
-                  title: h.title,
-                  info: h.info,
-                  link: h.link,
-                  weight: h.weight,
-                  points: h.points,
-                  completionCount: habitIdToCount[h.id] ?? 0,
-                  groupColor: group.colorValue,
-
-                );
-              }).toList(),
+              habits: const [],
             );
-          }).toList();
-        },
-      );
+            groupToHabits[group.id] = [];
+          }
+
+          if (habit != null) {
+            groupToHabits[group.id]!.add(HabitEntity(
+              id: habit.id,
+              title: habit.title,
+              info: habit.info,
+              link: habit.link,
+              weight: habit.weight,
+              points: habit.points,
+              completionCount: completionCount,
+              groupColor: group.colorValue,
+            ));
+          }
+        }
+
+        return groupsMap.values.map((group) {
+          return GroupEntity(
+            id: group.id,
+            title: group.title,
+            weight: group.weight,
+            groupColor: group.groupColor,
+            durationInSec: group.durationInSec,
+            habits: groupToHabits[group.id] ?? [],
+          );
+        }).toList();
+      });
     });
   }
 
