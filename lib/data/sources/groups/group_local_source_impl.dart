@@ -65,23 +65,13 @@ class GroupLocalSourceImpl implements GroupLocalSource {
     await (db.update(db.habits)..where((tbl) => tbl.id.equals(habitId)))
         .write(HabitsCompanion(groupId: Value(groupId)));
 
-    final performances = await (db.select(db.habitPerformances)
+    await (db.update(db.habitPerformances)
           ..where((tbl) => tbl.habitId.equals(habitId)))
-        .get();
-
-    if (performances.isNotEmpty) {
-      db.batch((batch) {
-        for (final performance in performances) {
-          final newTimeKey =
-              (performance.performTime.millisecondsSinceEpoch ~/ 1000) ~/
-                  newGroup.durationInSec;
-          batch.replace(
-            db.habitPerformances,
-            performance.copyWith(timeKey: newTimeKey),
-          );
-        }
-      });
-    }
+        .write(
+      HabitPerformancesCompanion.custom(
+        timeKey: CustomExpression<int>('CAST(perform_time / ${newGroup.durationInSec} AS INTEGER)'),
+      ),
+    );
   }
 
   @override
