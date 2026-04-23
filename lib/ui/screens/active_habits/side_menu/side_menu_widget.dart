@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:habits_flow/app_cubit.dart';
+import 'package:habits_flow/ui/common/app/app_cubit.dart';
 import 'package:habits_flow/ui/screens/active_habits/side_menu/side_menu_cubit.dart' show SideMenuCubit;
 
 
