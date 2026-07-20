@@ -37,7 +37,7 @@ class GroupWidget extends StatelessWidget {
                 bottom: 8.0,
               ),
               child: Column(
-                crossAxisAlignment: .start,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Row(
                     children: [
