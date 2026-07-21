@@ -1,7 +1,7 @@
 import 'package:fimber/fimber.dart' show Fimber;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:habits_flow/ui/ui_models/group_ui.dart';
+import 'package:habits_flow/ui/screens/active_habits/ui_models/group_ui.dart';
 import 'package:habits_flow/domain/use_cases/group/delete_group_use_case.dart';
 import 'package:habits_flow/domain/use_cases/group/edit_group_use_case.dart';
 import 'package:habits_flow/main/injection.dart';

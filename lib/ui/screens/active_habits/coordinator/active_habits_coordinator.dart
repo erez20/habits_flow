@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:habits_flow/ui/ui_models/habit_ui.dart';
+import 'package:habits_flow/ui/screens/active_habits/ui_models/habit_ui.dart';
 import 'package:injectable/injectable.dart';
 
 import 'package:rxdart/rxdart.dart';

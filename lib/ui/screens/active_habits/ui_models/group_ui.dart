@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:habits_flow/domain/entities/group_entity.dart';
 import 'package:habits_flow/ui/common/colors/app_colors.dart';
 import 'package:habits_flow/ui/common/duration/duration_type.dart';
-import 'package:habits_flow/ui/ui_models/habit_ui.dart';
+import 'package:habits_flow/ui/screens/active_habits/ui_models/habit_ui.dart';
 
 class GroupUI extends Equatable {
   final String id;

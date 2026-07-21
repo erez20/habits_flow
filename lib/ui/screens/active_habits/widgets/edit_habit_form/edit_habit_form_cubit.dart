@@ -1,6 +1,6 @@
 import 'package:fimber/fimber.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:habits_flow/ui/ui_models/selected_habit_ui.dart';
+import 'package:habits_flow/ui/screens/active_habits/ui_models/selected_habit_ui.dart';
 
 import 'edit_habit_form_state.dart';
 

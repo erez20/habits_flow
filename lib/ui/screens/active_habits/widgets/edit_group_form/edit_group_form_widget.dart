@@ -4,7 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:habits_flow/ui/common/colors/app_colors.dart';
-import 'package:habits_flow/ui/ui_models/group_ui.dart';
+import 'package:habits_flow/ui/screens/active_habits/ui_models/group_ui.dart';
 import 'package:habits_flow/ui/common/duration/duration_type.dart';
 
 import 'edit_group_form_cubit.dart';

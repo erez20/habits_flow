@@ -32,7 +32,8 @@ lib/
     ├── common/          # App-level cubit, colors, fonts, constants, shared UI types
     ├── routes/          # auto_route router (app_router.dart + generated .gr.dart)
     ├── screens/         # One directory per screen (see "Screen Structure" below)
-    ├── ui_models/       # UI models: <X>UI classes in *_ui.dart (see "UI Models")
+    ├── ui_models/       # REUSABLE UI models only — a model scoped to one
+    │                    #   screen lives under that screen (see "UI Models")
     └── widgets/         # REUSABLE widgets only, one directory per widget.
                          #   Anything unique to one screen lives under that
                          #   screen instead.
@@ -99,6 +100,7 @@ ui/screens/
 │   │                       #   rest of the 4-file unit if the screen has state
 │   ├── widgets/            # One directory per widget UNIQUE to this screen
 │   │   └── <widget_name>/  #   (a 4-file unit when it owns state)
+│   ├── ui_models/          # UI models shared by this screen's widgets
 │   └── coordinator/        # <screen_name>_coordinator.dart + the
 │                           #   RepositoryProvider that scopes it. Create ONLY
 │                           #   if screen and widgets need coordination
@@ -142,11 +144,21 @@ position) uses a `StatefulWidget`, not a cubit.
 
 ### UI Models
 
-The presentation counterpart of an entity. Lives in `ui/ui_models/`, class named
-`<X>UI` (`GroupUI`, `SelectedHabitUI`), file named `<x>_ui.dart`. Name it after
-**what it presents, not where it's used**: an aggregate's default presentation
-is plain `<Aggregate>UI`; a prefix (`Selected…UI`, `New…FormUI`) is earned only
-by a genuinely different projection.
+The presentation counterpart of an entity: class named `<X>UI` (`GroupUI`,
+`SelectedHabitUI`), file named `<x>_ui.dart`. Name it after **what it presents,
+not where it's used**: an aggregate's default presentation is plain
+`<Aggregate>UI`; a prefix (`Selected…UI`, `New…FormUI`) is earned only by a
+genuinely different projection.
+
+**Placement — the narrowest scope that contains all consumers:**
+
+1. Used by one widget → flat in that widget's directory (the unit's fifth file).
+2. Used by several widgets of one screen (or screens of one flow) →
+   `<screen_name>/ui_models/` (or `<flow_name>/ui_models/`).
+3. Proven reuse across screens → top-level `ui/ui_models/`.
+
+A model is promoted up the ladder only when a consumer from a wider scope
+actually appears — never preemptively.
 
 - **Cubits and widgets deal only with UI models — never entities.** Entities
   appear inside a cubit only *in transit* at the domain boundary: map with

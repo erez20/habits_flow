@@ -1,5 +1,5 @@
 import 'package:equatable/equatable.dart';
-import 'package:habits_flow/ui/ui_models/selected_habit_ui.dart';
+import 'package:habits_flow/ui/screens/active_habits/ui_models/selected_habit_ui.dart';
 
 class ActiveHabitsScreenState extends Equatable {
   const ActiveHabitsScreenState({

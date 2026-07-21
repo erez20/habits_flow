@@ -1,5 +1,5 @@
 import 'package:equatable/equatable.dart';
-import 'package:habits_flow/ui/ui_models/group_ui.dart';
+import 'package:habits_flow/ui/screens/active_habits/ui_models/group_ui.dart';
 
 class AllGroupsState extends Equatable {
   final List<GroupUI> groupList;
