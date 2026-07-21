@@ -11,7 +11,7 @@ import 'package:habits_flow/domain/use_cases/habit/reorder_habit_use_case.dart';
 import 'package:habits_flow/domain/use_cases/habit/reset_habit_use_case.dart';
 import 'package:habits_flow/domain/use_cases/shared/refresh_all_use_case.dart';
 import 'package:habits_flow/ui/common/colors/app_colors.dart';
-import 'package:habits_flow/ui/screens/active_habits/coordinator/active_habits_manager.dart';
+import 'package:habits_flow/ui/screens/active_habits/coordinator/active_habits_coordinator.dart';
 import 'package:habits_flow/ui/ui_models/new_group_form_ui_model.dart';
 import 'package:habits_flow/ui/ui_models/selected_habit_ui_model.dart';
 import 'package:habits_flow/ui/screens/active_habits/widgets/edit_habit_form/edit_habit_form_provider.dart';
@@ -20,7 +20,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'active_habits_screen_state.dart';
 
 class ActiveHabitsScreenCubit extends Cubit<ActiveHabitsScreenState> {
-  final ActiveHabitsManager manager;
+  final ActiveHabitsCoordinator coordinator;
   final AddGroupUseCase addGroupUseCase;
   final ResetHabitUseCase resetHabitUseCase;
   final RefreshAllUseCase refreshAllUseCase;
@@ -29,7 +29,7 @@ class ActiveHabitsScreenCubit extends Cubit<ActiveHabitsScreenState> {
   final EditHabitUseCase editHabitUseCase;
 
   ActiveHabitsScreenCubit({
-    required this.manager,
+    required this.coordinator,
     required this.addGroupUseCase,
     required this.resetHabitUseCase,
     required this.refreshAllUseCase,
@@ -50,7 +50,7 @@ class ActiveHabitsScreenCubit extends Cubit<ActiveHabitsScreenState> {
 
   void init() {
     refreshAllUseCase.exec(null);
-    _habitSelectedStreamSubscription = manager.listenToHabitSelected.listen(
+    _habitSelectedStreamSubscription = coordinator.listenToHabitSelected.listen(
       (habit) {
         if (habit == null) {
           emit(state.copyWith(clearUiModel: true));
@@ -64,11 +64,11 @@ class ActiveHabitsScreenCubit extends Cubit<ActiveHabitsScreenState> {
         }
       },
     );
-    _totalPointsStreamSubscription = manager.listenToTotalPoints.listen((totalPoints) {
+    _totalPointsStreamSubscription = coordinator.listenToTotalPoints.listen((totalPoints) {
       emit(state.copyWith(totalPoints: totalPoints));
     });
 
-    _totalCompletionsStreamSubscription = manager.listenToTotalCompletions.listen((totalCompletions) {
+    _totalCompletionsStreamSubscription = coordinator.listenToTotalCompletions.listen((totalCompletions) {
       emit(state.copyWith(totalCompletions: totalCompletions));
     });
   }
@@ -86,7 +86,7 @@ class ActiveHabitsScreenCubit extends Cubit<ActiveHabitsScreenState> {
   }
 
   void clearSelection() {
-    manager.clearHabitSelection();
+    coordinator.clearHabitSelection();
   }
 
   void resetHabit() {
@@ -99,11 +99,11 @@ class ActiveHabitsScreenCubit extends Cubit<ActiveHabitsScreenState> {
   }
 
   void expandAll() {
-    manager.collapseExpandAll(shouldExpand: true);
+    coordinator.collapseExpandAll(shouldExpand: true);
   }
 
   void collapseAll() {
-    manager.collapseExpandAll(shouldExpand: false);
+    coordinator.collapseExpandAll(shouldExpand: false);
   }
 
   void deleteHabit(String habitId) {

@@ -70,8 +70,8 @@ import 'package:habits_flow/domain/use_cases/shared/refresh_all_use_case.dart'
     as _i315;
 import 'package:habits_flow/domain/use_cases/shared/restore_backup_use_case.dart'
     as _i112;
-import 'package:habits_flow/ui/screens/active_habits/coordinator/active_habits_manager.dart'
-    as _i1010;
+import 'package:habits_flow/ui/screens/active_habits/coordinator/active_habits_coordinator.dart'
+    as _i111;
 import 'package:habits_flow/ui/screens/active_habits/widgets/all_groups/all_groups_cubit.dart'
     as _i118;
 import 'package:injectable/injectable.dart' as _i526;
@@ -100,11 +100,11 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i25.GroupLocalSource>(
       () => _i646.GroupLocalSourceImpl(gh<_i118.AppDatabase>()),
     );
+    gh.factory<_i111.ActiveHabitsCoordinator>(
+      () => _i111.ActiveHabitsCoordinatorImpl(),
+    );
     gh.factory<_i877.BackupLocalSource>(
       () => _i705.BackupLocalSourceImpl(gh<_i118.AppDatabase>()),
-    );
-    gh.factory<_i1010.ActiveHabitsManager>(
-      () => _i1010.ActiveHabitsManagerImpl(),
     );
     gh.lazySingleton<_i136.GroupRepo>(
       () => _i38.GroupRepoImpl(groupLocalSource: gh<_i25.GroupLocalSource>()),
@@ -172,6 +172,13 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i779.GroupsListStreamUseCase>(
       () => _i779.GroupsListStreamUseCase(groupRepo: gh<_i136.GroupRepo>()),
     );
+    gh.factory<_i118.AllGroupsCubit>(
+      () => _i118.AllGroupsCubit(
+        groupsListStreamUseCase: gh<_i779.GroupsListStreamUseCase>(),
+        reorderGroupsUseCase: gh<_i368.ReorderGroupsUseCase>(),
+        coordinator: gh<_i111.ActiveHabitsCoordinator>(),
+      ),
+    );
     gh.factory<_i182.GenerateBackupUseCase>(
       () => _i182.GenerateBackupUseCase(backupRepo: gh<_i600.BackupRepo>()),
     );
@@ -183,13 +190,6 @@ extension GetItInjectableX on _i174.GetIt {
         groupRepo: gh<_i136.GroupRepo>(),
         habitRepo: gh<_i877.HabitRepo>(),
         refreshSchedulerRepo: gh<_i184.RefreshSchedulerRepo>(),
-      ),
-    );
-    gh.factory<_i118.AllGroupsCubit>(
-      () => _i118.AllGroupsCubit(
-        groupsListStreamUseCase: gh<_i779.GroupsListStreamUseCase>(),
-        reorderGroupsUseCase: gh<_i368.ReorderGroupsUseCase>(),
-        manager: gh<_i1010.ActiveHabitsManager>(),
       ),
     );
     return this;

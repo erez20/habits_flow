@@ -7,7 +7,7 @@ import 'package:habits_flow/domain/use_cases/habit/reorder_habit_use_case.dart';
 import 'package:habits_flow/domain/use_cases/habit/reset_habit_use_case.dart';
 import 'package:habits_flow/domain/use_cases/shared/refresh_all_use_case.dart';
 import 'package:habits_flow/main/injection.dart';
-import 'package:habits_flow/ui/screens/active_habits/coordinator/active_habits_manager.dart';
+import 'package:habits_flow/ui/screens/active_habits/coordinator/active_habits_coordinator.dart';
 
 import 'active_habits_screen.dart';
 import 'active_habits_screen_cubit.dart';
@@ -26,7 +26,7 @@ class ActiveHabitsScreenProvider extends StatelessWidget {
         final addGroupUseCase = getIt<AddGroupUseCase>();
         return ActiveHabitsScreenCubit(
           addGroupUseCase: addGroupUseCase,
-          manager: context.read<ActiveHabitsManager>(),
+          coordinator: context.read<ActiveHabitsCoordinator>(),
           resetHabitUseCase: resetHabitUseCase,
           refreshAllUseCase: refreshAllUseCase,
           reorderHabitUseCase: reorderHabitUseCase,

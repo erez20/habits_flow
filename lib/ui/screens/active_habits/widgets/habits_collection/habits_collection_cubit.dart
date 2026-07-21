@@ -4,20 +4,20 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:habits_flow/domain/entities/group_entity.dart';
 import 'package:habits_flow/domain/entities/habit_entity.dart';
 import 'package:habits_flow/domain/use_cases/habit/habits_of_group_stream_use_case.dart';
-import 'package:habits_flow/ui/screens/active_habits/coordinator/active_habits_manager.dart';
+import 'package:habits_flow/ui/screens/active_habits/coordinator/active_habits_coordinator.dart';
 import 'package:habits_flow/ui/screens/active_habits/widgets/habits_collection/habits_collection_state.dart';
 
 class HabitsCollectionCubit extends Cubit<HabitCollectionState> {
   final GroupEntity group;
   final HabitsOfGroupStreamUseCase habitsOfGroupStreamUseCase;
-  final ActiveHabitsManager manager;
+  final ActiveHabitsCoordinator coordinator;
   final Set<String> _drownedHabits = {};
 
 
   HabitsCollectionCubit({
     required this.group,
     required this.habitsOfGroupStreamUseCase,
-    required this.manager,
+    required this.coordinator,
   }) : super(
          HabitCollectionState(
            habits: [],
@@ -42,7 +42,7 @@ class HabitsCollectionCubit extends Cubit<HabitCollectionState> {
     var id = data.id;
     if (!_drownedHabits.contains(id)) {
       _drownedHabits.add(id);
-      manager.habitDrown(id);
+      coordinator.habitDrown(id);
     }
 
   }

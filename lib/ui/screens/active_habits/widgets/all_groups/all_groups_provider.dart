@@ -4,7 +4,7 @@ import 'package:get_it/get_it.dart';
 import 'package:habits_flow/domain/use_cases/group/groups_list_stream_use_case.dart';
 import 'package:habits_flow/domain/use_cases/group/reorder_groups_use_case.dart';
 import 'package:habits_flow/main/injection.dart';
-import 'package:habits_flow/ui/screens/active_habits/coordinator/active_habits_manager.dart';
+import 'package:habits_flow/ui/screens/active_habits/coordinator/active_habits_coordinator.dart';
 
 import 'all_groups_cubit.dart';
 import 'all_groups_widget.dart';
@@ -14,13 +14,13 @@ class AllGroupsProvider extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final manager = context.read<ActiveHabitsManager>();
+    final coordinator = context.read<ActiveHabitsCoordinator>();
     return BlocProvider(
       create: (context) {
         var reorderGroupsUseCase = getIt<ReorderGroupsUseCase>();
         return AllGroupsCubit(
         groupsListStreamUseCase: GetIt.I<GroupsListStreamUseCase>(),
-        manager: manager, reorderGroupsUseCase: reorderGroupsUseCase,
+        coordinator: coordinator, reorderGroupsUseCase: reorderGroupsUseCase,
 
       );
       },

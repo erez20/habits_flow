@@ -7,7 +7,7 @@ import 'package:habits_flow/domain/repos/habit_repo.dart';
 import 'package:habits_flow/domain/responses/domain_response.dart';
 import 'package:habits_flow/domain/use_cases/habit/habit_stream_use_case.dart';
 import 'package:habits_flow/domain/use_cases/habit/perform_habit_use_case.dart';
-import 'package:habits_flow/ui/screens/active_habits/coordinator/active_habits_manager.dart';
+import 'package:habits_flow/ui/screens/active_habits/coordinator/active_habits_coordinator.dart';
 
 import 'habit_state.dart';
 
@@ -16,14 +16,14 @@ class HabitCubit extends Cubit<HabitState> {
   final HabitEntity habit;
   final HabitStreamUseCase habitStreamUseCase;
   final PerformHabitUseCase performHabitUseCase;
-  final ActiveHabitsManager manager;
+  final ActiveHabitsCoordinator coordinator;
 
    HabitCubit({
     required this.habitRepo,
     required this.habit,
     required this.habitStreamUseCase,
     required this.performHabitUseCase,
-    required this.manager,
+    required this.coordinator,
 
   }) : super(HabitState.init(habit: habit)) {
     init();
@@ -46,11 +46,11 @@ class HabitCubit extends Cubit<HabitState> {
           }
         });
 
-    _drownSubscription = manager.listenToDrownHabit(habit.id).listen((event) {
+    _drownSubscription = coordinator.listenToDrownHabit(habit.id).listen((event) {
       performHabit();
     });
 
-     _isSelectedSubscription = manager.listenIsHabitSelected(habit.id).listen((isSelected) {
+     _isSelectedSubscription = coordinator.listenIsHabitSelected(habit.id).listen((isSelected) {
       emit(state.copyWith(isSelected: isSelected));
     });
   }
@@ -63,7 +63,7 @@ class HabitCubit extends Cubit<HabitState> {
   }
 
   void onLongPress() {
-    manager.habitSelected(habit: state.habit);
+    coordinator.habitSelected(habit: state.habit);
   }
 
   @override

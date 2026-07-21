@@ -4,7 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:habits_flow/domain/entities/group_entity.dart';
 import 'package:habits_flow/domain/use_cases/group/groups_list_stream_use_case.dart';
 import 'package:habits_flow/domain/use_cases/group/reorder_groups_use_case.dart';
-import 'package:habits_flow/ui/screens/active_habits/coordinator/active_habits_manager.dart';
+import 'package:habits_flow/ui/screens/active_habits/coordinator/active_habits_coordinator.dart';
 import 'package:injectable/injectable.dart';
 
 import 'all_groups_state.dart';
@@ -17,12 +17,12 @@ class AllGroupsCubit extends Cubit<AllGroupsState> {
   final GroupsListStreamUseCase groupsListStreamUseCase;
   final ReorderGroupsUseCase reorderGroupsUseCase;
 
-  final ActiveHabitsManager manager;
+  final ActiveHabitsCoordinator coordinator;
 
   AllGroupsCubit({
     required this.groupsListStreamUseCase,
     required this.reorderGroupsUseCase,
-    required this.manager,
+    required this.coordinator,
   }) : super(AllGroupsState.initial()) {
     init();
   }
@@ -35,8 +35,8 @@ class AllGroupsCubit extends Cubit<AllGroupsState> {
       final totalCompletion = event.fold<int>(0, (sumGroups, group) => sumGroups + group.habits.fold<int>(0, (sum, habit) => sum + habit.completionCount));
 
 
-      manager.updateTotalPoints(totalPoints);
-      manager.updateTotalCompletion(totalCompletion);
+      coordinator.updateTotalPoints(totalPoints);
+      coordinator.updateTotalCompletion(totalCompletion);
       
       final expandedGroupIds = List<String>.from(state.expandedGroupIds);
       var groupWasAdded = state.groupList.length < event.length;
@@ -51,7 +51,7 @@ class AllGroupsCubit extends Cubit<AllGroupsState> {
         ),
       );
     });
-    _groupsExpandCollapseAllSubscription = manager.listenToCollapseExpandAll
+    _groupsExpandCollapseAllSubscription = coordinator.listenToCollapseExpandAll
         .listen((shouldExpand) {
           if (shouldExpand) {
             expandAll();

@@ -5,7 +5,7 @@ import 'package:injectable/injectable.dart';
 
 import 'package:rxdart/rxdart.dart';
 
-abstract class ActiveHabitsManager {
+abstract class ActiveHabitsCoordinator {
   Stream<void> listenToDrownHabit(String id);
 
   void habitDrown(String id);
@@ -33,8 +33,8 @@ abstract class ActiveHabitsManager {
   void dispose();
 }
 
-@Injectable(as: ActiveHabitsManager)
-class ActiveHabitsManagerImpl implements ActiveHabitsManager {
+@Injectable(as: ActiveHabitsCoordinator)
+class ActiveHabitsCoordinatorImpl implements ActiveHabitsCoordinator {
   final BehaviorSubject<String> _drawOverHabit = BehaviorSubject<String>();
   final BehaviorSubject<HabitEntity?> _habitSelected =
       BehaviorSubject<HabitEntity?>();

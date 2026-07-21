@@ -5,7 +5,7 @@ import 'package:habits_flow/main/injection.dart';
 
 
 import '../screen/active_habits_screen_provider.dart';
-import 'active_habits_manager.dart';
+import 'active_habits_coordinator.dart';
 
 @RoutePage()
 class ActiveHabitsProvider extends StatelessWidget {
@@ -13,9 +13,9 @@ class ActiveHabitsProvider extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return RepositoryProvider<ActiveHabitsManager>(
-      create: (context) => getIt<ActiveHabitsManager>(),
-      dispose: (manager) => manager.dispose(),
+    return RepositoryProvider<ActiveHabitsCoordinator>(
+      create: (context) => getIt<ActiveHabitsCoordinator>(),
+      dispose: (coordinator) => coordinator.dispose(),
       child: ActiveHabitsScreenProvider(),
     );
   }

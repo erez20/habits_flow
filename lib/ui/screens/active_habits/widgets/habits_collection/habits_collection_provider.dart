@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:habits_flow/domain/entities/group_entity.dart';
 import 'package:habits_flow/domain/use_cases/habit/habits_of_group_stream_use_case.dart';
 import 'package:habits_flow/main/injection.dart';
-import 'package:habits_flow/ui/screens/active_habits/coordinator/active_habits_manager.dart';
+import 'package:habits_flow/ui/screens/active_habits/coordinator/active_habits_coordinator.dart';
 
 
 
@@ -20,11 +20,11 @@ class HabitsCollectionProvider extends StatelessWidget {
     return BlocProvider(
       create: (context) {
         final habitsOfGroupStreamUseCase = getIt<HabitsOfGroupStreamUseCase>();
-        final manager = context.read<ActiveHabitsManager>();
+        final coordinator = context.read<ActiveHabitsCoordinator>();
         return HabitsCollectionCubit(
         group: group,
         habitsOfGroupStreamUseCase: habitsOfGroupStreamUseCase,
-          manager: manager,
+          coordinator: coordinator,
       );
       },
       child: const HabitsCollectionWidget(),

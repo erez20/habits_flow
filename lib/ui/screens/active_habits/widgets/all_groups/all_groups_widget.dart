@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:habits_flow/ui/common/constants.dart';
-import 'package:habits_flow/ui/screens/active_habits/coordinator/active_habits_manager.dart';
+import 'package:habits_flow/ui/screens/active_habits/coordinator/active_habits_coordinator.dart';
 import 'package:habits_flow/ui/screens/active_habits/widgets/all_groups/all_groups_cubit.dart';
 import 'package:habits_flow/ui/screens/active_habits/widgets/group/group_provider.dart';
 import 'package:habits_flow/ui/screens/active_habits/widgets/habits_collection/habits_collection_provider.dart';
@@ -14,7 +14,7 @@ class AllGroupsWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final cubit = context.read<AllGroupsCubit>();
-    final manager = context.read<ActiveHabitsManager>();
+    final coordinator = context.read<ActiveHabitsCoordinator>();
 
     return Expanded(
       child: BlocBuilder<AllGroupsCubit, AllGroupsState>(
@@ -25,7 +25,7 @@ class AllGroupsWidget extends StatelessWidget {
             return _GroupsListWidget(
               state: state,
               cubit: cubit,
-              manager: manager,
+              coordinator: coordinator,
             );
           }
         },
@@ -60,12 +60,12 @@ class _GroupsListWidget extends StatefulWidget {
   const _GroupsListWidget({
     required this.state,
     required this.cubit,
-    required this.manager,
+    required this.coordinator,
   });
 
   final AllGroupsState state;
   final AllGroupsCubit cubit;
-  final ActiveHabitsManager manager;
+  final ActiveHabitsCoordinator coordinator;
 
   @override
   State<_GroupsListWidget> createState() => _GroupsListWidgetState();
@@ -115,7 +115,7 @@ class _GroupsListWidgetState extends State<_GroupsListWidget> {
             key: ValueKey("dragged_group_${widget.state.groupList[index].id}"),
             elevation: 4.0,
             child: RepositoryProvider.value(
-              value: widget.manager,
+              value: widget.coordinator,
               child: child,
             ),
           );
