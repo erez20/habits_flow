@@ -5,7 +5,7 @@ import 'package:injectable/injectable.dart';
 
 import 'backup_local_source.dart';
 
-@Injectable(as: BackupLocalSource)
+@LazySingleton(as: BackupLocalSource)
 class BackupLocalSourceImpl extends BackupLocalSource{
   final  AppDatabase db;
   BackupLocalSourceImpl(this.db);

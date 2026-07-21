@@ -2,7 +2,8 @@
 
 Guidance for working in this codebase: a Flutter app following clean
 architecture with a reactive, stream-based data flow. Stack: flutter_bloc
-(cubits), get_it + injectable (DI), auto_route (navigation), drift (SQLite).
+(cubits), get_it + injectable (DI), auto_route (navigation), drift (SQLite),
+rxdart (subjects & stream composition).
 
 ## Directory Structure
 
@@ -40,6 +41,51 @@ lib/
 **Dependency rule:** `ui → domain ← data`. The domain layer imports nothing from
 `ui/` or `data/`. Generated files (`*.g.dart`, `*.gr.dart`, `*.config.dart`) are
 never edited by hand.
+
+## Dependency Injection (get_it + injectable)
+
+Setup lives in `main/injection.dart`; the registrations are generated into
+`injection.config.dart` from annotations:
+
+```dart
+final getIt = GetIt.instance;
+
+@InjectableInit(initializerName: 'init', preferRelativeImports: false, asExtension: true)
+void configureDependencies() => getIt.init();
+```
+
+`main()` calls `configureDependencies()` before `runApp`. After adding or
+changing any annotation, run
+`dart run build_runner build --delete-conflicting-outputs`.
+
+**What gets registered, and how:**
+
+| Kind | Annotation | Lifetime |
+|---|---|---|
+| Database | `@singleton` | One instance, app lifetime |
+| Repositories | `@LazySingleton(as: <DomainInterface>)` | One instance, created on first use |
+| Data sources | `@LazySingleton(as: <SourceInterface>)` | One instance — sources hold state (refresh subjects) |
+| Use cases | `@injectable` | Factory — stateless and cheap, new instance per request |
+| Coordinators | `@Injectable(as: <Interface>)` | Factory — fresh instance per screen/flow scope; lifecycle owned by the scoping `RepositoryProvider`, not by getIt |
+
+Registration is always against the abstraction (`as:` the domain interface);
+consumers depend on the interface, never the impl.
+
+**Lifetime follows state ownership:** app-owned state (database, repos, sources)
+→ singleton; scope-owned state (coordinators) → factory + the scope's `dispose`;
+stateless (use cases) → factory.
+
+**Source ownership:** a source has exactly one owner — its repo. No other class
+ever injects a source. Cross-aggregate needs go through the other aggregate's
+repo *interface*: preferably composed in a use case that injects both repos;
+repo→repo injection is allowed for infrastructure cases but must stay acyclic.
+
+**Never registered:** cubits, widgets, ui models. Cubits are constructed by hand
+in providers, receiving deps through their constructors.
+
+**Who may call `getIt`:** `main()` and `*_provider.dart` files only (see The
+4-File Unit). Everything else — cubits, repos, sources, use cases — receives its
+dependencies via constructor; injectable generates that wiring.
 
 ## Screen & Flow Structure
 
@@ -116,3 +162,63 @@ consumer. Father state only when no sibling cubit is involved.
 **Reusable widgets** (`ui/widgets/`) are the opposite regime: params in,
 callbacks out, nothing else. Never `context.read` a feature's cubit, never touch
 a coordinator — or the widget is no longer reusable.
+
+### Coordinator Anatomy
+
+The coordinator coordinates through rx: it is a plain class (abstract interface
++ `Impl`, registered `@Injectable(as: ...)`) holding **one `BehaviorSubject` per
+signal**, with void methods as the write side and streams as the read side:
+
+```dart
+abstract class <Name>Coordinator {
+  Stream<Item?> get listenToItemSelected;        // read: raw stream
+  Stream<bool> listenIsItemSelected(String id);  // read: filtered per consumer
+  void itemSelected(Item item);                  // write
+  void clearItemSelection();                     // write
+  void dispose();
+}
+
+@Injectable(as: <Name>Coordinator)
+class <Name>CoordinatorImpl implements <Name>Coordinator {
+  final _itemSelected = BehaviorSubject<Item?>();
+  final _total = BehaviorSubject<int>.seeded(0); // seeded: has a value pre-write
+
+  @override
+  Stream<Item?> get listenToItemSelected => _itemSelected.stream;
+
+  @override
+  Stream<bool> listenIsItemSelected(String id) =>
+      _itemSelected.stream.map((e) => e?.id == id);
+
+  @override
+  void itemSelected(Item item) => _itemSelected.add(item);
+
+  @override
+  void clearItemSelection() => _itemSelected.add(null);
+
+  @override
+  void dispose() {
+    _itemSelected.close();
+    _total.close();
+  }
+}
+```
+
+The rules that make it work:
+
+- **`BehaviorSubject`, not `StreamController`** — it replays the latest value,
+  so a cubit created after a signal fired still syncs on subscribe. Use
+  `.seeded(...)` when consumers need a value before the first write.
+- **Writers call methods, readers get streams.** No one outside the impl ever
+  sees a subject. Expose raw streams (`listenToX`) or per-consumer slices
+  (`listenIsItemSelected(id)` via `.map`/`.where`) so each subscriber receives
+  only what concerns it.
+- **No logic, no storage.** The coordinator transports signals between cubits;
+  it never calls use cases and holds no renderable state. Each consuming cubit
+  subscribes in `init()`, mirrors what it needs into its own state with `emit`,
+  and cancels the subscription in `close()`.
+- **Lifecycle.** `dispose()` closes every subject, and the `RepositoryProvider`
+  that scopes the coordinator owns that call
+  (`dispose: (c) => c.dispose()`) — the subjects die with the scope.
+- **Naming.** Streams are `listenToX` / `listenIsX(param)`; write methods are
+  imperative verbs (`itemSelected`, `clearItemSelection`, `updateTotal`).

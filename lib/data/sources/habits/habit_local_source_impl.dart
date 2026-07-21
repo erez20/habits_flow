@@ -6,7 +6,7 @@ import 'package:injectable/injectable.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:uuid/uuid.dart';
 
-@Injectable(as: HabitLocalSource)
+@LazySingleton(as: HabitLocalSource)
 class HabitLocalSourceImpl implements HabitLocalSource {
   final AppDatabase db;
   final _refreshController = BehaviorSubject<void>();

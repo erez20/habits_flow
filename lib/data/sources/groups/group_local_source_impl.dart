@@ -7,7 +7,7 @@ import 'package:injectable/injectable.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:uuid/uuid.dart';
 
-@Injectable(as: GroupLocalSource)
+@LazySingleton(as: GroupLocalSource)
 class GroupLocalSourceImpl implements GroupLocalSource {
   final AppDatabase db;
   final _refreshController = BehaviorSubject<void>();

@@ -84,7 +84,7 @@ extension GetItInjectableX on _i174.GetIt {
   }) {
     final gh = _i526.GetItHelper(this, environment, environmentFilter);
     gh.singleton<_i118.AppDatabase>(() => _i118.AppDatabase());
-    gh.factory<_i545.HabitLocalSource>(
+    gh.lazySingleton<_i545.HabitLocalSource>(
       () => _i995.HabitLocalSourceImpl(gh<_i118.AppDatabase>()),
     );
     gh.lazySingleton<_i877.HabitRepo>(
@@ -97,13 +97,13 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i271.HabitStreamUseCase>(
       () => _i271.HabitStreamUseCase(habitRepo: gh<_i877.HabitRepo>()),
     );
-    gh.factory<_i25.GroupLocalSource>(
+    gh.lazySingleton<_i25.GroupLocalSource>(
       () => _i646.GroupLocalSourceImpl(gh<_i118.AppDatabase>()),
     );
     gh.factory<_i111.ActiveHabitsCoordinator>(
       () => _i111.ActiveHabitsCoordinatorImpl(),
     );
-    gh.factory<_i877.BackupLocalSource>(
+    gh.lazySingleton<_i877.BackupLocalSource>(
       () => _i705.BackupLocalSourceImpl(gh<_i118.AppDatabase>()),
     );
     gh.lazySingleton<_i136.GroupRepo>(
