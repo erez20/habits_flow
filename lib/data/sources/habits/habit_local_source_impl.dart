@@ -11,7 +11,7 @@ class HabitLocalSourceImpl implements HabitLocalSource {
   final AppDatabase db;
   final _refreshController = BehaviorSubject<void>();
 
-  HabitLocalSourceImpl(this.db);
+  HabitLocalSourceImpl({required this.db});
 
   @override
   Future<void> refresh() async {

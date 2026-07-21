@@ -12,7 +12,7 @@ class GroupLocalSourceImpl implements GroupLocalSource {
   final AppDatabase db;
   final _refreshController = BehaviorSubject<void>();
 
-  GroupLocalSourceImpl(this.db);
+  GroupLocalSourceImpl({required this.db});
 
   @override
   Future<void> refresh() async {

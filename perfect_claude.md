@@ -249,3 +249,13 @@ The rules that make it work:
   (`dispose: (c) => c.dispose()`) — the subjects die with the scope.
 - **Naming.** Streams are `listenToX` / `listenIsX(param)`; write methods are
   imperative verbs (`itemSelected`, `clearItemSelection`, `updateTotal`).
+
+## Code Style
+
+- **Named parameters, always:** constructors and multi-parameter functions take
+  named parameters (`{required this.xxx}`), never positional. Since named
+  parameters cannot be private, injected dependency fields are public
+  (`final HabitRepo habitRepo`, not `_repo`). The one exception: single-value
+  wrappers and converters (`Success(data)`, `fromEntity(entity)`,
+  `exec(params)`) keep their single positional parameter — naming it adds
+  noise, and positional keeps them tear-off friendly.

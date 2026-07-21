@@ -84,8 +84,22 @@ extension GetItInjectableX on _i174.GetIt {
   }) {
     final gh = _i526.GetItHelper(this, environment, environmentFilter);
     gh.singleton<_i118.AppDatabase>(() => _i118.AppDatabase());
+    gh.factory<_i111.ActiveHabitsCoordinator>(
+      () => _i111.ActiveHabitsCoordinatorImpl(),
+    );
+    gh.lazySingleton<_i877.BackupLocalSource>(
+      () => _i705.BackupLocalSourceImpl(db: gh<_i118.AppDatabase>()),
+    );
+    gh.lazySingleton<_i25.GroupLocalSource>(
+      () => _i646.GroupLocalSourceImpl(db: gh<_i118.AppDatabase>()),
+    );
     gh.lazySingleton<_i545.HabitLocalSource>(
-      () => _i995.HabitLocalSourceImpl(gh<_i118.AppDatabase>()),
+      () => _i995.HabitLocalSourceImpl(db: gh<_i118.AppDatabase>()),
+    );
+    gh.lazySingleton<_i600.BackupRepo>(
+      () => _i769.BackupRepoImpl(
+        backupLocalSource: gh<_i877.BackupLocalSource>(),
+      ),
     );
     gh.lazySingleton<_i877.HabitRepo>(
       () =>
@@ -97,25 +111,17 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i271.HabitStreamUseCase>(
       () => _i271.HabitStreamUseCase(habitRepo: gh<_i877.HabitRepo>()),
     );
-    gh.lazySingleton<_i25.GroupLocalSource>(
-      () => _i646.GroupLocalSourceImpl(gh<_i118.AppDatabase>()),
-    );
-    gh.factory<_i111.ActiveHabitsCoordinator>(
-      () => _i111.ActiveHabitsCoordinatorImpl(),
-    );
-    gh.lazySingleton<_i877.BackupLocalSource>(
-      () => _i705.BackupLocalSourceImpl(gh<_i118.AppDatabase>()),
+    gh.factory<_i1073.HabitsOfGroupStreamUseCase>(
+      () => _i1073.HabitsOfGroupStreamUseCase(habitRepo: gh<_i877.HabitRepo>()),
     );
     gh.lazySingleton<_i136.GroupRepo>(
       () => _i38.GroupRepoImpl(groupLocalSource: gh<_i25.GroupLocalSource>()),
     );
-    gh.factory<_i1073.HabitsOfGroupStreamUseCase>(
-      () => _i1073.HabitsOfGroupStreamUseCase(gh<_i877.HabitRepo>()),
+    gh.factory<_i182.GenerateBackupUseCase>(
+      () => _i182.GenerateBackupUseCase(backupRepo: gh<_i600.BackupRepo>()),
     );
-    gh.lazySingleton<_i600.BackupRepo>(
-      () => _i769.BackupRepoImpl(
-        backupLocalSource: gh<_i877.BackupLocalSource>(),
-      ),
+    gh.factory<_i112.RestoreBackupUseCase>(
+      () => _i112.RestoreBackupUseCase(backupRepo: gh<_i600.BackupRepo>()),
     );
     gh.factory<_i262.AddHabitUseCase>(
       () => _i262.AddHabitUseCase(
@@ -156,9 +162,6 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i184.RefreshSchedulerRepo>(
       () => _i186.RefreshSchedulerRepoImpl(groupRepo: gh<_i136.GroupRepo>()),
     );
-    gh.factory<_i368.ReorderGroupsUseCase>(
-      () => _i368.ReorderGroupsUseCase(gh<_i136.GroupRepo>()),
-    );
     gh.factory<_i655.AddGroupUseCase>(
       () => _i655.AddGroupUseCase(groupRepo: gh<_i136.GroupRepo>()),
     );
@@ -172,18 +175,15 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i779.GroupsListStreamUseCase>(
       () => _i779.GroupsListStreamUseCase(groupRepo: gh<_i136.GroupRepo>()),
     );
+    gh.factory<_i368.ReorderGroupsUseCase>(
+      () => _i368.ReorderGroupsUseCase(groupRepo: gh<_i136.GroupRepo>()),
+    );
     gh.factory<_i118.AllGroupsCubit>(
       () => _i118.AllGroupsCubit(
         groupsListStreamUseCase: gh<_i779.GroupsListStreamUseCase>(),
         reorderGroupsUseCase: gh<_i368.ReorderGroupsUseCase>(),
         coordinator: gh<_i111.ActiveHabitsCoordinator>(),
       ),
-    );
-    gh.factory<_i182.GenerateBackupUseCase>(
-      () => _i182.GenerateBackupUseCase(backupRepo: gh<_i600.BackupRepo>()),
-    );
-    gh.factory<_i112.RestoreBackupUseCase>(
-      () => _i112.RestoreBackupUseCase(backupRepo: gh<_i600.BackupRepo>()),
     );
     gh.factory<_i315.RefreshAllUseCase>(
       () => _i315.RefreshAllUseCase(

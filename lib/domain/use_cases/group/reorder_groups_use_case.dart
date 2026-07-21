@@ -6,12 +6,12 @@ import 'package:injectable/injectable.dart';
 
 @injectable
 class ReorderGroupsUseCase extends ExecUseCase<void, List<GroupEntity>> {
-  final GroupRepo _repo;
+  final GroupRepo groupRepo;
 
-  ReorderGroupsUseCase(this._repo);
+  ReorderGroupsUseCase({required this.groupRepo});
 
   @override
   Future<DomainResponse<void>> exec(List<GroupEntity> params) {
-    return _repo.reorder(params);
+    return groupRepo.reorder(params);
   }
 }

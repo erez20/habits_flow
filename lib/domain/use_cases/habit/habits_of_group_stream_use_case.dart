@@ -5,10 +5,10 @@ import 'package:injectable/injectable.dart';
 
 @injectable
 class HabitsOfGroupStreamUseCase extends StreamUseCase<List<HabitEntity>, String> {
-  final HabitRepo _repo;
+  final HabitRepo habitRepo;
 
-  HabitsOfGroupStreamUseCase(this._repo);
+  HabitsOfGroupStreamUseCase({required this.habitRepo});
 
   @override
-  Stream<List<HabitEntity>> stream(String groupId) => _repo.habitsOfGroupStream(groupId);
+  Stream<List<HabitEntity>> stream(String groupId) => habitRepo.habitsOfGroupStream(groupId);
 }

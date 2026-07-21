@@ -8,7 +8,7 @@ import 'backup_local_source.dart';
 @LazySingleton(as: BackupLocalSource)
 class BackupLocalSourceImpl extends BackupLocalSource{
   final  AppDatabase db;
-  BackupLocalSourceImpl(this.db);
+  BackupLocalSourceImpl({required this.db});
 
   @override
   Future<File> generateBackup() => db.generateBackup();
