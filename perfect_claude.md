@@ -156,6 +156,16 @@ by a genuinely different projection.
 - **Always `Equatable`, always `copyWith`** — same requirements as states.
 - **`fromEntity` always; `toEntity` only if some flow actually submits the
   model back** to a use case.
+- **Conversions get their own line.** Never bury `fromEntity`/`toEntity` inside
+  another call's argument list — assign to a named local first, then pass it:
+
+  ```dart
+  // NO
+  editGroupUseCase.exec(uiModel.toEntity(groupUI: state.uiModel));
+  // YES
+  final entity = uiModel.toEntity(groupUI: state.uiModel);
+  editGroupUseCase.exec(entity);
+  ```
 
 ### Widget Communication Rules
 

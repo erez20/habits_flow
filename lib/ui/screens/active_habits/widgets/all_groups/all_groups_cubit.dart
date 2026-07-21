@@ -71,7 +71,8 @@ class AllGroupsCubit extends Cubit<AllGroupsState> {
     final group = groups.removeAt(oldIndex);
     groups.insert(newIndexA, group);
     emit(state.copyWith(groupList: groups));
-    reorderGroupsUseCase.exec(groups.map((g) => g.toEntity()).toList());
+    final entities = groups.map((g) => g.toEntity()).toList();
+    reorderGroupsUseCase.exec(entities);
   }
 
   void toggleGroup(String id) {

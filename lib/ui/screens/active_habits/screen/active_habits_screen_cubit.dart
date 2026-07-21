@@ -55,11 +55,8 @@ class ActiveHabitsScreenCubit extends Cubit<ActiveHabitsScreenState> {
         if (habit == null) {
           emit(state.copyWith(clearUiModel: true));
         } else {
-          emit(
-            state.copyWith(
-              uiModel: SelectedHabitUI.fromHabit(habit),
-            ),
-          );
+          final uiModel = SelectedHabitUI.fromHabit(habit);
+          emit(state.copyWith(uiModel: uiModel));
         }
       },
     );

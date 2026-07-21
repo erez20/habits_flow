@@ -25,7 +25,8 @@ class GroupCubit extends Cubit<GroupState> {
 
   void editGroup({required SelectedGroupUI uiModel}) {
     Fimber.d("editGroup ${state.uiModel.id}");
-    editGroupUseCase.exec(uiModel.toEntity(groupUI: state.uiModel));
+    final entity = uiModel.toEntity(groupUI: state.uiModel);
+    editGroupUseCase.exec(entity);
   }
 
   void updateGroup(GroupUI newGroup) {

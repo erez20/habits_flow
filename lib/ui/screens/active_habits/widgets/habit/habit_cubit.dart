@@ -43,7 +43,8 @@ class HabitCubit extends Cubit<HabitState> {
         .stream(HabitStreamUseCaseParams(habitId: habit.id))
         .listen((event) {
           if (event.isSuccess) {
-            emit(state.copyWith(habit: HabitUI.fromEntity(event.data!)));
+            final habit = HabitUI.fromEntity(event.data!);
+            emit(state.copyWith(habit: habit));
           }
         });
 

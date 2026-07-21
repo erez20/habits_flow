@@ -35,7 +35,8 @@ class HabitsCollectionCubit extends Cubit<HabitCollectionState> {
     _habitsSubscription = habitsOfGroupStreamUseCase.stream(group.id).listen((
       event,
     ) {
-      emit(state.copyWith(habits: event.map(HabitUI.fromEntity).toList(), init: false));
+      final habits = event.map(HabitUI.fromEntity).toList();
+      emit(state.copyWith(habits: habits, init: false));
     });
   }
 
