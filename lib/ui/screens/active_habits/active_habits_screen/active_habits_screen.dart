@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart' show BlocBuilder, ReadContext;
 import 'package:habits_flow/ui/screens/active_habits/widgets/app_bar/habits_app_bar_builder.dart';
 import 'package:habits_flow/ui/screens/active_habits/widgets/side_menu/side_menu_provider.dart';
-import 'package:habits_flow/ui/widgets/all_groups/all_groups_provider.dart';
-import 'package:habits_flow/ui/widgets/common/animated_color_filter/animated_color_filter.dart';
-import 'package:habits_flow/ui/widgets/common/joystick/joystick_widget.dart';
+import 'package:habits_flow/ui/screens/active_habits/widgets/all_groups/all_groups_provider.dart';
+import 'package:habits_flow/ui/widgets/animated_color_filter/animated_color_filter.dart';
+import 'package:habits_flow/ui/widgets/joystick/joystick_widget.dart';
 
 import 'active_habits_screen_cubit.dart' show ActiveHabitsScreenCubit;
 import 'active_habits_screen_state.dart' show ActiveHabitsScreenState;

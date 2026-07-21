@@ -14,7 +14,7 @@ import 'package:habits_flow/ui/common/colors/app_colors.dart';
 import 'package:habits_flow/ui/screens/active_habits/di/active_habits_manager.dart';
 import 'package:habits_flow/ui/ui_models/new_group_form_ui_model.dart';
 import 'package:habits_flow/ui/ui_models/selected_habit_ui_model.dart';
-import 'package:habits_flow/ui/widgets/edit_habit_form/edit_habit_form_provider.dart';
+import 'package:habits_flow/ui/screens/active_habits/widgets/edit_habit_form/edit_habit_form_provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import 'active_habits_screen_state.dart';

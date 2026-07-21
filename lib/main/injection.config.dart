@@ -72,7 +72,7 @@ import 'package:habits_flow/domain/use_cases/shared/restore_backup_use_case.dart
     as _i112;
 import 'package:habits_flow/ui/screens/active_habits/di/active_habits_manager.dart'
     as _i28;
-import 'package:habits_flow/ui/widgets/all_groups/all_groups_cubit.dart'
+import 'package:habits_flow/ui/screens/active_habits/widgets/all_groups/all_groups_cubit.dart'
     as _i967;
 import 'package:injectable/injectable.dart' as _i526;
 

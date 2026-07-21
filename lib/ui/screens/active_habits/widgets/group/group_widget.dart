@@ -4,9 +4,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:habits_flow/ui/common/duration/duration_utils.dart';
 import 'package:habits_flow/ui/ui_models/edit_group_ui_model.dart';
 import 'package:habits_flow/ui/ui_models/group_ui_model.dart';
-import 'package:habits_flow/ui/widgets/edit_group_form/edit_group_form_provider.dart';
-import 'package:habits_flow/ui/widgets/group/group_cubit.dart';
-import 'package:habits_flow/ui/widgets/group/group_state.dart';
+import 'package:habits_flow/ui/screens/active_habits/widgets/edit_group_form/edit_group_form_provider.dart';
+import 'package:habits_flow/ui/screens/active_habits/widgets/group/group_cubit.dart';
+import 'package:habits_flow/ui/screens/active_habits/widgets/group/group_state.dart';
 
 class GroupWidget extends StatelessWidget {
   final VoidCallback onTap;

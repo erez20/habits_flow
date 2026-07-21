@@ -4,11 +4,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:habits_flow/domain/entities/habit_entity.dart';
 import 'package:habits_flow/ui/common/constants.dart';
 import 'package:habits_flow/ui/ui_models/group_ui_model.dart';
-import 'package:habits_flow/ui/widgets/common/drawing_layer/drawing_layer_widget.dart';
-import 'package:habits_flow/ui/widgets/create_habit/create_habit_provider.dart';
-import 'package:habits_flow/ui/widgets/habit/habit_provider.dart';
-import 'package:habits_flow/ui/widgets/habits_collection/habits_collection_cubit.dart';
-import 'package:habits_flow/ui/widgets/habits_collection/habits_collection_state.dart';
+import 'package:habits_flow/ui/widgets/drawing_layer/drawing_layer_widget.dart';
+import 'package:habits_flow/ui/screens/active_habits/widgets/create_habit/create_habit_provider.dart';
+import 'package:habits_flow/ui/screens/active_habits/widgets/habit/habit_provider.dart';
+import 'package:habits_flow/ui/screens/active_habits/widgets/habits_collection/habits_collection_cubit.dart';
+import 'package:habits_flow/ui/screens/active_habits/widgets/habits_collection/habits_collection_state.dart';
 import 'package:flutter_reorderable_grid_view/widgets/reorderable_builder.dart';
 
 class HabitsCollectionWidget extends StatefulWidget {

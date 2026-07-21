@@ -4,24 +4,26 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:habits_flow/ui/common/colors/app_colors.dart';
-import 'package:habits_flow/ui/widgets/common/duration_type/duration_type.dart';
+import 'package:habits_flow/ui/ui_models/group_ui_model.dart';
+import 'package:habits_flow/ui/common/duration/duration_type.dart';
 
-import 'new_group_form_cubit.dart';
-import 'new_group_form_state.dart';
+import 'edit_group_form_cubit.dart';
+import 'edit_group_form_state.dart';
 
-class NewGroupFormWidget extends StatefulWidget {
-  const NewGroupFormWidget({super.key});
+class EditGroupFormWidget extends StatefulWidget {
+  final GroupUIModel uiModel;
+  const EditGroupFormWidget({super.key, required this.uiModel});
 
   @override
-  State<NewGroupFormWidget> createState() => _NewGroupFormWidgetState();
+  State<EditGroupFormWidget> createState() => _EditGroupFormWidgetState();
 }
 
-class _NewGroupFormWidgetState extends State<NewGroupFormWidget> {
+class _EditGroupFormWidgetState extends State<EditGroupFormWidget> {
   final _formKey = GlobalKey<FormBuilderState>();
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<NewGroupFormCubit, NewGroupFormState>(
+    return BlocConsumer<EditGroupFormCubit, EditGroupFormState>(
       listener: (context, state) {
         if (state.isSuccess) {
           Navigator.of(context).pop();
@@ -36,7 +38,7 @@ class _NewGroupFormWidgetState extends State<NewGroupFormWidget> {
         }
       },
       builder: (context, state) {
-        final cubit = context.read<NewGroupFormCubit>();
+        final cubit = context.read<EditGroupFormCubit>();
 
         return SafeArea(
           child: Container(
@@ -53,6 +55,13 @@ class _NewGroupFormWidgetState extends State<NewGroupFormWidget> {
               child: SingleChildScrollView(
                 child: FormBuilder(
                   key: _formKey,
+                  initialValue: {
+                    'title': widget.uiModel.title,
+                    'duration_value': widget.uiModel.durationValue,
+                    'duration_type': widget.uiModel.durationType,
+                    'group_color': widget.uiModel.color,
+
+                  },
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -63,7 +72,7 @@ class _NewGroupFormWidgetState extends State<NewGroupFormWidget> {
                       const SizedBox(height: 24),
                       _title(),
                       const SizedBox(height: 16),
-                      _DurationInSec(formKey: _formKey),
+                      _DurationInSec(formKey: _formKey, uiModel: widget.uiModel),
                       const SizedBox(height: 16),
                       _color(),
                       const SizedBox(height: 32),
@@ -123,7 +132,7 @@ class _NewGroupFormWidgetState extends State<NewGroupFormWidget> {
     );
   }
 
-  SizedBox _submit(NewGroupFormState state, NewGroupFormCubit cubit) {
+  SizedBox _submit(EditGroupFormState state, EditGroupFormCubit cubit) {
     return SizedBox(
       width: double.infinity,
       child: FilledButton(
@@ -134,54 +143,54 @@ class _NewGroupFormWidgetState extends State<NewGroupFormWidget> {
         onPressed: state.isSubmitting
             ? null
             : () {
-                if (_formKey.currentState?.saveAndValidate() ?? false) {
-                  final formData = _formKey.currentState!.value;
-                  final durationValue =
-                      int.tryParse(formData['duration_value'] ?? '0') ?? 0;
-                  final durationType = formData['duration_type'] as DurationType;
+          if (_formKey.currentState?.saveAndValidate() ?? false) {
+            final formData = _formKey.currentState!.value;
+            final durationValue =
+                int.tryParse(formData['duration_value'] ?? '0') ?? 0;
+            final durationType = formData['duration_type'] as DurationType;
 
-                  int durationInSeconds;
-                  switch (durationType) {
-                    case DurationType.months:
-                      durationInSeconds = durationValue * 30 * 24 * 3600;
-                      break;
-                    case DurationType.days:
-                      durationInSeconds = durationValue * 24 * 3600;
-                      break;
-                    case DurationType.hours:
-                      durationInSeconds = durationValue * 3600;
-                      break;
-                    case DurationType.seconds:
-                      durationInSeconds = durationValue;
-                      break;
-                  }
+            int durationInSeconds;
+            switch (durationType) {
+              case DurationType.months:
+                durationInSeconds = durationValue * 30 * 24 * 3600;
+                break;
+              case DurationType.days:
+                durationInSeconds = durationValue * 24 * 3600;
+                break;
+              case DurationType.hours:
+                durationInSeconds = durationValue * 3600;
+                break;
+              case DurationType.seconds:
+                durationInSeconds = durationValue;
+                break;
+            }
 
-                  if (durationInSeconds == 0) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: const Text(
-                          'Please enter a valid duration.',
-                        ),
-                        backgroundColor: Theme.of(context).colorScheme.error,
-                      ),
-                    );
-                    return;
-                  }
+            if (durationInSeconds == 0) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: const Text(
+                    'Please enter a valid duration.',
+                  ),
+                  backgroundColor: Theme.of(context).colorScheme.error,
+                ),
+              );
+              return;
+            }
 
-                  final updatedFormData = {
-                    ...formData,
-                    'durationInSec': durationInSeconds,
-                  };
+            final updatedFormData = {
+              ...formData,
+              'durationInSec': durationInSeconds,
+            };
 
-                  cubit.submitForm(updatedFormData);
-                }
-              },
+            cubit.submitForm(updatedFormData);
+          }
+        },
         child: state.isSubmitting
             ? const CircularProgressIndicator(
-                valueColor: AlwaysStoppedAnimation(
-                  Colors.white,
-                ),
-              )
+          valueColor: AlwaysStoppedAnimation(
+            Colors.white,
+          ),
+        )
             : const Text('Confirm'),
       ),
     );
@@ -189,8 +198,8 @@ class _NewGroupFormWidgetState extends State<NewGroupFormWidget> {
 
   Widget _color() {
     return FormBuilderField<Color>(
-      name: 'habit_color',
-      initialValue: Colors.red,
+      name: 'group_color',
+      initialValue: widget.uiModel.color,
       builder: (FormFieldState<Color?> field) {
         return InputDecorator(
           decoration: InputDecoration(
@@ -228,17 +237,25 @@ class _NewGroupFormWidgetState extends State<NewGroupFormWidget> {
 
 class _DurationInSec extends StatefulWidget {
   const _DurationInSec({
-    required this.formKey,
+    required this.formKey, required this.uiModel,
   });
 
   final GlobalKey<FormBuilderState> formKey;
+  final GroupUIModel uiModel;
+
 
   @override
   State<_DurationInSec> createState() => _DurationInSecState();
 }
 
 class _DurationInSecState extends State<_DurationInSec> {
-  DurationType _selectedDuration = DurationType.days;
+  late DurationType _selectedDuration;
+
+  @override
+  void initState() {
+    super.initState();
+    _selectedDuration = widget.uiModel.durationType;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -284,6 +301,7 @@ class _DurationInSecState extends State<_DurationInSec> {
         const SizedBox(height: 16),
         FormBuilderTextField(
           name: 'duration_value',
+          initialValue: widget.uiModel.durationValue,
           decoration: InputDecoration(
             labelText: 'Duration (${_selectedDuration.name})',
             prefixIcon: const Icon(Icons.timelapse),
@@ -297,7 +315,7 @@ class _DurationInSecState extends State<_DurationInSec> {
           validator: FormBuilderValidators.compose([
             FormBuilderValidators.required(),
             FormBuilderValidators.numeric(),
-            (value) {
+                (value) {
               if (value == null) return null;
               final number = int.tryParse(value);
               if (number == null) return 'Invalid number';
@@ -306,8 +324,8 @@ class _DurationInSecState extends State<_DurationInSec> {
                 return 'Hours must be between 1 and 23';
               }
               if ((_selectedDuration == DurationType.days ||
-                      _selectedDuration == DurationType.months ||
-                      _selectedDuration == DurationType.seconds) &&
+                  _selectedDuration == DurationType.months ||
+                  _selectedDuration == DurationType.seconds) &&
                   number < 1) {
                 return 'Must be at least 1';
               }
@@ -317,7 +335,6 @@ class _DurationInSecState extends State<_DurationInSec> {
         ),
         FormBuilderField<DurationType>(
           name: 'duration_type',
-          initialValue: _selectedDuration,
           builder: (field) => const SizedBox.shrink(),
         ),
       ],

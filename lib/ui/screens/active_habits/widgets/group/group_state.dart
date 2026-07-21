@@ -1,6 +1,6 @@
 import 'package:equatable/equatable.dart';
 
-import '../../ui_models/group_ui_model.dart';
+import 'package:habits_flow/ui/ui_models/group_ui_model.dart';
 
 class GroupState extends Equatable {
   final GroupUIModel uiModel;
