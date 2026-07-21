@@ -1,8 +1,8 @@
 import 'package:equatable/equatable.dart';
-import 'package:habits_flow/domain/entities/habit_entity.dart';
+import 'package:habits_flow/ui/ui_models/habit_ui.dart';
 
 class HabitState extends Equatable {
-  final HabitEntity habit;
+  final HabitUI habit;
 
   final bool isSelected;
 
@@ -14,11 +14,11 @@ class HabitState extends Equatable {
   @override
   List<Object?> get props => [habit, isSelected];
 
-  factory HabitState.init({required HabitEntity habit}) =>
+  factory HabitState.init({required HabitUI habit}) =>
       HabitState(habit: habit, isSelected: false);
 
   HabitState copyWith({
-    HabitEntity? habit,
+    HabitUI? habit,
 
     bool? isSelected,
   }) {

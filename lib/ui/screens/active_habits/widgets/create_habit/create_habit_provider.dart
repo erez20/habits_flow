@@ -2,17 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:habits_flow/domain/use_cases/habit/add_habit_use_case.dart';
 import 'package:habits_flow/main/injection.dart';
-import 'package:habits_flow/ui/ui_models/group_ui_model.dart';
+import 'package:habits_flow/ui/ui_models/group_ui.dart';
 
 import 'create_habit_cubit.dart';
 import 'create_habit_widget.dart';
 
 class CreateHabitProvider extends StatelessWidget {
-  final GroupUIModel groupUIModel;
+  final GroupUI groupUI;
 
   const CreateHabitProvider({
     super.key,
-    required this.groupUIModel,
+    required this.groupUI,
   });
 
   @override
@@ -22,11 +22,11 @@ class CreateHabitProvider extends StatelessWidget {
         var addHabitUseCase = getIt<AddHabitUseCase>();
         return CreateHabitCubit(
           addHabitUseCase: addHabitUseCase,
-          groupUIModel: groupUIModel,
+          groupUI: groupUI,
 
         );
       },
-      child: CreateHabitWidget(groupUIModel: groupUIModel),
+      child: CreateHabitWidget(groupUI: groupUI),
     );
   }
 }

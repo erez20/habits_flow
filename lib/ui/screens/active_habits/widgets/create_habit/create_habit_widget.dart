@@ -2,15 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:habits_flow/ui/common/colors/app_colors.dart';
 import 'package:habits_flow/ui/common/constants.dart';
-import 'package:habits_flow/ui/ui_models/group_ui_model.dart';
+import 'package:habits_flow/ui/ui_models/group_ui.dart';
 import 'package:habits_flow/ui/screens/active_habits/widgets/new_habit_form/new_habit_form_provider.dart';
-import 'package:habits_flow/ui/ui_models/new_habit_form_ui_model.dart';
+import 'package:habits_flow/ui/ui_models/new_habit_form_ui.dart';
 
 import 'create_habit_cubit.dart';
 
 class CreateHabitWidget extends StatelessWidget {
-  final GroupUIModel groupUIModel;
-  const CreateHabitWidget({super.key, required this.groupUIModel});
+  final GroupUI groupUI;
+  const CreateHabitWidget({super.key, required this.groupUI});
 
   @override
   Widget build(BuildContext context) {
@@ -32,7 +32,7 @@ class CreateHabitWidget extends StatelessWidget {
             ),
             child: DecoratedBox(
               decoration: BoxDecoration(
-                color: groupUIModel.color[50],
+                color: groupUI.color[50],
                 borderRadius: BorderRadius.circular(8.0),
                 border: Border.all(width: 2.0, color: Colors.grey[500]!)
               ),
@@ -48,7 +48,7 @@ class CreateHabitWidget extends StatelessWidget {
 
   void _addHabitModal({
     required BuildContext context,
-    required void Function({required NewHabitFormUiModel uiModel}) onConfirm,
+    required void Function({required NewHabitFormUI uiModel}) onConfirm,
   }) {
     showModalBottomSheet(
       context: context,

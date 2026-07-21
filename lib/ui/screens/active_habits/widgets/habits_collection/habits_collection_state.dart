@@ -1,10 +1,10 @@
 import 'package:equatable/equatable.dart';
-import 'package:habits_flow/domain/entities/group_entity.dart';
-import 'package:habits_flow/domain/entities/habit_entity.dart';
+import 'package:habits_flow/ui/ui_models/group_ui.dart';
+import 'package:habits_flow/ui/ui_models/habit_ui.dart';
 
 class HabitCollectionState extends Equatable {
-  final List<HabitEntity> habits;
-  final GroupEntity group;
+  final List<HabitUI> habits;
+  final GroupUI group;
   final bool init;
 
   const HabitCollectionState({required this.habits, required this.group, required this.init});
@@ -13,8 +13,8 @@ class HabitCollectionState extends Equatable {
   List<Object?> get props => [habits, group, init];
 
   HabitCollectionState copyWith({
-    List<HabitEntity>? habits,
-    GroupEntity? group,
+    List<HabitUI>? habits,
+    GroupUI? group,
     bool? init,
   }) {
     return HabitCollectionState(

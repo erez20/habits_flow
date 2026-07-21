@@ -1,10 +1,10 @@
 import 'dart:async';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:habits_flow/domain/entities/group_entity.dart';
 import 'package:habits_flow/domain/use_cases/group/groups_list_stream_use_case.dart';
 import 'package:habits_flow/domain/use_cases/group/reorder_groups_use_case.dart';
 import 'package:habits_flow/ui/screens/active_habits/coordinator/active_habits_coordinator.dart';
+import 'package:habits_flow/ui/ui_models/group_ui.dart';
 import 'package:injectable/injectable.dart';
 
 import 'all_groups_state.dart';
@@ -31,21 +31,22 @@ class AllGroupsCubit extends Cubit<AllGroupsState> {
     _groupsListSubscription = groupsListStreamUseCase.stream(null).listen((
       event,
     ) {
-      final totalPoints = event.fold<int>(0, (sum, group) => sum + group.points);
-      final totalCompletion = event.fold<int>(0, (sumGroups, group) => sumGroups + group.habits.fold<int>(0, (sum, habit) => sum + habit.completionCount));
+      final groups = event.map(GroupUI.fromEntity).toList();
+      final totalPoints = groups.fold<int>(0, (sum, group) => sum + group.points);
+      final totalCompletion = groups.fold<int>(0, (sumGroups, group) => sumGroups + group.habits.fold<int>(0, (sum, habit) => sum + habit.completionCount));
 
 
       coordinator.updateTotalPoints(totalPoints);
       coordinator.updateTotalCompletion(totalCompletion);
-      
+
       final expandedGroupIds = List<String>.from(state.expandedGroupIds);
-      var groupWasAdded = state.groupList.length < event.length;
+      var groupWasAdded = state.groupList.length < groups.length;
       if (!state.isInit && groupWasAdded) {
-        expandedGroupIds.add(event.last.id);
+        expandedGroupIds.add(groups.last.id);
       }
       emit(
         state.copyWith(
-          groupList: event,
+          groupList: groups,
           expandedGroupIds: expandedGroupIds,
           isInit: false,
         ),
@@ -66,11 +67,11 @@ class AllGroupsCubit extends Cubit<AllGroupsState> {
     if (oldIndex < newIndexA) {
       newIndexA -= 1;
     }
-    final groups = List<GroupEntity>.from(state.groupList);
+    final groups = List<GroupUI>.from(state.groupList);
     final group = groups.removeAt(oldIndex);
     groups.insert(newIndexA, group);
     emit(state.copyWith(groupList: groups));
-    reorderGroupsUseCase.exec(groups);
+    reorderGroupsUseCase.exec(groups.map((g) => g.toEntity()).toList());
   }
 
   void toggleGroup(String id) {

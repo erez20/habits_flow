@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:habits_flow/domain/entities/habit_entity.dart';
+import 'package:habits_flow/ui/ui_models/habit_ui.dart';
 import 'package:injectable/injectable.dart';
 
 import 'package:rxdart/rxdart.dart';
@@ -10,7 +10,7 @@ abstract class ActiveHabitsCoordinator {
 
   void habitDrown(String id);
 
-  Stream<HabitEntity?> get listenToHabitSelected;
+  Stream<HabitUI?> get listenToHabitSelected;
 
   Stream<bool> get listenToCollapseExpandAll;
 
@@ -26,7 +26,7 @@ abstract class ActiveHabitsCoordinator {
 
   void collapseExpandAll({required bool shouldExpand});
 
-  void habitSelected({required HabitEntity habit});
+  void habitSelected({required HabitUI habit});
 
   void clearHabitSelection();
 
@@ -36,8 +36,8 @@ abstract class ActiveHabitsCoordinator {
 @Injectable(as: ActiveHabitsCoordinator)
 class ActiveHabitsCoordinatorImpl implements ActiveHabitsCoordinator {
   final BehaviorSubject<String> _drawOverHabit = BehaviorSubject<String>();
-  final BehaviorSubject<HabitEntity?> _habitSelected =
-      BehaviorSubject<HabitEntity?>();
+  final BehaviorSubject<HabitUI?> _habitSelected =
+      BehaviorSubject<HabitUI?>();
   final BehaviorSubject<bool> _collapseExpandAll = BehaviorSubject<bool>();
   final BehaviorSubject<int> _totalPoints = BehaviorSubject<int>.seeded(0);
   final BehaviorSubject<int> _totalCompletions = BehaviorSubject<int>.seeded(0);
@@ -50,14 +50,14 @@ class ActiveHabitsCoordinatorImpl implements ActiveHabitsCoordinator {
   void habitDrown(String id) => _drawOverHabit.add(id);
 
   @override
-  Stream<HabitEntity?> get listenToHabitSelected => _habitSelected.stream;
+  Stream<HabitUI?> get listenToHabitSelected => _habitSelected.stream;
 
   @override
   Stream<bool> listenIsHabitSelected(String habitId) =>
       _habitSelected.stream.map((e) => e?.id == habitId);
 
   @override
-  void habitSelected({required HabitEntity habit}) => _habitSelected.add(habit);
+  void habitSelected({required HabitUI habit}) => _habitSelected.add(habit);
 
   @override
   void dispose() {

@@ -2,11 +2,11 @@ import 'package:fimber/fimber.dart' show Fimber;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:habits_flow/ui/screens/active_habits/screen/active_habits_screen_cubit.dart';
-import 'package:habits_flow/ui/ui_models/selected_habit_ui_model.dart';
+import 'package:habits_flow/ui/ui_models/selected_habit_ui.dart';
 
 class HabitSelectedAppBar extends StatelessWidget
     implements PreferredSizeWidget {
-  final SelectedHabitUiModel uiModel;
+  final SelectedHabitUI uiModel;
 
   const HabitSelectedAppBar({
     super.key,
@@ -88,7 +88,7 @@ class HabitSelectedAppBar extends StatelessWidget
   void _handleDelete({
     required BuildContext context,
     required void Function(String habitId) deleteHabit,
-    required SelectedHabitUiModel uiModel,
+    required SelectedHabitUI uiModel,
   }) {
     showDialog(
       context: context,
@@ -118,7 +118,7 @@ class HabitSelectedAppBar extends StatelessWidget
 
   void _handleInfo({
     required BuildContext context,
-    required SelectedHabitUiModel uiModel,
+    required SelectedHabitUI uiModel,
     required Future<void> Function(String url) onLinkTapped,
   }) {
     showDialog(

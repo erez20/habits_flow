@@ -24,10 +24,7 @@ class HabitWidget extends StatelessWidget {
       onLongPress: cubit.onLongPress,
       child: BlocBuilder<HabitCubit, HabitState>(
         builder: (context, state) {
-          //var completionCount = state.habit.completionCount;
-          var materialColor = AppColors.getMaterialColor(
-            state.habit.groupColor,
-          ); //use ui model!!!
+          final materialColor = state.habit.color;
           return Container(
             width: side,
             height: side,

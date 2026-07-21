@@ -1,7 +1,7 @@
 import 'package:fimber/fimber.dart' show Fimber;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:habits_flow/domain/entities/group_entity.dart';
+import 'package:habits_flow/ui/ui_models/group_ui.dart';
 import 'package:habits_flow/domain/use_cases/group/delete_group_use_case.dart';
 import 'package:habits_flow/domain/use_cases/group/edit_group_use_case.dart';
 import 'package:habits_flow/main/injection.dart';
@@ -10,7 +10,7 @@ import 'group_cubit.dart';
 import 'group_widget.dart';
 
 class GroupProvider extends StatefulWidget {
-  final GroupEntity group;
+  final GroupUI group;
   final VoidCallback onTap;
   final int index;
 
@@ -35,7 +35,7 @@ class _GroupProviderState extends State<GroupProvider> {
     final editGroupUseCase = getIt<EditGroupUseCase>();
 
     _cubit = GroupCubit(
-      entity: widget.group,
+      group: widget.group,
       deleteGroupUseCase: deleteGroupUseCase,
       editGroupUseCase: editGroupUseCase,
 
@@ -56,7 +56,7 @@ class _GroupProviderState extends State<GroupProvider> {
   void didUpdateWidget(GroupProvider oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (widget.group != oldWidget.group) {
-      _cubit.updateEntity(widget.group);
+      _cubit.updateGroup(widget.group);
     }
   }
 

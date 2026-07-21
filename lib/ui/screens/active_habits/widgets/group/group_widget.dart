@@ -2,8 +2,8 @@ import 'package:fimber/fimber.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:habits_flow/ui/common/duration/duration_utils.dart';
-import 'package:habits_flow/ui/ui_models/edit_group_ui_model.dart';
-import 'package:habits_flow/ui/ui_models/group_ui_model.dart';
+import 'package:habits_flow/ui/ui_models/selected_group_ui.dart';
+import 'package:habits_flow/ui/ui_models/group_ui.dart';
 import 'package:habits_flow/ui/screens/active_habits/widgets/edit_group_form/edit_group_form_provider.dart';
 import 'package:habits_flow/ui/screens/active_habits/widgets/group/group_cubit.dart';
 import 'package:habits_flow/ui/screens/active_habits/widgets/group/group_state.dart';
@@ -156,8 +156,8 @@ class GroupWidget extends StatelessWidget {
 
   void _handleEdit(
     BuildContext context,
-    GroupUIModel uiModel,
-    void Function({required SelectedGroupUIModel uiModel}) editGroup,
+    GroupUI uiModel,
+    void Function({required SelectedGroupUI uiModel}) editGroup,
   ) {
     showModalBottomSheet(
       context: context,

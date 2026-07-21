@@ -1,8 +1,8 @@
 import 'package:equatable/equatable.dart';
-import 'package:habits_flow/domain/entities/group_entity.dart';
+import 'package:habits_flow/ui/ui_models/group_ui.dart';
 
 class AllGroupsState extends Equatable {
-  final List<GroupEntity> groupList;
+  final List<GroupUI> groupList;
   final List<String> expandedGroupIds;
   final bool isInit;
   final String? groupJustToggled;
@@ -29,7 +29,7 @@ class AllGroupsState extends Equatable {
   bool get isEmpty => groupList.isEmpty;
 
   AllGroupsState copyWith({
-    List<GroupEntity>? groupList,
+    List<GroupUI>? groupList,
     List<String>? expandedGroupIds,
     bool? isInit,
     String? groupJustToggled,

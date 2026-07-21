@@ -1,6 +1,5 @@
 import 'package:equatable/equatable.dart';
-import 'package:habits_flow/domain/entities/habit_entity.dart';
-import 'package:habits_flow/ui/ui_models/selected_habit_ui_model.dart';
+import 'package:habits_flow/ui/ui_models/selected_habit_ui.dart';
 
 class ActiveHabitsScreenState extends Equatable {
   const ActiveHabitsScreenState({
@@ -9,7 +8,7 @@ class ActiveHabitsScreenState extends Equatable {
     required this.totalCompletions,
   });
 
-  final SelectedHabitUiModel? uiModel;
+  final SelectedHabitUI? uiModel;
   final int totalPoints;
   final int totalCompletions;
 
@@ -24,8 +23,7 @@ class ActiveHabitsScreenState extends Equatable {
   bool get isHabitSelected => uiModel != null;
 
   ActiveHabitsScreenState copyWith({
-    SelectedHabitUiModel? uiModel,
-    HabitEntity? selectedHabit,
+    SelectedHabitUI? uiModel,
     bool clearUiModel = false,
     int? totalPoints,
     int? totalCompletions,

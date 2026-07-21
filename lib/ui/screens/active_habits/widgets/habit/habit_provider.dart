@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:habits_flow/domain/entities/habit_entity.dart';
+import 'package:habits_flow/ui/ui_models/habit_ui.dart';
 import 'package:habits_flow/domain/repos/habit_repo.dart';
 import 'package:habits_flow/domain/use_cases/habit/habit_stream_use_case.dart';
 import 'package:habits_flow/domain/use_cases/habit/perform_habit_use_case.dart';
@@ -12,7 +12,7 @@ import 'habit_cubit.dart';
 import 'habit_widget.dart';
 
 class HabitProvider extends StatelessWidget {
-  final HabitEntity habit;
+  final HabitUI habit;
 
   const HabitProvider({
     super.key,

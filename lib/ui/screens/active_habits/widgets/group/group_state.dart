@@ -1,9 +1,9 @@
 import 'package:equatable/equatable.dart';
 
-import 'package:habits_flow/ui/ui_models/group_ui_model.dart';
+import 'package:habits_flow/ui/ui_models/group_ui.dart';
 
 class GroupState extends Equatable {
-  final GroupUIModel uiModel;
+  final GroupUI uiModel;
 
   const GroupState({required this.uiModel});
 
@@ -13,7 +13,7 @@ class GroupState extends Equatable {
   List<Object?> get props => [uiModel];
 
   GroupState copyWith({
-    GroupUIModel? uiModel,
+    GroupUI? uiModel,
   }) {
     return GroupState(
       uiModel: uiModel ?? this.uiModel,

@@ -1,9 +1,9 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:habits_flow/ui/ui_models/new_group_form_ui_model.dart';
+import 'package:habits_flow/ui/ui_models/new_group_form_ui.dart';
 import 'new_group_form_state.dart';
 
 class NewGroupFormCubit extends Cubit<NewGroupFormState> {
-  final void Function({required NewGroupFormUIModel uiModel}) onConfirm;
+  final void Function({required NewGroupFormUI uiModel}) onConfirm;
 
   NewGroupFormCubit({required this.onConfirm}) : super(NewGroupFormState.init()) {
     init();
@@ -16,7 +16,7 @@ class NewGroupFormCubit extends Cubit<NewGroupFormState> {
   void submitForm(Map<String, dynamic> formData) {
     emit(state.copyWith(isSubmitting: true));
     try {
-      final newUIModel = NewGroupFormUIModel(
+      final newUIModel = NewGroupFormUI(
         title: formData['title'],
         durationInSec: formData['durationInSec'] ?? 86400,
         color: formData['habit_color'],

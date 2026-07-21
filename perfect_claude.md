@@ -32,7 +32,7 @@ lib/
     ├── common/          # App-level cubit, colors, fonts, constants, shared UI types
     ├── routes/          # auto_route router (app_router.dart + generated .gr.dart)
     ├── screens/         # One directory per screen (see "Screen Structure" below)
-    ├── ui_models/       # Presentation models mapped from entities (fromEntity/toEntity)
+    ├── ui_models/       # UI models: <X>UI classes in *_ui.dart (see "UI Models")
     └── widgets/         # REUSABLE widgets only, one directory per widget.
                          #   Anything unique to one screen lives under that
                          #   screen instead.
@@ -139,6 +139,23 @@ position) uses a `StatefulWidget`, not a cubit.
 - **Flow:** the flow is a shell route — a `@RoutePage` widget where the flow
   coordinator's `RepositoryProvider` wraps a nested `AutoRouter()`; the member
   screens are its child routes.
+
+### UI Models
+
+The presentation counterpart of an entity. Lives in `ui/ui_models/`, class named
+`<X>UI` (`GroupUI`, `SelectedHabitUI`), file named `<x>_ui.dart`. Name it after
+**what it presents, not where it's used**: an aggregate's default presentation
+is plain `<Aggregate>UI`; a prefix (`Selected…UI`, `New…FormUI`) is earned only
+by a genuinely different projection.
+
+- **Cubits and widgets deal only with UI models — never entities.** Entities
+  appear inside a cubit only *in transit* at the domain boundary: map with
+  `fromEntity` the moment a use case delivers one, and with `toEntity` right at
+  the call when submitting back. State fields, widget code, and cubit public
+  APIs never carry an entity.
+- **Always `Equatable`, always `copyWith`** — same requirements as states.
+- **`fromEntity` always; `toEntity` only if some flow actually submits the
+  model back** to a use case.
 
 ### Widget Communication Rules
 

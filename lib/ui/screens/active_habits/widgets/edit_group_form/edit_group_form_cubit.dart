@@ -1,12 +1,12 @@
 import 'package:fimber/fimber.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:habits_flow/ui/ui_models/edit_group_ui_model.dart';
-import 'package:habits_flow/ui/ui_models/group_ui_model.dart';
+import 'package:habits_flow/ui/ui_models/selected_group_ui.dart';
+import 'package:habits_flow/ui/ui_models/group_ui.dart';
 import 'edit_group_form_state.dart';
 
 class EditGroupFormCubit extends Cubit<EditGroupFormState> {
-  final GroupUIModel uiModel;
-  final void Function({required SelectedGroupUIModel uiModel}) onUpdate;
+  final GroupUI uiModel;
+  final void Function({required SelectedGroupUI uiModel}) onUpdate;
 
   EditGroupFormCubit({
     required this.uiModel,
@@ -22,7 +22,7 @@ class EditGroupFormCubit extends Cubit<EditGroupFormState> {
   void submitForm(Map<String, dynamic> updatedFormData) {
     emit(state.copyWith(isSubmitting: true));
     try {
-      final newUIModel = SelectedGroupUIModel(
+      final newUIModel = SelectedGroupUI(
         title: updatedFormData['title'],
         durationInSec: updatedFormData['durationInSec'],
         color: updatedFormData['group_color'],

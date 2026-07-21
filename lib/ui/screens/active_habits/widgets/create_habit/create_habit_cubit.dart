@@ -2,33 +2,33 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:habits_flow/domain/use_cases/habit/add_habit_use_case.dart';
 import 'package:habits_flow/ui/common/colors/app_colors.dart';
-import 'package:habits_flow/ui/ui_models/group_ui_model.dart';
-import 'package:habits_flow/ui/ui_models/new_habit_form_ui_model.dart';
+import 'package:habits_flow/ui/ui_models/group_ui.dart';
+import 'package:habits_flow/ui/ui_models/new_habit_form_ui.dart';
 
 import 'create_habit_state.dart';
 
 class CreateHabitCubit extends Cubit<CreateHabitState> {
   final AddHabitUseCase addHabitUseCase;
-  final GroupUIModel groupUIModel;
+  final GroupUI groupUI;
 
   CreateHabitCubit({
     required this.addHabitUseCase,
-    required this.groupUIModel,
+    required this.groupUI,
 
   }) : super(CreateHabitState.init());
 
-  void addHabit({required NewHabitFormUiModel uiModel}) async {
+  void addHabit({required NewHabitFormUI uiModel}) async {
     addHabitUseCase.exec(
       AddHabitUseCaseParams(
-        groupId: groupUIModel.id,
+        groupId: groupUI.id,
         title: uiModel.title,
         info: uiModel.info,
         link: uiModel.link,
-        groupColor: AppColors.getColorValue(groupUIModel.color),
+        groupColor: AppColors.getColorValue(groupUI.color),
         points: uiModel.points,
       ),
     );
   }
 
-  MaterialColor get color => groupUIModel.color;
+  MaterialColor get color => groupUI.color;
 }

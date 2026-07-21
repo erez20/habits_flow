@@ -1,9 +1,8 @@
 import 'package:fimber/fimber.dart' show Fimber;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:habits_flow/domain/entities/habit_entity.dart';
+import 'package:habits_flow/ui/ui_models/habit_ui.dart';
 import 'package:habits_flow/ui/common/constants.dart';
-import 'package:habits_flow/ui/ui_models/group_ui_model.dart';
 import 'package:habits_flow/ui/widgets/drawing_layer/drawing_layer_widget.dart';
 import 'package:habits_flow/ui/screens/active_habits/widgets/create_habit/create_habit_provider.dart';
 import 'package:habits_flow/ui/screens/active_habits/widgets/habit/habit_provider.dart';
@@ -39,14 +38,14 @@ class _HabitsCollectionWidgetState extends State<HabitsCollectionWidget> {
           }),
           CreateHabitProvider(
             key: const ValueKey('create_button'),
-            groupUIModel: GroupUIModel.fromEntity(state.group),
+            groupUI: state.group,
           ),
         ];
 
         return DrawingLayerWidget(
           onWidgetHit: (data) {
             Fimber.d("onWidgetHit $data");
-            if (data is HabitEntity) {
+            if (data is HabitUI) {
               cubit.onHabitDrown(data);
             }
           },
