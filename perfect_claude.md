@@ -41,21 +41,32 @@ lib/
 `ui/` or `data/`. Generated files (`*.g.dart`, `*.gr.dart`, `*.config.dart`) are
 never edited by hand.
 
-## Screen Structure
+## Screen & Flow Structure
 
-A **screen** = has a route and a `Scaffold` (and usually a cubit). Each screen
-gets a directory under `ui/screens/` with up to three subdirectories:
+A **screen** = has a route and a `Scaffold` (and usually a cubit). A **flow** =
+several screens sharing one coordinator. Both live under `ui/screens/`:
 
 ```
-ui/screens/<screen_name>/
-├── screen/                 # <screen_name>_screen.dart (the Scaffold), plus the
-│                           #   rest of the 4-file unit if the screen has state
-├── widgets/                # One directory per widget UNIQUE to this screen
-│   └── <widget_name>/      #   (a 4-file unit when it owns state)
-└── coordinator/            # <screen_name>_coordinator.dart + the
-                            #   RepositoryProvider that scopes it.
-                            # Create ONLY if screen and widgets need coordination
-                            # (e.g. selection, totals, expand/collapse-all).
+ui/screens/
+├── <screen_name>/          # STANDALONE SCREEN
+│   ├── screen/             # <screen_name>_screen.dart (the Scaffold), plus the
+│   │                       #   rest of the 4-file unit if the screen has state
+│   ├── widgets/            # One directory per widget UNIQUE to this screen
+│   │   └── <widget_name>/  #   (a 4-file unit when it owns state)
+│   └── coordinator/        # <screen_name>_coordinator.dart + the
+│                           #   RepositoryProvider that scopes it. Create ONLY
+│                           #   if screen and widgets need coordination
+│                           #   (e.g. selection, totals, expand/collapse-all).
+└── <flow_name>/            # FLOW — create only when screens must share state
+    ├── coordinator/        # <flow_name>_coordinator.dart — scoped above the
+    │                       #   flow's nested router; injectable into every
+    │                       #   cubit of every member screen
+    ├── <screen_a>/         # Member screens: same shape as a standalone screen
+    │   ├── screen/         #   (each may still have its own screen-local
+    │   └── widgets/        #   coordinator for its own widgets)
+    └── <screen_b>/
+        ├── screen/
+        └── widgets/
 ```
 
 ### The 4-File Unit
@@ -75,18 +86,24 @@ either: just `*_widget.dart` (or `<screen_name>_screen.dart`). Purely
 view-mechanical state (`AnimationController`, `TextEditingController`, scroll
 position) uses a `StatefulWidget`, not a cubit.
 
-**Routing:** `@RoutePage()` goes on the outermost widget of the screen's stack:
-the coordinator's provider if one exists → else the screen's provider → else the
-screen widget itself.
+**Routing:** `@RoutePage()` goes on the outermost widget of each stack:
+
+- **Screen:** the coordinator's provider if one exists → else the screen's
+  provider → else the screen widget itself.
+- **Flow:** the flow is a shell route — a `@RoutePage` widget where the flow
+  coordinator's `RepositoryProvider` wraps a nested `AutoRouter()`; the member
+  screens are its child routes.
 
 ### Widget Communication Rules
 
 For widgets under `screens/<screen_name>/widgets/`:
 
 1. **Internal state affecting no one else → own cubit.**
-2. **Affects a sibling that has its own cubit → coordinator.** Also the only
-   channel that physically works: cubits cannot subscribe to each other — the
-   coordinator is injectable into any cubit.
+2. **Affects a sibling that has its own cubit → coordinator.** A *sibling* is
+   any other cubit under the same coordinator's scope — in the same screen, or
+   in a sister screen of the flow. Also the only channel that physically works:
+   cubits cannot subscribe to each other — the coordinator is injectable into
+   any cubit.
 3. **Affects only the father (the screen), or a sibling relying on the father's
    state → father's state.** Call `context.read<ScreenCubit>().method()` to
    affect it; watch it with `BlocBuilder` to read it.
