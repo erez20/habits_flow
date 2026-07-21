@@ -10,7 +10,7 @@
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:auto_route/auto_route.dart' as _i2;
-import 'package:habits_flow/ui/screens/active_habits/di/active_habits_provider.dart'
+import 'package:habits_flow/ui/screens/active_habits/coordinator/active_habits_provider.dart'
     as _i1;
 
 /// generated route for

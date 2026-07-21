@@ -7,7 +7,7 @@ import 'package:habits_flow/domain/repos/habit_repo.dart';
 import 'package:habits_flow/domain/responses/domain_response.dart';
 import 'package:habits_flow/domain/use_cases/habit/habit_stream_use_case.dart';
 import 'package:habits_flow/domain/use_cases/habit/perform_habit_use_case.dart';
-import 'package:habits_flow/ui/screens/active_habits/di/active_habits_manager.dart';
+import 'package:habits_flow/ui/screens/active_habits/coordinator/active_habits_manager.dart';
 
 import 'habit_state.dart';
 

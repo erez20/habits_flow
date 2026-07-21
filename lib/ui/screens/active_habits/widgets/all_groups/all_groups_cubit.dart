@@ -4,7 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:habits_flow/domain/entities/group_entity.dart';
 import 'package:habits_flow/domain/use_cases/group/groups_list_stream_use_case.dart';
 import 'package:habits_flow/domain/use_cases/group/reorder_groups_use_case.dart';
-import 'package:habits_flow/ui/screens/active_habits/di/active_habits_manager.dart';
+import 'package:habits_flow/ui/screens/active_habits/coordinator/active_habits_manager.dart';
 import 'package:injectable/injectable.dart';
 
 import 'all_groups_state.dart';

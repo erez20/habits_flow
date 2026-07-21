@@ -1277,7 +1277,7 @@ final class $$GroupsTableReferences
     _$AppDatabase db,
   ) => MultiTypedResultKey.fromTable(
     db.habits,
-    aliasName: $_aliasNameGenerator(db.groups.id, db.habits.groupId),
+    aliasName: 'groups__id__habits__group_id',
   );
 
   $$HabitsTableProcessedTableManager get habitsRefs {
@@ -1593,9 +1593,8 @@ final class $$HabitsTableReferences
     extends BaseReferences<_$AppDatabase, $HabitsTable, Habit> {
   $$HabitsTableReferences(super.$_db, super.$_table, super.$_typedResult);
 
-  static $GroupsTable _groupIdTable(_$AppDatabase db) => db.groups.createAlias(
-    $_aliasNameGenerator(db.habits.groupId, db.groups.id),
-  );
+  static $GroupsTable _groupIdTable(_$AppDatabase db) =>
+      db.groups.createAlias('habits__group_id__groups__id');
 
   $$GroupsTableProcessedTableManager? get groupId {
     final $_column = $_itemColumn<String>('group_id');
@@ -1615,10 +1614,7 @@ final class $$HabitsTableReferences
   _habitPerformancesRefsTable(_$AppDatabase db) =>
       MultiTypedResultKey.fromTable(
         db.habitPerformances,
-        aliasName: $_aliasNameGenerator(
-          db.habits.id,
-          db.habitPerformances.habitId,
-        ),
+        aliasName: 'habits__id__habit_performances__habit_id',
       );
 
   $$HabitPerformancesTableProcessedTableManager get habitPerformancesRefs {
@@ -2067,9 +2063,8 @@ final class $$HabitPerformancesTableReferences
     super.$_typedResult,
   );
 
-  static $HabitsTable _habitIdTable(_$AppDatabase db) => db.habits.createAlias(
-    $_aliasNameGenerator(db.habitPerformances.habitId, db.habits.id),
-  );
+  static $HabitsTable _habitIdTable(_$AppDatabase db) =>
+      db.habits.createAlias('habit_performances__habit_id__habits__id');
 
   $$HabitsTableProcessedTableManager get habitId {
     final $_column = $_itemColumn<String>('habit_id')!;

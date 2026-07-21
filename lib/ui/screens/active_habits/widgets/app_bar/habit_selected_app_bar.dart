@@ -1,7 +1,7 @@
 import 'package:fimber/fimber.dart' show Fimber;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:habits_flow/ui/screens/active_habits/active_habits_screen/active_habits_screen_cubit.dart';
+import 'package:habits_flow/ui/screens/active_habits/screen/active_habits_screen_cubit.dart';
 import 'package:habits_flow/ui/ui_models/selected_habit_ui_model.dart';
 
 class HabitSelectedAppBar extends StatelessWidget
