@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:habits_flow/ui/common/constants.dart';
 import 'package:habits_flow/ui/screens/active_habits/coordinator/active_habits_coordinator.dart';
-import 'package:habits_flow/ui/screens/active_habits/widgets/all_groups/all_groups_cubit.dart';
+import 'all_groups_cubit.dart';
 import 'package:habits_flow/ui/screens/active_habits/widgets/group/group_provider.dart';
 import 'package:habits_flow/ui/screens/active_habits/widgets/habits_collection/habits_collection_provider.dart';
 

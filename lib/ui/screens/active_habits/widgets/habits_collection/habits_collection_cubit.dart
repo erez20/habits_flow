@@ -6,7 +6,7 @@ import 'package:habits_flow/domain/entities/habit_entity.dart';
 import 'package:habits_flow/ui/screens/active_habits/ui_models/habit_ui.dart';
 import 'package:habits_flow/domain/use_cases/habit/habits_of_group_stream_use_case.dart';
 import 'package:habits_flow/ui/screens/active_habits/coordinator/active_habits_coordinator.dart';
-import 'package:habits_flow/ui/screens/active_habits/widgets/habits_collection/habits_collection_state.dart';
+import 'habits_collection_state.dart';
 
 class HabitsCollectionCubit extends Cubit<HabitCollectionState> {
   final GroupUI group;

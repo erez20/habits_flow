@@ -1,7 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'app_state.dart';
-import '../../../main/injection.dart' ;
+import 'package:habits_flow/main/injection.dart' ;
 
 class AppCubit extends Cubit<AppState> {
   AppCubit() : super(AppReady());

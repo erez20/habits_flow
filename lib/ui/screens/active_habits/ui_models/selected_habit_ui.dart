@@ -2,7 +2,7 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:habits_flow/domain/entities/habit_entity.dart';
 import 'package:habits_flow/ui/common/colors/app_colors.dart';
-import 'package:habits_flow/ui/screens/active_habits/ui_models/habit_ui.dart';
+import 'habit_ui.dart';
 
 class SelectedHabitUI extends Equatable {
   final String id;

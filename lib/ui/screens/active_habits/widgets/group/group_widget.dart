@@ -5,8 +5,8 @@ import 'package:habits_flow/ui/common/duration/duration_utils.dart';
 import 'package:habits_flow/ui/screens/active_habits/ui_models/selected_group_ui.dart';
 import 'package:habits_flow/ui/screens/active_habits/ui_models/group_ui.dart';
 import 'package:habits_flow/ui/screens/active_habits/widgets/edit_group_form/edit_group_form_provider.dart';
-import 'package:habits_flow/ui/screens/active_habits/widgets/group/group_cubit.dart';
-import 'package:habits_flow/ui/screens/active_habits/widgets/group/group_state.dart';
+import 'group_cubit.dart';
+import 'group_state.dart';
 
 class GroupWidget extends StatelessWidget {
   final VoidCallback onTap;

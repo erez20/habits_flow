@@ -4,7 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:habits_flow/main/injection.dart';
 
 
-import '../screen/active_habits_screen_provider.dart';
+import 'package:habits_flow/ui/screens/active_habits/screen/active_habits_screen_provider.dart';
 import 'active_habits_coordinator.dart';
 
 @RoutePage()

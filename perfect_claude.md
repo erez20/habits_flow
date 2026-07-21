@@ -264,6 +264,12 @@ The rules that make it work:
 
 ## Code Style
 
+- **Imports:** full package path (`package:<app>/...`) for anything outside the
+  file's own directory; bare filename (`import 'group_state.dart';`) for files
+  in the same directory; `../` never. Package paths keep consumers greppable
+  and rewritable when files move; bare same-dir imports keep a unit's internal
+  wiring intact when its whole directory moves. No lint expresses this hybrid —
+  `avoid_relative_lib_imports` guards the worst case, the rest is convention.
 - **Named parameters, always:** constructors and multi-parameter functions take
   named parameters (`{required this.xxx}`), never positional. Since named
   parameters cannot be private, injected dependency fields are public

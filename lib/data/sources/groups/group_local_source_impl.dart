@@ -1,6 +1,6 @@
 import 'package:drift/drift.dart';
 import 'package:habits_flow/data/db/database.dart';
-import 'package:habits_flow/data/sources/groups/group_local_source.dart';
+import 'group_local_source.dart';
 import 'package:habits_flow/domain/entities/group_entity.dart';
 import 'package:habits_flow/domain/entities/habit_entity.dart';
 import 'package:injectable/injectable.dart';

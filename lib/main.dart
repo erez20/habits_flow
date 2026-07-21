@@ -3,9 +3,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:habits_flow/core/logger/app_logger.dart';
 import 'package:habits_flow/main/injection.dart';
 
-import 'ui/common/app/app_cubit.dart';
-import 'ui/common/app/app_state.dart';
-import 'main/habits_flow_app.dart';
+import 'package:habits_flow/ui/common/app/app_cubit.dart';
+import 'package:habits_flow/ui/common/app/app_state.dart';
+import 'package:habits_flow/main/habits_flow_app.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
