@@ -23,7 +23,7 @@ class AllGroupsCubit extends Cubit<AllGroupsState> {
     required this.groupsListStreamUseCase,
     required this.reorderGroupsUseCase,
     required this.coordinator,
-  }) : super(AllGroupsState.initial()) {
+  }) : super(AllGroupsState.init()) {
     init();
   }
 

@@ -142,6 +142,28 @@ position) uses a `StatefulWidget`, not a cubit.
   coordinator's `RepositoryProvider` wraps a nested `AutoRouter()`; the member
   screens are its child routes.
 
+### State
+
+A cubit has exactly **one** state class — a single `Equatable` class, never a
+sealed hierarchy of multiple states. It always has:
+
+- `extends Equatable` with `props`.
+- A `factory <Name>.init()` producing the initial state. Params are allowed when
+  the initial state needs seed data (`HabitState.init({required habit})`);
+  otherwise it takes none (`ActiveHabitsScreenState.init()`).
+- `copyWith`, with an explicit `clearX` bool flag for any field that needs to be
+  set back to null (nullable fields can't be cleared through `x ?? this.x`).
+
+The cubit changes state **only** through `emit(state.copyWith(...))` — never by
+constructing a fresh state instance.
+
+**Exception — one-shot signal cubits.** A cubit whose whole job is to emit a
+transient signal rather than hold renderable state (e.g. an app-restart trigger)
+uses a **sealed** state hierarchy instead: one variant per signal, plain classes
+(no Equatable/copyWith/init). The widget reacts with a `BlocListener` that fires
+on the signal variant. This is the *only* place a sealed multi-state hierarchy
+is allowed; if the cubit holds anything a widget renders, it is not this case.
+
 ### UI Models
 
 The presentation counterpart of an entity: class named `<X>UI` (`GroupUI`,

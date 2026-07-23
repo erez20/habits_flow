@@ -16,7 +16,7 @@ class GroupCubit extends Cubit<GroupState> {
     required GroupUI group,
     required this.deleteGroupUseCase,
     required this.editGroupUseCase,
-  }) : super(GroupState(uiModel: group));
+  }) : super(GroupState.init(group: group));
 
   void deleteGroup() {
     Fimber.d("deleteGroup ${state.uiModel.id}");
@@ -30,6 +30,6 @@ class GroupCubit extends Cubit<GroupState> {
   }
 
   void updateGroup(GroupUI newGroup) {
-    emit(GroupState(uiModel: newGroup));
+    emit(state.copyWith(uiModel: newGroup));
   }
 }

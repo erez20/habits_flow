@@ -19,13 +19,7 @@ class HabitsCollectionCubit extends Cubit<HabitCollectionState> {
     required this.group,
     required this.habitsOfGroupStreamUseCase,
     required this.coordinator,
-  }) : super(
-         HabitCollectionState(
-           habits: [],
-           group: group,
-           init: true
-         ),
-       ) {
+  }) : super(HabitCollectionState.init(group: group)) {
     init();
   }
 
@@ -36,7 +30,7 @@ class HabitsCollectionCubit extends Cubit<HabitCollectionState> {
       event,
     ) {
       final habits = event.map(HabitUI.fromEntity).toList();
-      emit(state.copyWith(habits: habits, init: false));
+      emit(state.copyWith(habits: habits, isInit: false));
     });
   }
 

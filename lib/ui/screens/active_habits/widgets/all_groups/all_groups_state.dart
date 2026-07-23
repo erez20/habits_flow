@@ -14,7 +14,7 @@ class AllGroupsState extends Equatable {
     this.groupJustToggled,
   });
 
-  factory AllGroupsState.initial() {
+  factory AllGroupsState.init() {
     return const AllGroupsState(
       groupList: [],
       expandedGroupIds: [],

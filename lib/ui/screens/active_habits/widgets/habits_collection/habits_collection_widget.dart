@@ -27,7 +27,7 @@ class _HabitsCollectionWidgetState extends State<HabitsCollectionWidget> {
     return BlocBuilder<HabitsCollectionCubit, HabitCollectionState>(
       builder: (context, state) {
 
-        final generatedChildren = state.init?null:[
+        final generatedChildren = state.isInit?null:[
           ...state.habits.map((habit) {
             return MetaData(
               key: ValueKey(habit.id), // CRITICAL: Key goes here

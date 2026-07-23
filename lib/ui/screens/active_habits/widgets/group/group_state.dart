@@ -7,7 +7,8 @@ class GroupState extends Equatable {
 
   const GroupState({required this.uiModel});
 
-
+  factory GroupState.init({required GroupUI group}) =>
+      GroupState(uiModel: group);
 
   @override
   List<Object?> get props => [uiModel];

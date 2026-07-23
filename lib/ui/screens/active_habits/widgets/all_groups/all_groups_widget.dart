@@ -35,7 +35,7 @@ class AllGroupsWidget extends StatelessWidget {
 }
 
 class _EmptyGroupsWidget extends StatelessWidget {
-  const _EmptyGroupsWidget({super.key});
+  const _EmptyGroupsWidget();
 
   @override
   Widget build(BuildContext context) {

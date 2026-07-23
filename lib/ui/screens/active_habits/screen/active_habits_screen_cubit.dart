@@ -125,7 +125,7 @@ class ActiveHabitsScreenCubit extends Cubit<ActiveHabitsScreenState> {
   }
 
   Future<void> onLinkTapped(String url) async{
-    final uri = Uri.parse("$url");
+    final uri = Uri.parse(url);
     var res = await canLaunchUrl(uri);
     if (res) {
       await launchUrl (uri);
