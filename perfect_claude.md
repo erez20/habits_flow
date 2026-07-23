@@ -235,14 +235,25 @@ actually appears — never preemptively.
 
 ### Widget Communication Rules
 
+**Prime rule: a cubit is never aware of another cubit** — no references, no
+subscriptions, in any direction. A cross-cubit effect travels on exactly one of
+two channels, chosen by the nature of the change:
+
+- **It changes data (db / server)?** Then it isn't communication at all — call
+  the use case. Affected cubits react through the domain streams they already
+  subscribe to (perform a habit → db write → every watching stream re-emits).
+  A data change is **never** echoed through the coordinator.
+- **It is pure UI** (selection, expand/collapse, gesture signals)? → the
+  coordinator.
+
 For widgets under `screens/<screen_name>/widgets/`:
 
 1. **Internal state affecting no one else → own cubit.**
-2. **Affects a sibling that has its own cubit → coordinator.** A *sibling* is
-   any other cubit under the same coordinator's scope — in the same screen, or
-   in a sister screen of the flow. Also the only channel that physically works:
-   cubits cannot subscribe to each other — the coordinator is injectable into
-   any cubit.
+2. **Affects a sibling's UI state (sibling has its own cubit) → coordinator.**
+   A *sibling* is any other cubit under the same coordinator's scope — in the
+   same screen, or in a sister screen of the flow. Also the only channel that
+   physically works: cubits cannot subscribe to each other — the coordinator is
+   injectable into any cubit.
 3. **Affects only the father (the screen), or a sibling relying on the father's
    state → father's state.** Call `context.read<ScreenCubit>().method()` to
    affect it; watch it with `BlocBuilder` to read it.
@@ -352,10 +363,12 @@ The rules that make it work:
   sees a subject. Expose raw streams (`listenToX`) or per-consumer slices
   (`listenIsItemSelected(id)` via `.map`/`.where`) so each subscriber receives
   only what concerns it.
-- **No logic, no storage.** The coordinator transports signals between cubits;
-  it never calls use cases and holds no renderable state. Each consuming cubit
-  subscribes in `init()`, mirrors what it needs into its own state with `emit`,
-  and cancels the subscription in `close()`.
+- **No logic, no storage, UI signals only.** The coordinator transports pure-UI
+  signals between cubits; it never calls use cases, holds no renderable state,
+  and never carries data-change echoes — those travel through the domain (see
+  the prime rule). Each consuming cubit subscribes in `init()`, mirrors what it
+  needs into its own state with `emit`, and cancels the subscription in
+  `close()`.
 - **Lifecycle.** `dispose()` closes every subject, and the `RepositoryProvider`
   that scopes the coordinator owns that call
   (`dispose: (c) => c.dispose()`) — the subjects die with the scope.
