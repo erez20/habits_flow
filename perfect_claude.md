@@ -363,12 +363,14 @@ The rules that make it work:
   sees a subject. Expose raw streams (`listenToX`) or per-consumer slices
   (`listenIsItemSelected(id)` via `.map`/`.where`) so each subscriber receives
   only what concerns it.
-- **No logic, no storage, UI signals only.** The coordinator transports pure-UI
-  signals between cubits; it never calls use cases, holds no renderable state,
-  and never carries data-change echoes — those travel through the domain (see
-  the prime rule). Each consuming cubit subscribes in `init()`, mirrors what it
-  needs into its own state with `emit`, and cancels the subscription in
-  `close()`.
+- **No logic, no storage, UI signals only.** The coordinator is **deaf to the
+  domain**: it never calls *or listens to* a use case, holds no renderable
+  state, and never carries data-change echoes — live data always travels
+  through domain streams straight to the cubits that need it (see the prime
+  rule). A coordinator that subscribed to the domain would just be a cubit
+  rebuilt badly out of raw subjects. Each consuming cubit subscribes in
+  `init()`, mirrors what it needs into its own state with `emit`, and cancels
+  the subscription in `close()`.
 - **Lifecycle.** `dispose()` closes every subject, and the `RepositoryProvider`
   that scopes the coordinator owns that call
   (`dispose: (c) => c.dispose()`) — the subjects die with the scope.

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:habits_flow/domain/use_cases/group/add_group_use_case.dart';
+import 'package:habits_flow/domain/use_cases/group/groups_list_stream_use_case.dart';
 import 'package:habits_flow/domain/use_cases/habit/delete_habit_use_case.dart';
 import 'package:habits_flow/domain/use_cases/habit/edit_habit_use_case.dart';
 import 'package:habits_flow/domain/use_cases/habit/reorder_habit_use_case.dart';
@@ -26,6 +27,7 @@ class ActiveHabitsScreenProvider extends StatelessWidget {
         final addGroupUseCase = getIt<AddGroupUseCase>();
         return ActiveHabitsScreenCubit(
           addGroupUseCase: addGroupUseCase,
+          groupsListStreamUseCase: getIt<GroupsListStreamUseCase>(),
           coordinator: context.read<ActiveHabitsCoordinator>(),
           resetHabitUseCase: resetHabitUseCase,
           refreshAllUseCase: refreshAllUseCase,

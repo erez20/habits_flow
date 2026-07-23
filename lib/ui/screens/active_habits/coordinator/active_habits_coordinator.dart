@@ -14,14 +14,6 @@ abstract class ActiveHabitsCoordinator {
 
   Stream<bool> get listenToCollapseExpandAll;
 
-  Stream<int> get listenToTotalPoints;
-
-  Stream<int> get listenToTotalCompletions;
-
-  void updateTotalPoints(int totalPoints);
-
-  void updateTotalCompletion(int totalPoints);
-
   Stream<bool> listenIsHabitSelected(String habitId);
 
   void collapseExpandAll({required bool shouldExpand});
@@ -39,8 +31,6 @@ class ActiveHabitsCoordinatorImpl implements ActiveHabitsCoordinator {
   final BehaviorSubject<HabitUI?> _habitSelected =
       BehaviorSubject<HabitUI?>();
   final BehaviorSubject<bool> _collapseExpandAll = BehaviorSubject<bool>();
-  final BehaviorSubject<int> _totalPoints = BehaviorSubject<int>.seeded(0);
-  final BehaviorSubject<int> _totalCompletions = BehaviorSubject<int>.seeded(0);
 
   @override
   Stream<String> listenToDrownHabit(String id) =>
@@ -63,8 +53,7 @@ class ActiveHabitsCoordinatorImpl implements ActiveHabitsCoordinator {
   void dispose() {
     _drawOverHabit.close();
     _habitSelected.close();
-    _totalCompletions.close();
-    _totalPoints.close();
+    _collapseExpandAll.close();
   }
 
   @override
@@ -77,20 +66,4 @@ class ActiveHabitsCoordinatorImpl implements ActiveHabitsCoordinator {
 
   @override
   Stream<bool> get listenToCollapseExpandAll => _collapseExpandAll;
-
-  @override
-  Stream<int> get listenToTotalPoints => _totalPoints.stream;
-
-  @override
-  Stream<int> get listenToTotalCompletions => _totalCompletions.stream;
-
-  @override
-  void updateTotalPoints(int totalPoints) {
-    _totalPoints.add(totalPoints);
-  }
-
-  @override
-  void updateTotalCompletion(int totalCompletions) {
-    _totalCompletions.add(totalCompletions);
-  }
 }

@@ -3,7 +3,9 @@ import 'dart:async';
 import 'package:fimber/fimber.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:habits_flow/ui/screens/active_habits/ui_models/habit_ui.dart';
+import 'package:habits_flow/domain/entities/group_entity.dart';
 import 'package:habits_flow/domain/use_cases/group/add_group_use_case.dart';
+import 'package:habits_flow/domain/use_cases/group/groups_list_stream_use_case.dart';
 import 'package:habits_flow/domain/use_cases/habit/delete_habit_use_case.dart';
 import 'package:habits_flow/domain/use_cases/habit/edit_habit_use_case.dart';
 import 'package:habits_flow/domain/use_cases/habit/reorder_habit_use_case.dart';
@@ -20,6 +22,7 @@ import 'active_habits_screen_state.dart';
 class ActiveHabitsScreenCubit extends Cubit<ActiveHabitsScreenState> {
   final ActiveHabitsCoordinator coordinator;
   final AddGroupUseCase addGroupUseCase;
+  final GroupsListStreamUseCase groupsListStreamUseCase;
   final ResetHabitUseCase resetHabitUseCase;
   final RefreshAllUseCase refreshAllUseCase;
   final ReorderHabitUseCase reorderHabitUseCase;
@@ -29,6 +32,7 @@ class ActiveHabitsScreenCubit extends Cubit<ActiveHabitsScreenState> {
   ActiveHabitsScreenCubit({
     required this.coordinator,
     required this.addGroupUseCase,
+    required this.groupsListStreamUseCase,
     required this.resetHabitUseCase,
     required this.refreshAllUseCase,
     required this.reorderHabitUseCase,
@@ -39,8 +43,7 @@ class ActiveHabitsScreenCubit extends Cubit<ActiveHabitsScreenState> {
   }
 
   late final StreamSubscription<HabitUI?> _habitSelectedStreamSubscription;
-  late final StreamSubscription<int> _totalPointsStreamSubscription;
-  late final StreamSubscription<int> _totalCompletionsStreamSubscription;
+  late final StreamSubscription<List<GroupEntity>> _groupsStreamSubscription;
 
   void moveRequest({required String habitId, required int steps}) {
     reorderHabitUseCase.exec(ReorderHabitUseCaseParams(habitId: habitId, steps: steps));
@@ -58,12 +61,19 @@ class ActiveHabitsScreenCubit extends Cubit<ActiveHabitsScreenState> {
         }
       },
     );
-    _totalPointsStreamSubscription = coordinator.listenToTotalPoints.listen((totalPoints) {
-      emit(state.copyWith(totalPoints: totalPoints));
-    });
-
-    _totalCompletionsStreamSubscription = coordinator.listenToTotalCompletions.listen((totalCompletions) {
-      emit(state.copyWith(totalCompletions: totalCompletions));
+    _groupsStreamSubscription = groupsListStreamUseCase.stream(null).listen((groups) {
+      final totalPoints =
+          groups.fold<int>(0, (sum, group) => sum + group.points);
+      final totalCompletions = groups.fold<int>(
+          0,
+          (sumGroups, group) =>
+              sumGroups +
+              group.habits
+                  .fold<int>(0, (sum, habit) => sum + habit.completionCount));
+      emit(state.copyWith(
+        totalPoints: totalPoints,
+        totalCompletions: totalCompletions,
+      ));
     });
   }
 
@@ -122,8 +132,7 @@ class ActiveHabitsScreenCubit extends Cubit<ActiveHabitsScreenState> {
   @override
   Future<void> close() {
     _habitSelectedStreamSubscription.cancel();
-    _totalPointsStreamSubscription.cancel();
-    _totalCompletionsStreamSubscription.cancel();
+    _groupsStreamSubscription.cancel();
     return super.close();
   }
 }

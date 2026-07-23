@@ -32,13 +32,6 @@ class AllGroupsCubit extends Cubit<AllGroupsState> {
       event,
     ) {
       final groups = event.map(GroupUI.fromEntity).toList();
-      final totalPoints = groups.fold<int>(0, (sum, group) => sum + group.points);
-      final totalCompletion = groups.fold<int>(0, (sumGroups, group) => sumGroups + group.habits.fold<int>(0, (sum, habit) => sum + habit.completionCount));
-
-
-      coordinator.updateTotalPoints(totalPoints);
-      coordinator.updateTotalCompletion(totalCompletion);
-
       final expandedGroupIds = List<String>.from(state.expandedGroupIds);
       var groupWasAdded = state.groupList.length < groups.length;
       if (!state.isInit && groupWasAdded) {
