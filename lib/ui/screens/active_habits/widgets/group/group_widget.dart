@@ -1,7 +1,7 @@
 import 'package:fimber/fimber.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:habits_flow/ui/common/duration/duration_utils.dart';
+import 'package:habits_flow/core/extensions/int/duration_ext.dart';
 import 'package:habits_flow/ui/dialogs/confirm_dialog/confirm_dialog.dart';
 import 'package:habits_flow/ui/screens/active_habits/dialogs/edit_group_form_dialog/edit_group_form_dialog.dart';
 import 'group_cubit.dart';

@@ -2,7 +2,7 @@ import 'package:fimber/fimber.dart' show Fimber;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:habits_flow/ui/screens/active_habits/ui_models/habit_ui.dart';
-import 'package:habits_flow/ui/common/constants.dart';
+import 'package:habits_flow/ui/constants/constants.dart';
 import 'package:habits_flow/ui/widgets/drawing_layer/drawing_layer_widget.dart';
 import 'package:habits_flow/ui/screens/active_habits/widgets/create_habit/create_habit_provider.dart';
 import 'package:habits_flow/ui/screens/active_habits/widgets/habit/habit_provider.dart';

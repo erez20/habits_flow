@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:habits_flow/ui/common/constants.dart';
+import 'package:habits_flow/ui/constants/constants.dart';
 
 class JoystickWidget extends StatelessWidget {
   final String habitId;

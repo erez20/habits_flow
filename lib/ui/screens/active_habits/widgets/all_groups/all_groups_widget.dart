@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:habits_flow/ui/common/constants.dart';
+import 'package:habits_flow/ui/constants/constants.dart';
 import 'package:habits_flow/ui/screens/active_habits/coordinator/active_habits_coordinator.dart';
 import 'all_groups_cubit.dart';
 import 'package:habits_flow/ui/screens/active_habits/widgets/group/group_provider.dart';

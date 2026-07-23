@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:habits_flow/ui/common/colors/app_colors.dart';
+import 'package:habits_flow/ui/theme/app_colors.dart';
 
 import 'habit_cubit.dart';
 import 'habit_state.dart';

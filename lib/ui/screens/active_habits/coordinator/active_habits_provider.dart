@@ -1,7 +1,7 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:habits_flow/main/injection.dart';
+import 'package:habits_flow/core/di/di.dart';
 
 
 import 'package:habits_flow/ui/screens/active_habits/screen/active_habits_screen_provider.dart';

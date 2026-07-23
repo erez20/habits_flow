@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:habits_flow/ui/common/colors/app_colors.dart';
-import 'package:habits_flow/ui/common/constants.dart';
+import 'package:habits_flow/ui/theme/app_colors.dart';
+import 'package:habits_flow/ui/constants/constants.dart';
 import 'package:habits_flow/ui/screens/active_habits/ui_models/group_ui.dart';
 import 'package:habits_flow/ui/screens/active_habits/dialogs/new_habit_form_dialog/new_habit_form_dialog.dart';
 

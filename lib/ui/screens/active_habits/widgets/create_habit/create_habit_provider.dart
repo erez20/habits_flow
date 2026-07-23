@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:habits_flow/domain/use_cases/habit/add_habit_use_case.dart';
-import 'package:habits_flow/main/injection.dart';
+import 'package:habits_flow/core/di/di.dart';
 import 'package:habits_flow/ui/screens/active_habits/ui_models/group_ui.dart';
 
 import 'create_habit_cubit.dart';

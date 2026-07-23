@@ -10,9 +10,13 @@ rxdart (subjects & stream composition).
 ```
 lib/
 ├── main.dart            # Entry point → root app widget
-├── main/                # App bootstrap: DI setup (injection.dart + injectable config), root MaterialApp
-├── core/                # Cross-cutting utilities, no business logic
-│   ├── extensions/      # Dart extension helpers
+├── main/                # TOP of the graph — imported by NO ONE. Composition root:
+│                        #   injection wiring + config, root MaterialApp
+├── core/                # BOTTOM — imported by everyone, imports nothing.
+│   │                    #   Pure Dart (no Flutter). Cross-cutting, no business logic
+│   ├── di/              # The getIt handle (di.dart)
+│   ├── extensions/      # Pure-Dart extensions, one dir per extended type
+│   │   └── int/         #   (*_ext.dart, e.g. duration_ext.dart)
 │   └── logger/          # Logger initialization
 ├── domain/              # Pure Dart business layer — NO Flutter imports
 │   ├── entities/        # Equatable domain models
@@ -29,30 +33,48 @@ lib/
 │   │                    #   aggregate — the only code touching drift
 │   └── repos/           # Repo implementations: wrap source calls in try/catch → Failure
 └── ui/                  # Presentation layer
-    ├── common/          # App-level cubit, colors, fonts, constants, shared UI types
-    ├── dialogs/         # REUSABLE dialogs only, one directory per dialog
-    │                    #   (see "Dialogs")
+    ├── app/             # App-root cubit/state (e.g. restart)
+    ├── theme/           # Design tokens — colors, fonts
+    ├── constants/       # Layout constants (sizes, paddings)
+    ├── type/            # Shared UI value types (enums, etc.)
     ├── routes/          # auto_route router (app_router.dart + generated .gr.dart)
     ├── screens/         # One directory per screen (see "Screen Structure" below)
+    ├── dialogs/         # REUSABLE dialogs only, one dir per dialog (see "Dialogs")
     ├── ui_models/       # REUSABLE UI models only — a model scoped to one
     │                    #   screen lives under that screen (see "UI Models")
-    └── widgets/         # REUSABLE widgets only, one directory per widget.
-                         #   Anything unique to one screen lives under that
-                         #   screen instead.
+    └── widgets/         # REUSABLE widgets only, one dir per widget — anything
+                         #   unique to one screen lives under that screen instead
 ```
 
 **Dependency rule:** `ui → domain ← data`. The domain layer imports nothing from
 `ui/` or `data/`. Generated files (`*.g.dart`, `*.gr.dart`, `*.config.dart`) are
 never edited by hand.
 
+**The sandwich — `core` at the bottom, `main` at the top:**
+
+- **`core/` is imported by everyone and imports nothing** in the app, so it must
+  stay **pure Dart (no Flutter)** — `domain` may import it, and `domain` is
+  Flutter-free. A helper that needs Flutter types is therefore not `core`: a
+  pure-Dart extension goes in `core/extensions/`, a Flutter-typed one under
+  `ui/`.
+- **`main/` is imported by no one.** It is the composition root: it may import
+  anything to wire the app together, but nothing depends on it. If a lower layer
+  seems to need something from `main`, `main` injects it downward instead (see
+  DI below).
+
 ## Dependency Injection (get_it + injectable)
 
-Setup lives in `main/injection.dart`; the registrations are generated into
-`injection.config.dart` from annotations:
+DI is split to honor the sandwich. The **`getIt` handle** lives in
+`core/di/di.dart` (`final getIt = GetIt.instance;` — pure, imported by every
+provider). The **wiring** lives at the top in `main/injection.dart`, because the
+generated `injection.config.dart` imports nearly the whole app to register it —
+that file is the composition root and can only live in `main/`:
 
 ```dart
+// core/di/di.dart — pure handle, imported everywhere
 final getIt = GetIt.instance;
 
+// main/injection.dart — wiring, imported by no one but main.dart
 @InjectableInit(initializerName: 'init', preferRelativeImports: false, asExtension: true)
 void configureDependencies() => getIt.init();
 ```
@@ -60,6 +82,11 @@ void configureDependencies() => getIt.init();
 `main()` calls `configureDependencies()` before `runApp`. After adding or
 changing any annotation, run
 `dart run build_runner build --delete-conflicting-outputs`.
+
+Restart/reset is a `main/` concern too: `AppCubit` (in `ui/app/`) takes an
+`onRestart` callback that `main.dart` supplies as
+`() async { await getIt.reset(); configureDependencies(); }` — the cubit never
+imports `main/`.
 
 **What gets registered, and how:**
 
