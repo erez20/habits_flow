@@ -2,18 +2,36 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
+import 'package:habits_flow/ui/screens/active_habits/ui_models/selected_habit_ui.dart';
 
-import 'new_habit_form_cubit.dart';
-import 'new_habit_form_state.dart';
+import 'edit_habit_form_dialog_cubit.dart';
+import 'edit_habit_form_dialog_provider.dart';
+import 'edit_habit_form_dialog_state.dart';
 
-class NewHabitFormWidget extends StatefulWidget {
-  const NewHabitFormWidget({super.key});
+class EditHabitFormDialog extends StatefulWidget {
+  final SelectedHabitUI uiModel;
+  const EditHabitFormDialog({super.key, required this.uiModel});
+
+  static Future<void> show(
+    BuildContext context, {
+    required SelectedHabitUI uiModel,
+    required void Function({required SelectedHabitUI uiModel}) onUpdate,
+  }) {
+    return showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      builder: (_) => EditHabitFormDialogProvider(
+        uiModel: uiModel,
+        onUpdate: onUpdate,
+      ),
+    );
+  }
 
   @override
-  State<NewHabitFormWidget> createState() => _NewHabitFormWidgetState();
+  State<EditHabitFormDialog> createState() => _EditHabitFormDialogState();
 }
 
-class _NewHabitFormWidgetState extends State<NewHabitFormWidget> {
+class _EditHabitFormDialogState extends State<EditHabitFormDialog> {
   final _formKey = GlobalKey<FormBuilderState>();
   late final FocusNode _titleFocusNode;
 
@@ -31,7 +49,7 @@ class _NewHabitFormWidgetState extends State<NewHabitFormWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<NewHabitFormCubit, NewHabitFormState>(
+    return BlocConsumer<EditHabitFormDialogCubit, EditHabitFormDialogState>(
       listener: (context, state) {
         if (state.isSuccess) {
           Navigator.of(context).pop();
@@ -46,7 +64,7 @@ class _NewHabitFormWidgetState extends State<NewHabitFormWidget> {
         }
       },
       builder: (context, state) {
-        final cubit = context.read<NewHabitFormCubit>();
+        final cubit = context.read<EditHabitFormDialogCubit>();
 
         return SafeArea(
           child: Container(
@@ -63,6 +81,12 @@ class _NewHabitFormWidgetState extends State<NewHabitFormWidget> {
               child: SingleChildScrollView(
                 child: FormBuilder(
                   key: _formKey,
+                  initialValue: {
+                    'title': widget.uiModel.title,
+                    'info': widget.uiModel.info,
+                    'link': widget.uiModel.link,
+                    'points': widget.uiModel.points,
+                  },
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -108,7 +132,7 @@ class _NewHabitFormWidgetState extends State<NewHabitFormWidget> {
 
   Text _formTitle(BuildContext context) {
     return Text(
-      'Add New Habit',
+      'Edit Habit',
       style: Theme.of(context).textTheme.headlineSmall?.copyWith(
             fontWeight: FontWeight.bold,
           ),
@@ -172,7 +196,6 @@ class _NewHabitFormWidgetState extends State<NewHabitFormWidget> {
         filled: true,
         fillColor: Colors.grey[200],
       ),
-      initialValue: 1,
       items: List.generate(20, (index) => index + 1)
           .map((value) => DropdownMenuItem(
                 value: value,
@@ -185,7 +208,7 @@ class _NewHabitFormWidgetState extends State<NewHabitFormWidget> {
     );
   }
 
-  SizedBox _submit(NewHabitFormState state, NewHabitFormCubit cubit) {
+  SizedBox _submit(EditHabitFormDialogState state, EditHabitFormDialogCubit cubit) {
     return SizedBox(
       width: double.infinity,
       child: FilledButton(
@@ -197,7 +220,7 @@ class _NewHabitFormWidgetState extends State<NewHabitFormWidget> {
             ? null
             : () {
                 if (_formKey.currentState?.saveAndValidate() ?? false) {
-                  cubit.submitForm(_formKey.currentState!.value);
+                  cubit.updateForm(_formKey.currentState!.value);
                 }
               },
         child: state.isSubmitting

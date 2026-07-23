@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'new_group_form_cubit.dart';
+import 'new_group_form_dialog_cubit.dart';
 import 'package:habits_flow/ui/screens/active_habits/ui_models/new_group_form_ui.dart';
-import 'new_group_form_widget.dart';
+import 'new_group_form_dialog.dart';
 
-class NewGroupFormProvider extends StatelessWidget {
+class NewGroupFormDialogProvider extends StatelessWidget {
   final void Function({required NewGroupFormUI uiModel}) onConfirm;
-  const NewGroupFormProvider({super.key,required this.onConfirm});
+  const NewGroupFormDialogProvider({super.key,required this.onConfirm});
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => NewGroupFormCubit(onConfirm: onConfirm),
-      child: const NewGroupFormWidget(),
+      create: (context) => NewGroupFormDialogCubit(onConfirm: onConfirm),
+      child: const NewGroupFormDialog(),
     );
   }
 }

@@ -2,16 +2,16 @@ import 'package:fimber/fimber.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:habits_flow/ui/screens/active_habits/ui_models/selected_habit_ui.dart';
 
-import 'edit_habit_form_state.dart';
+import 'edit_habit_form_dialog_state.dart';
 
-class EditHabitFormCubit extends Cubit<EditHabitFormState> {
+class EditHabitFormDialogCubit extends Cubit<EditHabitFormDialogState> {
   final void Function({required SelectedHabitUI uiModel}) onUpdate;
   final SelectedHabitUI uiModel;
 
-  EditHabitFormCubit({
+  EditHabitFormDialogCubit({
     required this.onUpdate,
     required this.uiModel,
-  }) : super(EditHabitFormState.init());
+  }) : super(EditHabitFormDialogState.init());
 
   Future<void> updateForm(Map<String, dynamic> formData) async {
     emit(state.copyWith(isSubmitting: true));

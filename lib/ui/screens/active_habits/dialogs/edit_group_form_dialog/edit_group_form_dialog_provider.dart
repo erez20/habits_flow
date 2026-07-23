@@ -3,14 +3,14 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:habits_flow/ui/screens/active_habits/ui_models/selected_group_ui.dart';
 import 'package:habits_flow/ui/screens/active_habits/ui_models/group_ui.dart';
 
-import 'edit_group_form_cubit.dart';
-import 'edit_group_form_widget.dart';
+import 'edit_group_form_dialog_cubit.dart';
+import 'edit_group_form_dialog.dart';
 
-class EditGroupFormProvider extends StatelessWidget {
+class EditGroupFormDialogProvider extends StatelessWidget {
   final GroupUI uiModel;
   final void Function({required SelectedGroupUI uiModel}) onUpdate;
 
-  const EditGroupFormProvider({
+  const EditGroupFormDialogProvider({
     super.key,
     required this.uiModel,
     required this.onUpdate,
@@ -19,11 +19,11 @@ class EditGroupFormProvider extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => EditGroupFormCubit(
+      create: (context) => EditGroupFormDialogCubit(
         uiModel: uiModel,
         onUpdate: onUpdate,
       ),
-      child:  EditGroupFormWidget(
+      child:  EditGroupFormDialog(
         uiModel: uiModel,
       ),
     );

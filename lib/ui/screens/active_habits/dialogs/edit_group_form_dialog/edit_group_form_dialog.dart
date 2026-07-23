@@ -6,24 +6,41 @@ import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:habits_flow/ui/common/colors/app_colors.dart';
 import 'package:habits_flow/ui/screens/active_habits/ui_models/group_ui.dart';
 import 'package:habits_flow/ui/common/duration/duration_type.dart';
+import 'package:habits_flow/ui/screens/active_habits/ui_models/selected_group_ui.dart';
 
-import 'edit_group_form_cubit.dart';
-import 'edit_group_form_state.dart';
+import 'edit_group_form_dialog_cubit.dart';
+import 'edit_group_form_dialog_provider.dart';
+import 'edit_group_form_dialog_state.dart';
 
-class EditGroupFormWidget extends StatefulWidget {
+class EditGroupFormDialog extends StatefulWidget {
   final GroupUI uiModel;
-  const EditGroupFormWidget({super.key, required this.uiModel});
+  const EditGroupFormDialog({super.key, required this.uiModel});
+
+  static Future<void> show(
+    BuildContext context, {
+    required GroupUI uiModel,
+    required void Function({required SelectedGroupUI uiModel}) onUpdate,
+  }) {
+    return showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      builder: (_) => EditGroupFormDialogProvider(
+        uiModel: uiModel,
+        onUpdate: onUpdate,
+      ),
+    );
+  }
 
   @override
-  State<EditGroupFormWidget> createState() => _EditGroupFormWidgetState();
+  State<EditGroupFormDialog> createState() => _EditGroupFormDialogState();
 }
 
-class _EditGroupFormWidgetState extends State<EditGroupFormWidget> {
+class _EditGroupFormDialogState extends State<EditGroupFormDialog> {
   final _formKey = GlobalKey<FormBuilderState>();
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<EditGroupFormCubit, EditGroupFormState>(
+    return BlocConsumer<EditGroupFormDialogCubit, EditGroupFormDialogState>(
       listener: (context, state) {
         if (state.isSuccess) {
           Navigator.of(context).pop();
@@ -38,7 +55,7 @@ class _EditGroupFormWidgetState extends State<EditGroupFormWidget> {
         }
       },
       builder: (context, state) {
-        final cubit = context.read<EditGroupFormCubit>();
+        final cubit = context.read<EditGroupFormDialogCubit>();
 
         return SafeArea(
           child: Container(
@@ -132,7 +149,7 @@ class _EditGroupFormWidgetState extends State<EditGroupFormWidget> {
     );
   }
 
-  SizedBox _submit(EditGroupFormState state, EditGroupFormCubit cubit) {
+  SizedBox _submit(EditGroupFormDialogState state, EditGroupFormDialogCubit cubit) {
     return SizedBox(
       width: double.infinity,
       child: FilledButton(

@@ -5,23 +5,37 @@ import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:habits_flow/ui/common/colors/app_colors.dart';
 import 'package:habits_flow/ui/common/duration/duration_type.dart';
+import 'package:habits_flow/ui/screens/active_habits/ui_models/new_group_form_ui.dart';
 
-import 'new_group_form_cubit.dart';
-import 'new_group_form_state.dart';
+import 'new_group_form_dialog_cubit.dart';
+import 'new_group_form_dialog_provider.dart';
+import 'new_group_form_dialog_state.dart';
 
-class NewGroupFormWidget extends StatefulWidget {
-  const NewGroupFormWidget({super.key});
+class NewGroupFormDialog extends StatefulWidget {
+  const NewGroupFormDialog({super.key});
+
+  static Future<void> show(
+    BuildContext context, {
+    required void Function({required NewGroupFormUI uiModel}) onConfirm,
+  }) {
+    return showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.blueGrey[100],
+      builder: (_) => NewGroupFormDialogProvider(onConfirm: onConfirm),
+    );
+  }
 
   @override
-  State<NewGroupFormWidget> createState() => _NewGroupFormWidgetState();
+  State<NewGroupFormDialog> createState() => _NewGroupFormDialogState();
 }
 
-class _NewGroupFormWidgetState extends State<NewGroupFormWidget> {
+class _NewGroupFormDialogState extends State<NewGroupFormDialog> {
   final _formKey = GlobalKey<FormBuilderState>();
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<NewGroupFormCubit, NewGroupFormState>(
+    return BlocConsumer<NewGroupFormDialogCubit, NewGroupFormDialogState>(
       listener: (context, state) {
         if (state.isSuccess) {
           Navigator.of(context).pop();
@@ -36,7 +50,7 @@ class _NewGroupFormWidgetState extends State<NewGroupFormWidget> {
         }
       },
       builder: (context, state) {
-        final cubit = context.read<NewGroupFormCubit>();
+        final cubit = context.read<NewGroupFormDialogCubit>();
 
         return SafeArea(
           child: Container(
@@ -123,7 +137,7 @@ class _NewGroupFormWidgetState extends State<NewGroupFormWidget> {
     );
   }
 
-  SizedBox _submit(NewGroupFormState state, NewGroupFormCubit cubit) {
+  SizedBox _submit(NewGroupFormDialogState state, NewGroupFormDialogCubit cubit) {
     return SizedBox(
       width: double.infinity,
       child: FilledButton(

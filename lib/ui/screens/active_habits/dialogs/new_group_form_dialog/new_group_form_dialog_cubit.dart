@@ -1,11 +1,11 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:habits_flow/ui/screens/active_habits/ui_models/new_group_form_ui.dart';
-import 'new_group_form_state.dart';
+import 'new_group_form_dialog_state.dart';
 
-class NewGroupFormCubit extends Cubit<NewGroupFormState> {
+class NewGroupFormDialogCubit extends Cubit<NewGroupFormDialogState> {
   final void Function({required NewGroupFormUI uiModel}) onConfirm;
 
-  NewGroupFormCubit({required this.onConfirm}) : super(NewGroupFormState.init()) {
+  NewGroupFormDialogCubit({required this.onConfirm}) : super(NewGroupFormDialogState.init()) {
     init();
   }
 

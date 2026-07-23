@@ -1,6 +1,8 @@
-import 'package:fimber/fimber.dart' show Fimber;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:habits_flow/ui/dialogs/confirm_dialog/confirm_dialog.dart';
+import 'package:habits_flow/ui/screens/active_habits/dialogs/edit_habit_form_dialog/edit_habit_form_dialog.dart';
+import 'package:habits_flow/ui/screens/active_habits/dialogs/habit_info_dialog/habit_info_dialog.dart';
 import 'package:habits_flow/ui/screens/active_habits/screen/active_habits_screen_cubit.dart';
 import 'package:habits_flow/ui/screens/active_habits/ui_models/selected_habit_ui.dart';
 
@@ -51,7 +53,11 @@ class HabitSelectedAppBar extends StatelessWidget
               color: accent,
               size: 24,
             ),
-            onPressed: () => cubit.editHabit(context, uiModel),
+            onPressed: () => EditHabitFormDialog.show(
+              context,
+              uiModel: uiModel,
+              onUpdate: cubit.updateHabit,
+            ),
           ),
           IconButton(
             icon: Icon(
@@ -59,8 +65,8 @@ class HabitSelectedAppBar extends StatelessWidget
               color: accent,
               size: 24,
             ),
-            onPressed: () => _handleInfo(
-              context: context,
+            onPressed: () => HabitInfoDialog.show(
+              context,
               uiModel: uiModel,
               onLinkTapped: cubit.onLinkTapped,
             ),
@@ -85,121 +91,17 @@ class HabitSelectedAppBar extends StatelessWidget
   @override
   Size get preferredSize => const Size.fromHeight(kToolbarHeight);
 
-  void _handleDelete({
+  Future<void> _handleDelete({
     required BuildContext context,
     required void Function(String habitId) deleteHabit,
     required SelectedHabitUI uiModel,
-  }) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text("delete habit?"),
-          content: Text(
-            "Are you sure you want to delete ${uiModel.title}?",
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: Text('Cancel'),
-            ),
-            TextButton(
-              onPressed: () {
-                deleteHabit(uiModel.id);
-                Navigator.of(context).pop();
-              },
-              child: Text('Delete'),
-            ),
-          ],
-        );
-      },
+  }) async {
+    final confirmed = await ConfirmDialog.show(
+      context,
+      title: 'Delete Habit',
+      message: 'Are you sure you want to delete ${uiModel.title}?',
+      confirmLabel: 'Delete',
     );
-  }
-
-  void _handleInfo({
-    required BuildContext context,
-    required SelectedHabitUI uiModel,
-    required Future<void> Function(String url) onLinkTapped,
-  }) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return Dialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16.0),
-          ),
-          child: Stack(
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(24.0),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      uiModel.title,
-                      style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                            color: Colors.blueGrey[800],
-                            fontWeight: FontWeight.bold,
-                          ),
-                    ),
-                    const SizedBox(height: 24),
-                    if (uiModel.info.isNotEmpty)
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Icon(Icons.info_outline,
-                              color: uiModel.color[700], size: 20),
-                          const SizedBox(width: 12),
-                          Expanded(
-                            child: Text(
-                              uiModel.info,
-                              style: const TextStyle(fontSize: 16),
-                            ),
-                          ),
-                        ],
-                      ),
-                    if (uiModel.info.isNotEmpty && uiModel.link.isNotEmpty)
-                      const SizedBox(height: 16),
-                    if (uiModel.link.isNotEmpty)
-                      InkWell(
-                        onTap: () async {
-                          Fimber.d("link tapped--${uiModel.link}");
-                          await onLinkTapped(uiModel.link);
-                        },
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Icon(Icons.link,
-                                color: uiModel.color[700], size: 20),
-                            const SizedBox(width: 12),
-                            Expanded(
-                              child: Text(
-                                "Link",
-                                style: TextStyle(
-                                  color: Colors.blueGrey[800],
-                                  decoration: TextDecoration.underline,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                  ],
-                ),
-              ),
-              Positioned(
-                top: 8,
-                right: 8,
-                child: IconButton(
-                  icon: const Icon(Icons.close),
-                  onPressed: () => Navigator.of(context).pop(),
-                ),
-              ),
-            ],
-          ),
-        );
-      },
-    );
+    if (confirmed) deleteHabit(uiModel.id);
   }
 }

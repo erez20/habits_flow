@@ -1,11 +1,11 @@
 import 'package:equatable/equatable.dart';
 
-class NewHabitFormState extends Equatable {
+class NewHabitFormDialogState extends Equatable {
   final bool isSubmitting;
   final String errorMessage;
   final bool isSuccess;
 
-  const NewHabitFormState({
+  const NewHabitFormDialogState({
     required this.isSubmitting,
     required this.errorMessage,
     required this.isSuccess,
@@ -15,18 +15,18 @@ class NewHabitFormState extends Equatable {
   List<Object?> get props => [isSubmitting, errorMessage, isSuccess];
 
 
-  factory NewHabitFormState.init() => const NewHabitFormState(
+  factory NewHabitFormDialogState.init() => const NewHabitFormDialogState(
     isSubmitting: false,
     errorMessage: "",
     isSuccess: false,
   );
 
-  NewHabitFormState copyWith({
+  NewHabitFormDialogState copyWith({
     bool? isSubmitting,
     String? errorMessage,
     bool? isSuccess,
   }) {
-    return NewHabitFormState(
+    return NewHabitFormDialogState(
       isSubmitting: isSubmitting ?? this.isSubmitting,
       errorMessage: errorMessage ?? this.errorMessage,
       isSuccess: isSuccess ?? this.isSuccess,

@@ -30,6 +30,8 @@ lib/
 │   └── repos/           # Repo implementations: wrap source calls in try/catch → Failure
 └── ui/                  # Presentation layer
     ├── common/          # App-level cubit, colors, fonts, constants, shared UI types
+    ├── dialogs/         # REUSABLE dialogs only, one directory per dialog
+    │                    #   (see "Dialogs")
     ├── routes/          # auto_route router (app_router.dart + generated .gr.dart)
     ├── screens/         # One directory per screen (see "Screen Structure" below)
     ├── ui_models/       # REUSABLE UI models only — a model scoped to one
@@ -94,27 +96,30 @@ A **screen** = has a route and a `Scaffold` (and usually a cubit). A **flow** =
 several screens sharing one coordinator. Both live under `ui/screens/`:
 
 ```
-ui/screens/
-├── <screen_name>/          # STANDALONE SCREEN
-│   ├── screen/             # <screen_name>_screen.dart (the Scaffold), plus the
-│   │                       #   rest of the 4-file unit if the screen has state
-│   ├── widgets/            # One directory per widget UNIQUE to this screen
-│   │   └── <widget_name>/  #   (a 4-file unit when it owns state)
-│   ├── ui_models/          # UI models shared by this screen's widgets
-│   └── coordinator/        # <screen_name>_coordinator.dart + the
-│                           #   RepositoryProvider that scopes it. Create ONLY
-│                           #   if screen and widgets need coordination
-│                           #   (e.g. selection, totals, expand/collapse-all).
-└── <flow_name>/            # FLOW — create only when screens must share state
-    ├── coordinator/        # <flow_name>_coordinator.dart — scoped above the
-    │                       #   flow's nested router; injectable into every
-    │                       #   cubit of every member screen
-    ├── <screen_a>/         # Member screens: same shape as a standalone screen
-    │   ├── screen/         #   (each may still have its own screen-local
-    │   └── widgets/        #   coordinator for its own widgets)
-    └── <screen_b>/
-        ├── screen/
-        └── widgets/
+ui/
+└── screens/
+    ├── <screen_name>/          # STANDALONE SCREEN
+    │   ├── screen/             # <screen_name>_screen.dart (the Scaffold), plus the
+    │   │                       #   rest of the 4-file unit if the screen has state
+    │   ├── widgets/            # One directory per widget UNIQUE to this screen
+    │   │   └── <widget_name>/  #   (a 4-file unit when it owns state)
+    │   ├── dialogs/            # One directory per dialog UNIQUE to this screen —
+    │   │   └── <name>_dialog/  #   sibling of widgets/ at every scope (see "Dialogs")
+    │   ├── ui_models/          # UI models shared by this screen's widgets
+    │   └── coordinator/        # <screen_name>_coordinator.dart + the
+    │                           #   RepositoryProvider that scopes it. Create ONLY
+    │                           #   if screen and widgets need coordination
+    │                           #   (e.g. selection, totals, expand/collapse-all).
+    └── <flow_name>/            # FLOW — create only when screens must share state
+        ├── coordinator/        # <flow_name>_coordinator.dart — scoped above the
+        │                       #   flow's nested router; injectable into every
+        │                       #   cubit of every member screen
+        ├── <screen_a>/         # Member screens: same shape as a standalone screen
+        │   ├── screen/         #   (each may still have its own screen-local
+        │   └── widgets/        #   coordinator for its own widgets)
+        └── <screen_b>/
+            ├── screen/
+            └── widgets/
 ```
 
 ### The 4-File Unit
@@ -223,6 +228,52 @@ consumer. Father state only when no sibling cubit is involved.
 **Reusable widgets** (`ui/widgets/`) are the opposite regime: params in,
 callbacks out, nothing else. Never `context.read` a feature's cubit, never touch
 a coordinator — or the widget is no longer reusable.
+
+### Dialogs
+
+A **dialog** is anything presented on its own modal route — `showDialog` or
+`showModalBottomSheet`; which one is an implementation detail hidden inside the
+dialog's `show()`. The `_dialog` suffix is a view-role suffix parallel to
+`_widget`: the view file is `<name>_dialog.dart` (class `<Name>Dialog`), and a
+dialog that owns state completes the 4-file unit (`<name>_dialog_cubit.dart`,
+`..._state.dart`, `..._provider.dart`).
+
+**Placement** mirrors widgets — `dialogs/` is a sibling of `widgets/` at every
+scope: `<screen_name>/dialogs/` for screen dialogs (create only when needed),
+`ui/dialogs/` for reusable ones. The scope ladder applies unchanged.
+
+**Widgets specific to a dialog:** dialogs never nest a `widgets/` of their own —
+they are leaf units, like widgets. Small dialog-internal pieces are private
+classes in the dialog's own file; anything that earns its own unit goes in the
+screen's `widgets/` (also the natural home for a widget shared by several
+dialogs, e.g. a color picker used by two forms). Inside a dialog's subtree the
+communication rules apply with the dialog's cubit as the father.
+
+**The route boundary.** A dialog's route is a *sibling* of the screen's route,
+not a child — the screen's providers are unreachable from inside it, so the
+widget communication rules do not cross it. Instead:
+
+- **In: params** — a snapshot taken by the launcher (`uiModel: state.uiModel`).
+- **Out:** a callback for flow dialogs (forms:
+  `onUpdate: cubit.editGroup`), or an awaited result for decision dialogs
+  (`final ok = await ConfirmDialog.show(...); if (ok) cubit.deleteGroup();` —
+  the launcher applies the domain meaning).
+- **Never bridge with `BlocProvider.value`** to observe a screen cubit from a
+  dialog. A dialog that needs *live* data gets its own cubit subscribing to a
+  domain stream, keyed by ids passed as params — same logic as rule 2: a cubit
+  that needs live data goes to the domain, never to another cubit.
+
+**Opening.** Every dialog exposes a
+`static Future<T?> show(BuildContext context, {...})` that owns the route
+plumbing; launchers never call `showDialog`/`showModalBottomSheet` directly.
+Opening is a **widget's** job:
+
+- User-triggered: call `<Name>Dialog.show(...)` in the tap handler.
+- Cubit-triggered: the cubit emits a one-shot signal (see the State exception)
+  and a `BlocListener` in the widget opens the dialog. **A cubit never touches
+  `BuildContext`** — no navigation, dialogs, sheets, or snackbars from cubits.
+
+Guard with `context.mounted` before using a context after any `await`.
 
 ### Coordinator Anatomy
 

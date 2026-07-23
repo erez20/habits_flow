@@ -2,12 +2,12 @@ import 'package:fimber/fimber.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:habits_flow/ui/screens/active_habits/ui_models/new_habit_form_ui.dart';
 
-import 'new_habit_form_state.dart';
+import 'new_habit_form_dialog_state.dart';
 
-class NewHabitFormCubit extends Cubit<NewHabitFormState> {
+class NewHabitFormDialogCubit extends Cubit<NewHabitFormDialogState> {
   final void Function({required NewHabitFormUI uiModel}) onConfirm;
 
-  NewHabitFormCubit({required this.onConfirm}) : super(NewHabitFormState.init()) {
+  NewHabitFormDialogCubit({required this.onConfirm}) : super(NewHabitFormDialogState.init()) {
     init();
   }
 

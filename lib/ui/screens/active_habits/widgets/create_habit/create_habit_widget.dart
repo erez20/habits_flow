@@ -3,8 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:habits_flow/ui/common/colors/app_colors.dart';
 import 'package:habits_flow/ui/common/constants.dart';
 import 'package:habits_flow/ui/screens/active_habits/ui_models/group_ui.dart';
-import 'package:habits_flow/ui/screens/active_habits/widgets/new_habit_form/new_habit_form_provider.dart';
-import 'package:habits_flow/ui/screens/active_habits/ui_models/new_habit_form_ui.dart';
+import 'package:habits_flow/ui/screens/active_habits/dialogs/new_habit_form_dialog/new_habit_form_dialog.dart';
 
 import 'create_habit_cubit.dart';
 
@@ -17,9 +16,9 @@ class CreateHabitWidget extends StatelessWidget {
     final cubit = context.read<CreateHabitCubit>();
     final size = Constants.habitSide(context);
     return InkWell(
-      onTap: () => _addHabitModal(
-        context: context,
-        onConfirm: ({required uiModel}) => cubit.addHabit(uiModel: uiModel),
+      onTap: () => NewHabitFormDialog.show(
+        context,
+        onConfirm: cubit.addHabit,
       ),
         child: SizedBox( // Force the filter to these dimensions
           height: size,
@@ -46,16 +45,4 @@ class CreateHabitWidget extends StatelessWidget {
     );
   }
 
-  void _addHabitModal({
-    required BuildContext context,
-    required void Function({required NewHabitFormUI uiModel}) onConfirm,
-  }) {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.blueGrey[100],
-      builder: (_) => NewHabitFormProvider(onConfirm: onConfirm,
-      ),
-    );
-  }
 }

@@ -2,9 +2,8 @@ import 'package:fimber/fimber.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:habits_flow/ui/common/duration/duration_utils.dart';
-import 'package:habits_flow/ui/screens/active_habits/ui_models/selected_group_ui.dart';
-import 'package:habits_flow/ui/screens/active_habits/ui_models/group_ui.dart';
-import 'package:habits_flow/ui/screens/active_habits/widgets/edit_group_form/edit_group_form_provider.dart';
+import 'package:habits_flow/ui/dialogs/confirm_dialog/confirm_dialog.dart';
+import 'package:habits_flow/ui/screens/active_habits/dialogs/edit_group_form_dialog/edit_group_form_dialog.dart';
 import 'group_cubit.dart';
 import 'group_state.dart';
 
@@ -87,8 +86,11 @@ class GroupWidget extends StatelessWidget {
                           color: Color(0xFF111827),
                           size: 24,
                         ),
-                        onTap: () =>
-                            _handleEdit(context, uiModel, cubit.editGroup),
+                        onTap: () => EditGroupFormDialog.show(
+                          context,
+                          uiModel: uiModel,
+                          onUpdate: cubit.editGroup,
+                        ),
                       ),
                       SizedBox(width: 8),
                       InkWell(
@@ -129,43 +131,16 @@ class GroupWidget extends StatelessWidget {
     );
   }
 
-  void _handleDelete(BuildContext context, void Function() deleteGroup) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('Delete Group'),
-          content: Text('Are you sure you want to delete this group?'),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: Text('Cancel'),
-            ),
-            TextButton(
-              onPressed: () {
-                deleteGroup();
-                Navigator.of(context).pop();
-              },
-              child: Text('Delete'),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  void _handleEdit(
+  Future<void> _handleDelete(
     BuildContext context,
-    GroupUI uiModel,
-    void Function({required SelectedGroupUI uiModel}) editGroup,
-  ) {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      builder: (_) => EditGroupFormProvider(
-        uiModel: uiModel,
-        onUpdate: editGroup,
-      ),
+    void Function() deleteGroup,
+  ) async {
+    final confirmed = await ConfirmDialog.show(
+      context,
+      title: 'Delete Group',
+      message: 'Are you sure you want to delete this group?',
+      confirmLabel: 'Delete',
     );
+    if (confirmed) deleteGroup();
   }
 }

@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:habits_flow/ui/screens/active_habits/screen/active_habits_screen_cubit.dart';
-import 'package:habits_flow/ui/screens/active_habits/widgets/new_group_form/new_group_form_provider.dart';
-import 'package:habits_flow/ui/screens/active_habits/ui_models/new_group_form_ui.dart';
+import 'package:habits_flow/ui/screens/active_habits/dialogs/new_group_form_dialog/new_group_form_dialog.dart';
 
 class ActiveHabitsAppBar extends StatelessWidget
     implements PreferredSizeWidget {
@@ -51,9 +50,9 @@ class ActiveHabitsAppBar extends StatelessWidget
           ),
         ),
         IconButton(
-          onPressed: () => _addGroupModal(
-            context: context,
-            onConfirm: ({required uiModel}) => cubit.addGroup(uiModel: uiModel),
+          onPressed: () => NewGroupFormDialog.show(
+            context,
+            onConfirm: cubit.addGroup,
           ),
           icon: Icon(
             Icons.add,
@@ -66,19 +65,4 @@ class ActiveHabitsAppBar extends StatelessWidget
 
   @override
   Size get preferredSize => const Size.fromHeight(kToolbarHeight);
-
-  void _addGroupModal({
-    required BuildContext context,
-    required void Function({required NewGroupFormUI uiModel}) onConfirm,
-  }) {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.blueGrey[100],
-
-      builder: (_) => NewGroupFormProvider(
-        onConfirm: onConfirm,
-      ),
-    );
-  }
 }

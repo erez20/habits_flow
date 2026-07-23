@@ -1,30 +1,35 @@
 import 'package:equatable/equatable.dart';
 
-class NewGroupFormState extends Equatable {
+class EditHabitFormDialogState extends Equatable {
   final bool isSubmitting;
   final String errorMessage;
   final bool isSuccess;
-  const NewGroupFormState({
+
+  const EditHabitFormDialogState({
     required this.isSubmitting,
     required this.errorMessage,
     required this.isSuccess,
-});
+  });
 
   @override
   List<Object?> get props => [isSubmitting, errorMessage, isSuccess];
 
-  factory NewGroupFormState.init() => const NewGroupFormState(isSubmitting: false, errorMessage: '', isSuccess: false);
 
-  NewGroupFormState copyWith({
+  factory EditHabitFormDialogState.init() => const EditHabitFormDialogState(
+    isSubmitting: false,
+    errorMessage: "",
+    isSuccess: false,
+  );
+
+  EditHabitFormDialogState copyWith({
     bool? isSubmitting,
     String? errorMessage,
     bool? isSuccess,
   }) {
-    return NewGroupFormState(
+    return EditHabitFormDialogState(
       isSubmitting: isSubmitting ?? this.isSubmitting,
       errorMessage: errorMessage ?? this.errorMessage,
       isSuccess: isSuccess ?? this.isSuccess,
     );
   }
-
 }

@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:fimber/fimber.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:habits_flow/ui/screens/active_habits/ui_models/habit_ui.dart';
 import 'package:habits_flow/domain/use_cases/group/add_group_use_case.dart';
@@ -14,7 +13,6 @@ import 'package:habits_flow/ui/common/colors/app_colors.dart';
 import 'package:habits_flow/ui/screens/active_habits/coordinator/active_habits_coordinator.dart';
 import 'package:habits_flow/ui/screens/active_habits/ui_models/new_group_form_ui.dart';
 import 'package:habits_flow/ui/screens/active_habits/ui_models/selected_habit_ui.dart';
-import 'package:habits_flow/ui/screens/active_habits/widgets/edit_habit_form/edit_habit_form_provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import 'active_habits_screen_state.dart';
@@ -108,20 +106,10 @@ class ActiveHabitsScreenCubit extends Cubit<ActiveHabitsScreenState> {
   }
 
 
-  //TODO MUST remove from here
-  void editHabit(BuildContext context,SelectedHabitUI uiModel) {
-      showModalBottomSheet(
-        context: context,
-        isScrollControlled: true,
-        builder: (_) => EditHabitFormProvider(
-          uiModel: uiModel,
-          onUpdate: ({required SelectedHabitUI uiModel}) {
-            final updatedHabit = uiModel.toEntity();
-            editHabitUseCase.exec(updatedHabit);
-            clearSelection();
-          },
-        ),
-      );
+  void updateHabit({required SelectedHabitUI uiModel}) {
+    final updatedHabit = uiModel.toEntity();
+    editHabitUseCase.exec(updatedHabit);
+    clearSelection();
   }
 
   Future<void> onLinkTapped(String url) async{
