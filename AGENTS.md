@@ -201,8 +201,8 @@ sealed hierarchy of multiple states. It always has:
 
 - `extends Equatable` with `props`.
 - A `factory <Name>.init()` producing the initial state. Params are allowed when
-  the initial state needs seed data (`HabitState.init({required habit})`);
-  otherwise it takes none (`ActiveHabitsScreenState.init()`).
+  the initial state needs seed data (`FeatureState.init({required item})`);
+  otherwise it takes none (`ScreenState.init()`).
 - `copyWith`, with an explicit `clearX` bool flag for any field that needs to be
   set back to null (nullable fields can't be cleared through `x ?? this.x`).
 
@@ -218,8 +218,8 @@ is allowed; if the cubit holds anything a widget renders, it is not this case.
 
 ### UI Models
 
-The presentation counterpart of an entity: class named `<X>UI` (`GroupUI`,
-`SelectedHabitUI`), file named `<x>_ui.dart`. Name it after **what it presents,
+The presentation counterpart of an entity: class named `<X>UI` (`ItemUI`,
+`SelectedItemUI`), file named `<x>_ui.dart`. Name it after **what it presents,
 not where it's used**: an aggregate's default presentation is plain
 `<Aggregate>UI`; a prefix (`Selected…UI`, `New…FormUI`) is earned only by a
 genuinely different projection.
@@ -247,10 +247,10 @@ actually appears — never preemptively.
 
   ```dart
   // NO
-  editGroupUseCase.exec(uiModel.toEntity(groupUI: state.uiModel));
+  editItemUseCase.exec(uiModel.toEntity(existing: state.uiModel));
   // YES
-  final entity = uiModel.toEntity(groupUI: state.uiModel);
-  editGroupUseCase.exec(entity);
+  final entity = uiModel.toEntity(existing: state.uiModel);
+  editItemUseCase.exec(entity);
   ```
 
 ### Widget Communication Rules
@@ -261,7 +261,7 @@ two channels, chosen by the nature of the change:
 
 - **It changes data (db / server)?** Then it isn't communication at all — call
   the use case. Affected cubits react through the domain streams they already
-  subscribe to (perform a habit → db write → every watching stream re-emits).
+  subscribe to (perform an action → db write → every watching stream re-emits).
   A data change is **never** echoed through the coordinator.
 - **It is pure UI** (selection, expand/collapse, gesture signals)? → the
   coordinator.
@@ -313,8 +313,8 @@ widget communication rules do not cross it. Instead:
 
 - **In: params** — a snapshot taken by the launcher (`uiModel: state.uiModel`).
 - **Out:** a callback for flow dialogs (forms:
-  `onUpdate: cubit.editGroup`), or an awaited result for decision dialogs
-  (`final ok = await ConfirmDialog.show(...); if (ok) cubit.deleteGroup();` —
+  `onUpdate: cubit.editItem`), or an awaited result for decision dialogs
+  (`final ok = await ConfirmDialog.show(...); if (ok) cubit.deleteItem();` —
   the launcher applies the domain meaning).
 - **Never bridge with `BlocProvider.value`** to observe a screen cubit from a
   dialog. A dialog that needs *live* data gets its own cubit subscribing to a
@@ -400,7 +400,7 @@ The rules that make it work:
 ## Code Style
 
 - **Imports:** full package path (`package:<app>/...`) for anything outside the
-  file's own directory; bare filename (`import 'group_state.dart';`) for files
+  file's own directory; bare filename (`import 'item_state.dart';`) for files
   in the same directory; `../` never. Package paths keep consumers greppable
   and rewritable when files move; bare same-dir imports keep a unit's internal
   wiring intact when its whole directory moves. No lint expresses this hybrid —
@@ -408,7 +408,7 @@ The rules that make it work:
 - **Named parameters, always:** constructors and multi-parameter functions take
   named parameters (`{required this.xxx}`), never positional. Since named
   parameters cannot be private, injected dependency fields are public
-  (`final HabitRepo habitRepo`, not `_repo`). The one exception: single-value
+  (`final ItemRepo itemRepo`, not `_repo`). The one exception: single-value
   wrappers and converters (`Success(data)`, `fromEntity(entity)`,
   `exec(params)`) keep their single positional parameter — naming it adds
   noise, and positional keeps them tear-off friendly.
