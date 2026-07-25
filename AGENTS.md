@@ -5,6 +5,23 @@ architecture with a reactive, stream-based data flow. Stack: flutter_bloc
 (cubits), get_it + injectable (DI), auto_route (navigation), drift (SQLite),
 rxdart (subjects & stream composition).
 
+## Required Stack Packages
+
+Projects adopting these conventions need these architectural dependencies.
+`pubspec.yaml` is the source of truth for exact versions.
+
+| Purpose | Packages |
+|---|---|
+| State and immutable value objects | `flutter_bloc`, `equatable` |
+| Dependency injection | `get_it`, `injectable`, `injectable_generator` |
+| Navigation | `auto_route`, `auto_route_generator` |
+| Reactive stream composition | `rxdart` |
+| Code generation | `build_runner` |
+| Local SQLite persistence | `drift`, `drift_flutter`, `drift_dev` |
+
+Keep this list aligned whenever this guide adds or removes an architectural
+dependency. Feature-specific packages belong in `pubspec.yaml`, not here.
+
 ## Directory Structure
 
 ```
