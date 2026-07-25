@@ -18,11 +18,6 @@ reviewed).
 These are the "how the app is assembled and boots" concerns the doc doesn't
 cover. Every per-feature pattern is rebuildable; the shell is not.
 
-3. **Router — `ui/routes/app_router.dart`.**
-   `AppRouter extends RootStackRouter`, `@AutoRouterConfig`, `defaultRouteType`,
-   the `routes` list. The doc covers where `@RoutePage` goes but not the root
-   router class scaffold.
-
 4. **Logging — `core/logger/app_logger.dart`.**
    `Fimber` is not in the doc's stack list. `initLogger()` (plants `DebugTree`),
    the fact `main()` calls it, and the `Fimber.d/e/i` usage throughout cubits —
@@ -113,3 +108,5 @@ stable.
 - **#2 App root.** `AGENTS.md` now defines the dedicated root app widget as the
   owner of the long-lived router and app-wide `MaterialApp.router`
   configuration.
+- **#3 Root router.** `AGENTS.md` now defines the root `RootStackRouter`, its
+  `@AutoRouterConfig`, and its ownership of the root route list.

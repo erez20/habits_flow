@@ -193,6 +193,11 @@ either: just `*_widget.dart` (or `<screen_name>_screen.dart`). Purely
 view-mechanical state (`AnimationController`, `TextEditingController`, scroll
 position) uses a `StatefulWidget`, not a cubit.
 
+**Root router.** Keep the root router in `ui/routes/` as a class extending
+`RootStackRouter` and annotated with `@AutoRouterConfig`. It owns the root
+`AutoRoute` list, including the initial route and default route type. The root
+app widget supplies this router's configuration; it does not declare routes.
+
 **Routing:** `@RoutePage()` goes on the outermost widget of each stack:
 
 - **Screen:** the coordinator's provider if one exists → else the screen's
