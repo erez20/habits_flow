@@ -88,6 +88,26 @@ Restart/reset is a `main/` concern too: `AppCubit` (in `ui/app/`) takes an
 `() async { await getIt.reset(); configureDependencies(); }` — the cubit never
 imports `main/`.
 
+**Optional full-app restart.** Add a root-restart wrapper only when an
+operation—such as restoring a database—requires both rebuilding dependencies
+and remounting the entire widget tree. Most apps do not need this pattern;
+ordinary feature state changes should flow through cubits and streams instead.
+
+When it is needed:
+
+1. Bootstrap logging and dependencies before `runApp`, then place a
+   `StatefulWidget` restart wrapper above the root app widget.
+2. Let the wrapper own an incrementing key and provide a restart cubit/action
+   with a callback that resets and reconfigures dependencies.
+3. After that callback completes, emit a one-shot restart signal. A
+   `BlocListener` in the wrapper increments the key in response.
+4. Give the root app `ValueKey(key)`; changing it remounts the app against the
+   newly configured dependencies.
+
+Name the wrapper, action, and signal for the app at hand. A convenience
+`restart(context)` helper is optional; prefer the restart cubit/action when it
+is already available.
+
 **What gets registered, and how:**
 
 | Kind | Annotation | Lifetime |
