@@ -18,17 +18,6 @@ reviewed).
 These are the "how the app is assembled and boots" concerns the doc doesn't
 cover. Every per-feature pattern is rebuildable; the shell is not.
 
-1. **Restart mechanism — `main.dart` `AppRestarter`.**
-   The doc explains `AppCubit` (one-shot signal + `onRestart` callback) but not
-   the `AppRestarter` `StatefulWidget` that wraps the tree in `ValueKey(_key)`
-   and bumps the key on `AppRestarting` to force a full remount. The *how* of
-   restart is undocumented.
-
-2. **App root — `main/habits_flow_app.dart`.**
-   `MaterialApp.router` wired to `_appRouter.config()`, `ThemeData` setup, and
-   who instantiates `AppRouter`. The doc says main/ holds "root MaterialApp" but
-   never describes its content.
-
 3. **Router — `ui/routes/app_router.dart`.**
    `AppRouter extends RootStackRouter`, `@AutoRouterConfig`, `defaultRouteType`,
    the `routes` list. The doc covers where `@RoutePage` goes but not the root
@@ -110,3 +99,17 @@ cover. Every per-feature pattern is rebuildable; the shell is not.
   `habit_repo_impl.dart` (`incHabitCount`, `resetHabitCount`), and the
   dummy-group/habit dev use cases.
 - The **domain & data section of the doc** is not yet written.
+
+---
+
+## Resolved
+
+Resolved items are retained here as a short audit log; remaining issue IDs stay
+stable.
+
+- **#1 Restart mechanism.** `AGENTS.md` now documents the optional, generic
+  root-restart pattern: dependency reset/reconfiguration, a one-shot signal,
+  and key-based root remounting.
+- **#2 App root.** `AGENTS.md` now defines the dedicated root app widget as the
+  owner of the long-lived router and app-wide `MaterialApp.router`
+  configuration.

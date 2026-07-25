@@ -108,6 +108,13 @@ Name the wrapper, action, and signal for the app at hand. A convenience
 `restart(context)` helper is optional; prefer the restart cubit/action when it
 is already available.
 
+**Root app widget.** Keep the app shell in a dedicated widget under `main/`;
+`main.dart` remains responsible only for bootstrap and composition. The root
+widget owns the long-lived router instance and returns `MaterialApp.router`
+from that router's configuration. Put app-wide configuration there—such as the
+title, theme, localization, and navigation settings—and do not recreate the
+router in `build`.
+
 **What gets registered, and how:**
 
 | Kind | Annotation | Lifetime |
