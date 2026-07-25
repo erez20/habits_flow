@@ -3,7 +3,7 @@
 Guidance for working in this codebase: a Flutter app following clean
 architecture with a reactive, stream-based data flow. Stack: flutter_bloc
 (cubits), get_it + injectable (DI), auto_route (navigation), drift (SQLite),
-rxdart (subjects & stream composition).
+rxdart (subjects & stream composition), fimber (logging).
 
 ## Required Stack Packages
 
@@ -16,6 +16,7 @@ Projects adopting these conventions need these architectural dependencies.
 | Dependency injection | `get_it`, `injectable`, `injectable_generator` |
 | Navigation | `auto_route`, `auto_route_generator` |
 | Reactive stream composition | `rxdart` |
+| Logging | `fimber` |
 | Code generation | `build_runner` |
 | Local SQLite persistence | `drift`, `drift_flutter`, `drift_dev` |
 
@@ -34,7 +35,7 @@ lib/
 │   ├── di/              # The getIt handle (di.dart)
 │   ├── extensions/      # Pure-Dart extensions, one dir per extended type
 │   │   └── int/         #   (*_ext.dart, e.g. duration_ext.dart)
-│   └── logger/          # Logger initialization
+│   └── logger/          # Logger initialization (app_logger.dart)
 ├── domain/              # Pure Dart business layer — NO Flutter imports
 │   ├── entities/        # Equatable domain models
 │   ├── repos/           # Abstract repository interfaces (implemented in data/)
@@ -99,6 +100,20 @@ void configureDependencies() => getIt.init();
 `main()` calls `configureDependencies()` before `runApp`. After adding or
 changing any annotation, run
 `dart run build_runner build --delete-conflicting-outputs`.
+
+**Logging setup.** Logging initialization lives in `core/logger/app_logger.dart`.
+`initLogger()` plants `DebugTree()` (or environment-specific trees) and is
+called in `main()` during bootstrap before `configureDependencies()`:
+
+```dart
+// core/logger/app_logger.dart — pure logger initialization
+void initLogger() {
+  Fimber.plantTree(DebugTree());
+}
+```
+
+Use `Fimber` static methods (`Fimber.d`, `Fimber.i`, `Fimber.e`) directly across
+cubits and services for log output.
 
 Restart/reset is a `main/` concern too: `AppCubit` (in `ui/app/`) takes an
 `onRestart` callback that `main.dart` supplies as

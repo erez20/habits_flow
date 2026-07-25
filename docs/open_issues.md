@@ -18,11 +18,6 @@ reviewed).
 These are the "how the app is assembled and boots" concerns the doc doesn't
 cover. Every per-feature pattern is rebuildable; the shell is not.
 
-4. **Logging — `core/logger/app_logger.dart`.**
-   `Fimber` is not in the doc's stack list. `initLogger()` (plants `DebugTree`),
-   the fact `main()` calls it, and the `Fimber.d/e/i` usage throughout cubits —
-   no logging convention exists in the doc.
-
 5. **`StatefulWidget` provider variant — `group_provider.dart`.**
    Every other provider is `StatelessWidget` + `BlocProvider`. This one is a
    `StatefulWidget` that owns the cubit and forwards parent changes via
@@ -110,3 +105,6 @@ stable.
   configuration.
 - **#3 Root router.** `AGENTS.md` now defines the root `RootStackRouter`, its
   `@AutoRouterConfig`, and its ownership of the root route list.
+- **#4 Logging convention.** `AGENTS.md` now documents `fimber` as the logging
+  dependency, logger initialization (`initLogger()`) in `core/logger/app_logger.dart`,
+  and its bootstrap call in `main()` before DI.
