@@ -208,22 +208,31 @@ ui/
             └── widgets/
 ```
 
+**Widget Variant Selectors.** When a UI component has multiple state-driven view variants (e.g. an app bar switching between a standard view and a selection view based on screen state), group the variants and their builder/selector widget together inside a single component directory (`widgets/<component_name>/`). The builder widget (e.g. `<Component>Builder`) owns the `BlocBuilder` switching logic and renders the appropriate variant.
+
 ### The 4-File Unit
 
 A widget or screen that owns state has a cubit — and then always all four files,
-named after it (`<name>_widget.dart`, `<name>_cubit.dart`, …):
+named after it (`<name>_widget.dart` or `<name>_screen.dart`, `<name>_cubit.dart`, …):
 
 | File | Role |
 |---|---|
-| `*_widget.dart` | View only — reads the cubit, renders, no logic |
+| `*_widget.dart` / `*_screen.dart` | View only — reads the cubit, renders, no logic (`*_screen.dart` for screens, `*_widget.dart` for widgets) |
 | `*_cubit.dart` | Owns the logic; deps via constructor injection; subscribes to streams in `init()`, cancels in `close()` |
 | `*_state.dart` | Equatable state with `copyWith` (explicit `clearX` flags for nullable fields) |
 | `*_provider.dart` | The ONLY file that touches `getIt`. Fetches deps, `context.read`s scoped ones (e.g. the coordinator), creates the cubit in a `BlocProvider`, wraps the widget |
 
-A cubit is never mandatory. No state → no cubit, and the other files don't exist
-either: just `*_widget.dart` (or `<screen_name>_screen.dart`). Purely
+A cubit is never mandatory. If a widget has no state and no actions requiring a cubit, the other files don't exist: just `*_widget.dart` (or `<screen_name>_screen.dart`). Purely
 view-mechanical state (`AnimationController`, `TextEditingController`, scroll
-position) uses a `StatefulWidget`, not a cubit.
+position) uses a `StatefulWidget`, not a cubit. Reusable helper widgets without
+a 4-file unit use free descriptive naming without a required view suffix.
+
+**Provider forms.** Most providers are a `StatelessWidget` returning a `BlocProvider`
+that creates the cubit. However, when a provider receives data from a parent widget
+that can change over the provider's lifecycle, implement the provider as a
+`StatefulWidget` using `BlocProvider.value`: initialize the cubit in `initState()`,
+dispose it in `dispose()`, and forward updated parent properties to the cubit inside
+`didUpdateWidget()`.
 
 **Root router.** Keep the root router in `ui/routes/` as a class extending
 `RootStackRouter` and annotated with `@AutoRouterConfig`. It owns the root
@@ -259,6 +268,12 @@ uses a **sealed** state hierarchy instead: one variant per signal, plain classes
 (no Equatable/copyWith/init). The widget reacts with a `BlocListener` that fires
 on the signal variant. This is the *only* place a sealed multi-state hierarchy
 is allowed; if the cubit holds anything a widget renders, it is not this case.
+
+**Action-only cubits.** When a cubit exists solely to encapsulate actions (such
+as triggering use cases or dialogs) and holds no renderable state, it still
+uses the standard single `Equatable` state structure: an empty state class
+(`props => []`), a parameterless `factory <Name>.init() => const <Name>()`, and a
+no-op `copyWith()`.
 
 ### UI Models
 

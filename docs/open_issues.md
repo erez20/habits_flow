@@ -18,34 +18,9 @@ reviewed).
 These are the "how the app is assembled and boots" concerns the doc doesn't
 cover. Every per-feature pattern is rebuildable; the shell is not.
 
-5. **`StatefulWidget` provider variant — `group_provider.dart`.**
-   Every other provider is `StatelessWidget` + `BlocProvider`. This one is a
-   `StatefulWidget` that owns the cubit and forwards parent changes via
-   `didUpdateWidget → cubit.updateGroup(...)`. The doc's provider description
-   only covers the stateless shape.
-
 ---
 
 ## Doc gaps — conventions (rebuild would guess wrong)
-
-6. **Action-only cubits.**
-   `SideMenuCubit` and `CreateHabitCubit` expose behavior (`exportDb`,
-   `addHabit`) but hold no renderable state, so their `State` classes are empty
-   `Equatable` shells with a no-op `copyWith`. The doc says "cubit only when
-   there's state to own" and never addresses a cubit that exists for actions,
-   nor what its `State` should be.
-
-7. **`_widget` suffix is not universal.**
-   The doc says the view file is `<name>_widget.dart`, but
-   `animated_color_filter.dart` (class `AnimatedColorFiltered`) and the three
-   `app_bar/` files have no suffix. The apparent real rule — `_widget` for
-   4-file-unit views, free naming otherwise — is unwritten.
-
-8. **Multiple widgets in one dir — `app_bar/`.**
-   Holds a builder (`habits_app_bar_builder`) that `BlocBuilder`-switches
-   between two variants (`ActiveHabitsAppBar` / `HabitSelectedAppBar`). This
-   breaks "one directory per widget," and the "state-driven variant selector"
-   shape isn't described.
 
 9. **Theme / constants internal conventions.**
    `AppColors` (static class: `palette` + `getMaterialColor`/`getColorValue`), a
@@ -108,3 +83,11 @@ stable.
 - **#4 Logging convention.** `AGENTS.md` now documents `fimber` as the logging
   dependency, logger initialization (`initLogger()`) in `core/logger/app_logger.dart`,
   and its bootstrap call in `main()` before DI.
+- **#5 Provider forms.** `AGENTS.md` now documents both provider forms: standard
+  `StatelessWidget` returning `BlocProvider`, and `StatefulWidget` using `BlocProvider.value`
+  with `didUpdateWidget` to forward updated parent properties to the cubit.
+- **#6 Action-only cubits.** `AGENTS.md` now documents cubits created solely to
+  encapsulate actions without renderable state, specifying an empty single `Equatable` state structure.
+- **#7 View file suffixes.** `AGENTS.md` now documents view file role suffix rules:
+  `*_screen.dart` for screen 4-file units, `*_widget.dart` for widget 4-file units, and free naming for standalone helper widgets.
+- **#8 Widget Variant Selectors.** `AGENTS.md` now documents grouping state-driven widget view variants and their builder/selector inside a single component directory.
