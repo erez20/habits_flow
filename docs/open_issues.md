@@ -22,13 +22,6 @@ cover. Every per-feature pattern is rebuildable; the shell is not.
 
 ## Doc gaps — conventions (rebuild would guess wrong)
 
-9. **Theme / constants internal conventions.**
-   `AppColors` (static class: `palette` + `getMaterialColor`/`getColorValue`), a
-   second class `AppColorsConst` for border colors, and `Constants` (static
-   consts + a `habitSide(context)` method). The doc says *what* goes in `theme/`
-   and `constants/` but not their internal form (static classes named `App*`?
-   methods taking `BuildContext`? why two color classes?).
-
 10. **`app/` unit has no provider and no widget.**
     `AppCubit` is created directly in `main.dart` and consumed by a
     `BlocListener` there. The one-shot-signal exception covers the sealed state
@@ -91,3 +84,4 @@ stable.
 - **#7 View file suffixes.** `AGENTS.md` now documents view file role suffix rules:
   `*_screen.dart` for screen 4-file units, `*_widget.dart` for widget 4-file units, and free naming for standalone helper widgets.
 - **#8 Widget Variant Selectors.** `AGENTS.md` now documents grouping state-driven widget view variants and their builder/selector inside a single component directory.
+- **#9 Theme & Constants.** `AGENTS.md` now documents internal conventions for `theme/` and `constants/` (static utility classes exposing tokens, palettes, and dynamic layout helpers).

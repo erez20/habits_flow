@@ -275,6 +275,11 @@ uses the standard single `Equatable` state structure: an empty state class
 (`props => []`), a parameterless `factory <Name>.init() => const <Name>()`, and a
 no-op `copyWith()`.
 
+### Theme & Constants
+
+- **Theme (`ui/theme/`):** Exposes design tokens (colors, palettes, font styles) through static utility classes (`AppColors`, `AppFonts`). Palette mapping and conversion utilities belong on `AppColors`.
+- **Constants (`ui/constants/`):** Exposes layout constants (paddings, spacing) and dynamic layout helper methods accepting `BuildContext` (e.g. `Constants.itemDimension(context)`) through static utility classes (`Constants`).
+
 ### UI Models
 
 The presentation counterpart of an entity: class named `<X>UI` (`ItemUI`,
