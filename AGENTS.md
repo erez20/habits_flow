@@ -23,6 +23,14 @@ Projects adopting these conventions need these architectural dependencies.
 Keep this list aligned whenever this guide adds or removes an architectural
 dependency. Feature-specific packages belong in `pubspec.yaml`, not here.
 
+## Placeholder Definitions
+
+When generating code, strict rules apply to the following placeholders:
+- `<package_name>`: Must match the exact package name in `pubspec.yaml`.
+- `<Aggregate>`: PascalCase for classes and types (e.g., `UserProfile`).
+- `<aggregate>`: snake_case for file paths and snake_case properties (e.g., `user_profile`).
+- `<camelAggregate>`: camelCase for variables and methods (e.g., `userProfile`).
+
 ## Directory Structure
 
 ```
@@ -224,8 +232,8 @@ Repository interfaces define the contract that the data layer must fulfill.
 - **Rule:** Pure abstract class. Synchronous actions must return `Future<DomainResponse<T>>`. Streams must return `Stream<DomainResponse<T>>` or `Stream<T>`.
 - **Template:**
   ```dart
-  import 'package:app/domain/entities/<aggregate>_entity.dart';
-  import 'package:app/domain/responses/domain_response.dart';
+  import 'package:<package_name>/domain/entities/<aggregate>_entity.dart';
+  import 'package:<package_name>/domain/responses/domain_response.dart';
 
   abstract class <Aggregate>Repo {
     Future<DomainResponse<void>> update<Aggregate>({required <Aggregate>Entity item});
@@ -244,9 +252,9 @@ Use Cases encapsulate a single business action. They orchestrate repositories.
 - **Path:** `domain/use_cases/<aggregate>/<action>_<aggregate>_use_case.dart`
 - **Template:**
   ```dart
-  import 'package:app/domain/repos/<aggregate>_repo.dart';
-  import 'package:app/domain/responses/domain_response.dart';
-  import 'package:app/domain/use_cases/base/exec_use_case.dart';
+  import 'package:<package_name>/domain/repos/<aggregate>_repo.dart';
+  import 'package:<package_name>/domain/responses/domain_response.dart';
+  import 'package:<package_name>/domain/use_cases/base/exec_use_case.dart';
   import 'package:injectable/injectable.dart';
 
   @injectable
@@ -279,10 +287,10 @@ Use Cases encapsulate a single business action. They orchestrate repositories.
 - **Path:** `domain/use_cases/<aggregate>/<aggregate>_stream_use_case.dart`
 - **Template:**
   ```dart
-  import 'package:app/domain/entities/<aggregate>_entity.dart';
-  import 'package:app/domain/repos/<aggregate>_repo.dart';
-  import 'package:app/domain/responses/domain_response.dart';
-  import 'package:app/domain/use_cases/base/stream_use_case.dart';
+  import 'package:<package_name>/domain/entities/<aggregate>_entity.dart';
+  import 'package:<package_name>/domain/repos/<aggregate>_repo.dart';
+  import 'package:<package_name>/domain/responses/domain_response.dart';
+  import 'package:<package_name>/domain/use_cases/base/stream_use_case.dart';
   import 'package:injectable/injectable.dart';
 
   @injectable
@@ -333,7 +341,7 @@ Every API call is split into three strictly enforced components: the Request, th
 - **Template:**
   ```dart
   import 'package:dio/dio.dart';
-  import 'package:dio_mini/data/network/requests/get_request.dart';
+  import 'package:<package_name>/data/network/requests/get_request.dart';
 
   class Get<Aggregate>Request extends GetRequest {
     final String id;
@@ -356,7 +364,7 @@ Every API call is split into three strictly enforced components: the Request, th
 - **Template:**
   ```dart
   import 'package:json_annotation/json_annotation.dart';
-  import 'package:app/domain/entities/<aggregate>_entity.dart';
+  import 'package:<package_name>/domain/entities/<aggregate>_entity.dart';
 
   part '<aggregate>_remote_model.g.dart';
 
@@ -383,6 +391,8 @@ Every API call is split into three strictly enforced components: the Request, th
   ```dart
   import 'package:dio/dio.dart';
   import 'package:injectable/injectable.dart';
+  import 'package:<package_name>/data/<aggregate>/requests/get_<aggregate>_request.dart';
+  import 'package:<package_name>/data/<aggregate>/remote_models/<aggregate>_remote_model.dart';
 
   @Injectable()
   class <Aggregate>RemoteSource {
@@ -408,13 +418,16 @@ Local sources are the *only* components that touch `AppDatabase`. They do not us
 
 **B. The Implementation**
 - **Path:** `data/sources/<aggregate>/<aggregate>_local_source_impl.dart`
-- **Rule:** Registered as `@LazySingleton(as: <Aggregate>LocalSource)`. Uses `BehaviorSubject` for manual refreshes.
+- **Rule:** Registered as `@LazySingleton(as: <Aggregate>LocalSource)`. Uses `BehaviorSubject` for manual refreshes. When generating Drift table access (e.g. `db.<aggregate>s`), properly pluralize the aggregate according to standard English rules (e.g., `Category` -> `Categories`, never `Categorys`).
 - **Template:**
   ```dart
   import 'package:drift/drift.dart';
   import 'package:injectable/injectable.dart';
   import 'package:rxdart/rxdart.dart';
   import 'package:uuid/uuid.dart';
+  import 'package:<package_name>/data/db/database.dart';
+  import 'package:<package_name>/domain/entities/<aggregate>_entity.dart';
+  import 'package:<package_name>/data/sources/<aggregate>/<aggregate>_local_source.dart';
 
   @LazySingleton(as: <Aggregate>LocalSource)
   class <Aggregate>LocalSourceImpl implements <Aggregate>LocalSource {
@@ -462,6 +475,16 @@ Repositories orchestrate data but never touch the DB or API directly. They are t
   - For **remote sources**, it may use stateful in-memory caching (e.g. `BehaviorSubject` + `Map`) to broadcast network results.
 - **Template:**
   ```dart
+  import 'package:dio/dio.dart';
+  import 'package:injectable/injectable.dart';
+  import 'package:rxdart/rxdart.dart';
+  import 'package:<package_name>/domain/entities/<aggregate>_entity.dart';
+  import 'package:<package_name>/domain/repos/<aggregate>_repo.dart';
+  import 'package:<package_name>/domain/responses/domain_response.dart';
+  import 'package:<package_name>/domain/responses/domain_error.dart';
+  import 'package:<package_name>/data/sources/<aggregate>/<aggregate>_local_source.dart';
+  import 'package:<package_name>/data/<aggregate>/remote_source/<aggregate>_remote_source.dart';
+
   @LazySingleton(as: <Aggregate>Repo)
   class <Aggregate>RepoImpl implements <Aggregate>Repo {
     final <Aggregate>LocalSource localSource;
