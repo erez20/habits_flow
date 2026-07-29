@@ -20,6 +20,10 @@ Currently, templates use example imports like `package:app/...` and `package:dio
 Currently, the Drift Local Source template uses `<Aggregate>sCompanion` and `db.<aggregate>s`. If the aggregate is `category`, a blind string replacement results in invalid code (`CategorysCompanion`).
 - **Rule:** Add an explicit rule under the Local Source section: "When replacing `<Aggregate>s` or `<aggregate>s` for Drift tables and companions, properly pluralize the word according to standard English rules (e.g., `Category` -> `Categories`, `CategorysCompanion` is invalid)."
 
+### 4. Explicit Template Imports
+Currently, the templates omit imports for core files like `AppDatabase`, `Loading`, `Success`, `Failure`, and `DomainError` subclasses, forcing the LLM to guess their location.
+- **Rule:** We will add explicit import statements to the Data and Domain boilerplates using the `<package_name>` placeholder to eliminate all import path guesswork.
+  - Examples: `import 'package:<package_name>/data/db/database.dart';` and `import 'package:<package_name>/domain/responses/domain_error.dart';`
+
 ## Scope & Constraints
-- We explicitly decided **not** to add missing imports (like `AppDatabase` and `DomainError`) to the templates. The LLM or IDE will handle auto-importing these as needed.
 - No existing architectural concepts are changing; this is purely an anti-ambiguity documentation update.
