@@ -87,7 +87,7 @@ class _GroupsListWidgetState extends State<_GroupsListWidget> {
               Future.delayed(const Duration(milliseconds: 170), () {
                 if (!mounted) return;
                 final targetContext = key.currentContext;
-                if (targetContext != null) {
+                if (targetContext != null && targetContext.mounted) {
                   Scrollable.ensureVisible(
                     targetContext,
                     duration: const Duration(milliseconds: 300),
