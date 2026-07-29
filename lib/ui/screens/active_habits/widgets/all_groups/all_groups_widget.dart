@@ -85,10 +85,11 @@ class _GroupsListWidgetState extends State<_GroupsListWidget> {
             if (key != null) {
               // Wait for the animation to finish
               Future.delayed(const Duration(milliseconds: 170), () {
-                final context = key.currentContext;
-                if (context != null) {
+                if (!mounted) return;
+                final targetContext = key.currentContext;
+                if (targetContext != null) {
                   Scrollable.ensureVisible(
-                    context,
+                    targetContext,
                     duration: const Duration(milliseconds: 300),
                     curve: Curves.easeInOut,
                     alignment: 0.1,

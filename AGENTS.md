@@ -118,7 +118,7 @@ cubits and services for log output.
 Restart/reset is a `main/` concern too: `AppCubit` (in `ui/app/`) takes an
 `onRestart` callback that `main.dart` supplies as
 `() async { await getIt.reset(); configureDependencies(); }` — the cubit never
-imports `main/`.
+imports `main/`. App-root cubits (under `ui/app/`) omit provider and view files because they are instantiated and listened to directly at the composition root in `main.dart`.
 
 **Optional full-app restart.** Add a root-restart wrapper only when an
 operation—such as restoring a database—requires both rebuilding dependencies

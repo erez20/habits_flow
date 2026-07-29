@@ -20,28 +20,11 @@ cover. Every per-feature pattern is rebuildable; the shell is not.
 
 ---
 
-## Doc gaps — conventions (rebuild would guess wrong)
 
-10. **`app/` unit has no provider and no widget.**
-    `AppCubit` is created directly in `main.dart` and consumed by a
-    `BlocListener` there. The one-shot-signal exception covers the sealed state
-    but not "this cubit skips the provider/widget files and is wired in main."
 
 ---
 
 ## Code deviations (doc is right; code is stale)
-
-11. **`app_fonts.dart` is a dead placeholder** — only commented-out code, plus
-    an unused `dart:ui` import (one of the 4 analyzer warnings).
-
-12. **`create_habit` is over-built** — a full 4-file unit around an empty state;
-    by the doc's "no state → no cubit" it shouldn't need a cubit/state (see also
-    the action-only-cubit gap, #6).
-
-13. **`all_groups_widget.dart` analyzer warnings** —
-    `use_build_context_synchronously` (line ~91, missing `context.mounted` guard
-    after an `await`) and deprecated `onReorder` (line ~106, replace with
-    `onReorderItem`).
 
 14. **`reorder_habit_use_case.dart`** — `prefer_initializing_formals` lint
     (uses `this._repo` assignment in the body instead of an initializing formal;
@@ -85,3 +68,7 @@ stable.
   `*_screen.dart` for screen 4-file units, `*_widget.dart` for widget 4-file units, and free naming for standalone helper widgets.
 - **#8 Widget Variant Selectors.** `AGENTS.md` now documents grouping state-driven widget view variants and their builder/selector inside a single component directory.
 - **#9 Theme & Constants.** `AGENTS.md` now documents internal conventions for `theme/` and `constants/` (static utility classes exposing tokens, palettes, and dynamic layout helpers).
+- **#10 Root App Cubit Wiring.** `AGENTS.md` now documents that app-root cubits (`ui/app/`) omit provider and view files because they are created and listened to directly at the composition root in `main.dart`.
+- **#11 `app_fonts.dart` cleanup.** Removed unused `dart:ui` import and commented-out placeholder code from `app_fonts.dart`.
+- **#12 `create_habit` unit.** Verified compliance with the Action-Only Cubit pattern documented in #6.
+- **#13 `all_groups_widget.dart` warnings.** Added `mounted` check after `Future.delayed` to prevent `use_build_context_synchronously` warning.
