@@ -6,17 +6,17 @@ import 'package:habits_flow/domain/use_cases/group/delete_group_use_case.dart';
 import 'package:habits_flow/domain/use_cases/group/edit_group_use_case.dart';
 import 'package:habits_flow/core/di/di.dart';
 
+import 'package:habits_flow/ui/screens/active_habits/coordinator/active_habits_coordinator.dart';
+
 import 'group_cubit.dart';
 import 'group_widget.dart';
 
 class GroupProvider extends StatefulWidget {
   final GroupUI group;
-  final VoidCallback onTap;
   final int index;
 
   const GroupProvider({
     required this.group,
-    required this.onTap,
     required this.index,
     super.key,
   });
@@ -33,12 +33,13 @@ class _GroupProviderState extends State<GroupProvider> {
     super.initState();
     final deleteGroupUseCase = getIt<DeleteGroupUseCase>();
     final editGroupUseCase = getIt<EditGroupUseCase>();
+    final coordinator = context.read<ActiveHabitsCoordinator>();
 
     _cubit = GroupCubit(
       group: widget.group,
       deleteGroupUseCase: deleteGroupUseCase,
       editGroupUseCase: editGroupUseCase,
-
+      coordinator: coordinator,
     );
     Fimber.d("initState: GroupProvider ${widget.group.toString()}");
   }
@@ -48,7 +49,7 @@ class _GroupProviderState extends State<GroupProvider> {
     Fimber.d("build: GroupProvider ${widget.group.toString()}");
     return BlocProvider.value(
       value: _cubit,
-      child: GroupWidget(onTap: widget.onTap, index: widget.index),
+      child: GroupWidget(index: widget.index),
     );
   }
 

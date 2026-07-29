@@ -13,6 +13,7 @@ import 'all_groups_state.dart';
 class AllGroupsCubit extends Cubit<AllGroupsState> {
   StreamSubscription? _groupsListSubscription;
   StreamSubscription? _groupsExpandCollapseAllSubscription;
+  StreamSubscription? _groupToggledSubscription;
 
   final GroupsListStreamUseCase groupsListStreamUseCase;
   final ReorderGroupsUseCase reorderGroupsUseCase;
@@ -53,6 +54,9 @@ class AllGroupsCubit extends Cubit<AllGroupsState> {
             collapseAll();
           }
         });
+    _groupToggledSubscription = coordinator.listenToGroupToggled.listen(
+      toggleGroup,
+    );
   }
 
   void reorderGroups(int oldIndex, int newIndex) {
@@ -102,6 +106,7 @@ class AllGroupsCubit extends Cubit<AllGroupsState> {
   Future<void> close() {
     _groupsListSubscription?.cancel();
     _groupsExpandCollapseAllSubscription?.cancel();
+    _groupToggledSubscription?.cancel();
     return super.close();
   }
 }

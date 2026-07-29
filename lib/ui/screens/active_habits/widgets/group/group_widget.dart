@@ -8,12 +8,10 @@ import 'group_cubit.dart';
 import 'group_state.dart';
 
 class GroupWidget extends StatelessWidget {
-  final VoidCallback onTap;
   final int index;
 
   const GroupWidget({
     super.key,
-    required this.onTap,
     required this.index,
   });
 
@@ -27,7 +25,7 @@ class GroupWidget extends StatelessWidget {
         return SizedBox(
           height: 60,
           child: InkWell(
-            onTap: onTap,
+            onTap: cubit.toggleGroup,
             child: Padding(
               padding: const EdgeInsets.only(
                 left: 12.0,

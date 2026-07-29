@@ -7,6 +7,8 @@ class CreateHabitState extends Equatable {
   List<Object> get props => [];
 
   factory CreateHabitState.init() => const CreateHabitState();
+
+  CreateHabitState copyWith() => const CreateHabitState();
 }
 
 

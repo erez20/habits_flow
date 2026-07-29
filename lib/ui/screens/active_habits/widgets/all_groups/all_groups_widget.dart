@@ -148,7 +148,6 @@ class _GroupsListWidgetState extends State<_GroupsListWidget> {
                 children: [
                   GroupProvider(
                     group: group,
-                    onTap: () => widget.cubit.toggleGroup(group.id),
                     index: index,
                   ),
                   AnimatedSwitcher(
