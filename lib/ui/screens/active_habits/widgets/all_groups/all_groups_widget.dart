@@ -159,7 +159,7 @@ class _GroupsListWidgetState extends State<_GroupsListWidget> {
                         child: child,
                       );
                     },
-                    child: widget.state.expandedGroupIds.contains(group.id)
+                    child: widget.state.isGroupExpanded(group.id)
                         ? HabitsCollectionProvider(group: group)
                         : const SizedBox.shrink(),
                   ),

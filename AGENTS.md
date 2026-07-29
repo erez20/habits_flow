@@ -275,6 +275,8 @@ uses the standard single `Equatable` state structure: an empty state class
 (`props => []`), a parameterless `factory <Name>.init() => const <Name>()`, and a
 no-op `copyWith()`.
 
+**No inline conditional rendering logic in widgets.** Widgets must never contain inline conditional branch expressions (such as `if (condition) Widget1() else Widget2()` or ternary operators choosing between distinct view branches). Any condition that determines layout branching must be evaluated in the cubit or computed on the state class (or UI model) as a field or getter. The widget only inspects state properties to select what to render.
+
 ### Theme & Constants
 
 - **Theme (`ui/theme/`):** Exposes design tokens (colors, palettes, font styles) through static utility classes (`AppColors`, `AppFonts`). Palette mapping and conversion utilities belong on `AppColors`.

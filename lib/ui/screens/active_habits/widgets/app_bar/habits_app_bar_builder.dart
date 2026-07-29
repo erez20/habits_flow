@@ -19,10 +19,12 @@ class HabitsAppBarBuilder extends StatelessWidget
         previous.totalCompletions != current.totalCompletions,
         builder: (context, state)
     {
-      var uiModel = state.uiModel;
-      return uiModel != null
-          ? HabitSelectedAppBar(uiModel: uiModel)
-          : ActiveHabitsAppBar(totalPoints: state.totalPoints, totalCompletions: state.totalCompletions);
+      return state.isHabitSelected
+          ? HabitSelectedAppBar(uiModel: state.uiModel!)
+          : ActiveHabitsAppBar(
+              totalPoints: state.totalPoints,
+              totalCompletions: state.totalCompletions,
+            );
     },);
   }
 
