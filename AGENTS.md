@@ -176,6 +176,202 @@ in providers, receiving deps through their constructors.
 4-File Unit). Everything else — cubits, repos, sources, use cases — receives its
 dependencies via constructor; injectable generates that wiring.
 
+## Data Layer
+
+### 1. Remote Data Sources & API Requests
+
+Every API call is split into three strictly enforced components: the Request, the Remote Model, and the Remote Source.
+
+**A. The Request Class**
+- **Path:** `data/<aggregate>/requests/<action>_<aggregate>_request.dart`
+- **Rule:** Exactly one class per API endpoint. Must extend a base verb (`GetRequest`, `PostRequest`).
+- **Template:**
+  ```dart
+  import 'package:dio/dio.dart';
+  import 'package:dio_mini/data/network/requests/get_request.dart';
+
+  class Get<Aggregate>Request extends GetRequest {
+    final String id;
+
+    Get<Aggregate>Request({
+      required this.id,
+      required super.dio,
+    });
+
+    Future<Map<String, dynamic>> exec() async {
+      final response = await dio.get('/<aggregate>/$id');
+      return response.data;
+    }
+  }
+  ```
+
+**B. The Remote Model**
+- **Path:** `data/<aggregate>/remote_models/<aggregate>_remote_model.dart`
+- **Rule:** Must be annotated with `@JsonSerializable()`. Must implement `fromJson`, `toJson`, and `toEntity()`.
+- **Template:**
+  ```dart
+  import 'package:json_annotation/json_annotation.dart';
+  import 'package:app/domain/entities/<aggregate>_entity.dart';
+
+  part '<aggregate>_remote_model.g.dart';
+
+  @JsonSerializable()
+  class <Aggregate>RemoteModel {
+    final String id;
+    // ...fields
+
+    <Aggregate>RemoteModel({required this.id});
+
+    factory <Aggregate>RemoteModel.fromJson(Map<String, dynamic> json) => 
+        _$<Aggregate>RemoteModelFromJson(json);
+    
+    Map<String, dynamic> toJson() => _$<Aggregate>RemoteModelToJson(this);
+
+    <Aggregate>Entity toEntity() => <Aggregate>Entity(id: id);
+  }
+  ```
+
+**C. The Remote Source**
+- **Path:** `data/<aggregate>/remote_source/<aggregate>_remote_source.dart`
+- **Rule:** Registered as `@Injectable()`. Takes `Dio` via constructor. Instantiates the request, calls `exec()`, and returns the `RemoteModel`.
+- **Template:**
+  ```dart
+  import 'package:dio/dio.dart';
+  import 'package:injectable/injectable.dart';
+
+  @Injectable()
+  class <Aggregate>RemoteSource {
+    final Dio _dio;
+
+    <Aggregate>RemoteSource({required Dio dio}) : _dio = dio;
+
+    Future<<Aggregate>RemoteModel> get<Aggregate>({required String id}) async {
+      final request = Get<Aggregate>Request(dio: _dio, id: id);
+      final data = await request.exec();
+      return <Aggregate>RemoteModel.fromJson(data);
+    }
+  }
+  ```
+
+### 2. Local Sources (Drift Persistence)
+
+Local sources are the *only* components that touch `AppDatabase`. They do not use intermediate models; they map Drift table rows directly to Domain Entities.
+
+**A. The Interface**
+- **Path:** `data/sources/<aggregate>/<aggregate>_local_source.dart`
+- **Rule:** Pure abstract class defining CRUD and stream operations. Must include `Future<void> refresh();`.
+
+**B. The Implementation**
+- **Path:** `data/sources/<aggregate>/<aggregate>_local_source_impl.dart`
+- **Rule:** Registered as `@LazySingleton(as: <Aggregate>LocalSource)`. Uses `BehaviorSubject` for manual refreshes.
+- **Template:**
+  ```dart
+  import 'package:drift/drift.dart';
+  import 'package:injectable/injectable.dart';
+  import 'package:rxdart/rxdart.dart';
+  import 'package:uuid/uuid.dart';
+
+  @LazySingleton(as: <Aggregate>LocalSource)
+  class <Aggregate>LocalSourceImpl implements <Aggregate>LocalSource {
+    final AppDatabase db;
+    final _refreshController = BehaviorSubject<void>();
+
+    <Aggregate>LocalSourceImpl({required this.db});
+
+    @override
+    Future<void> refresh() async => _refreshController.add(null);
+
+    @override
+    Future<<Aggregate>Entity> create<Aggregate>({required String title}) async {
+      final companion = <Aggregate>sCompanion.insert(id: const Uuid().v4(), title: title);
+      await db.into(db.<aggregate>s).insert(companion);
+      return <Aggregate>Entity(id: companion.id.value, title: title); // Direct Entity mapping
+    }
+
+    @override
+    Stream<List<<Aggregate>Entity>> <aggregate>sStream() {
+      // Use switchMap to combine manual refresh with Drift's reactive watch()
+      return _refreshController.startWith(null).switchMap((_) {
+        return db.select(db.<aggregate>s).watch().map((rows) => 
+          rows.map((row) => <Aggregate>Entity(id: row.id, title: row.title)).toList()
+        );
+      });
+    }
+  }
+  ```
+
+### 3. Repositories (Strict Error Boundaries & Data State)
+
+Repositories orchestrate data but never touch the DB or API directly. They are the strict error boundary mapped to `DomainResponse<T>`. 
+
+**A. Interface & Return Types (Domain Layer)**
+- **Path:** Interfaces sit in `domain/repos/<aggregate>_repo.dart`.
+- **Rule:** Repositories must enforce strict return types:
+  - Synchronous/One-off requests must return `Future<DomainResponse<T>>`. They **never** return raw `Future<T>`.
+  - Reactive subscriptions must return `Stream<T>` or `Stream<DomainResponse<T>>`.
+
+**B. Implementation (Data Layer)**
+- **Path:** Implementations sit in `data/repos/<aggregate>_repo_impl.dart`.
+- **Rule:** A single repository implementation may compose both local and remote sources. 
+  - For **local sources**, it often acts as a stateless passthrough (since Drift maintains the state), mapping database exceptions.
+  - For **remote sources**, it may use stateful in-memory caching (e.g. `BehaviorSubject` + `Map`) to broadcast network results.
+- **Template:**
+  ```dart
+  @LazySingleton(as: <Aggregate>Repo)
+  class <Aggregate>RepoImpl implements <Aggregate>Repo {
+    final <Aggregate>LocalSource localSource;
+    final <Aggregate>RemoteSource remoteSource;
+    
+    // Stateful caching for remote data
+    final _db = <String, DomainResponse<<Aggregate>Entity>>{};
+    final _subject = BehaviorSubject<Map<String, DomainResponse<<Aggregate>Entity>>>.seeded({});
+
+    <Aggregate>RepoImpl({
+      required this.localSource, 
+      required this.remoteSource,
+    });
+
+    // Example 1: Stateful Remote Interaction (Caching + Error Mapping)
+    @override
+    Future<DomainResponse<<Aggregate>Entity>> fetchRemote<Aggregate>({required String id}) async {
+      try {
+        _db[id] = Loading(data: _db[id]?.data);
+        _subject.add(Map.unmodifiable(_db));
+
+        final model = await remoteSource.get<Aggregate>(id: id);
+        final success = Success(model.toEntity());
+        _db[id] = success;
+        _subject.add(Map.unmodifiable(_db));
+        return success;
+      } on DioException catch (e) {
+        return Failure(error: NetworkError(e.response?.statusCode));
+      } catch (e) {
+        return Failure(error: UnknownError(e.toString()));
+      }
+    }
+
+    // Example 2: Stateless Local Interaction (DB Error Mapping)
+    @override
+    Future<DomainResponse<void>> updateLocal<Aggregate>({required <Aggregate>Entity item}) async {
+      try {
+        await localSource.update<Aggregate>(item: item);
+        return const Success(null);
+      } on Exception catch (e) {
+        return Failure(error: DatabaseError(message: e.toString()));
+      }
+    }
+
+    // Example 3: Stateless Local Stream (Stream Mapping)
+    @override
+    Stream<DomainResponse<<Aggregate>Entity>> <aggregate>Stream({required String id}) {
+      return localSource
+          .<aggregate>Stream(id)
+          .map((item) => Success(item) as DomainResponse<<Aggregate>Entity>)
+          .handleError((e) => Failure(error: DatabaseError(message: e.toString())));
+    }
+  }
+  ```
+
 ## Screen & Flow Structure
 
 A **screen** = has a route and a `Scaffold` (and usually a cubit). A **flow** =
