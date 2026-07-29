@@ -176,7 +176,152 @@ in providers, receiving deps through their constructors.
 4-File Unit). Everything else — cubits, repos, sources, use cases — receives its
 dependencies via constructor; injectable generates that wiring.
 
+## Domain Layer
+
+The domain layer is pure Dart. It knows nothing about Flutter, external APIs, databases, or UI. It defines the core business logic, entities, and the contracts (interfaces) for data retrieval.
+
+```
+domain/
+├── entities/                   # Equatable domain models
+│   └── <aggregate>_entity.dart
+├── repos/                      # Abstract repository interfaces
+│   └── <aggregate>_repo.dart
+├── responses/                  # DomainResponse<T> (Success/Failure) + DomainError
+│   ├── domain_response.dart
+│   └── domain_error.dart
+└── use_cases/                  # Business actions
+    ├── base/                   # ExecUseCase<T, Params>, StreamUseCase<T, Params>
+    └── <aggregate>/            # One directory per aggregate
+        ├── <action>_<aggregate>_use_case.dart
+        └── <aggregate>_stream_use_case.dart
+```
+
+### 1. Entities
+Entities are immutable data classes representing the core business models.
+- **Path:** `domain/entities/<aggregate>_entity.dart`
+- **Rule:** Must extend `Equatable`. Must contain a `props` getter.
+- **Template:**
+  ```dart
+  import 'package:equatable/equatable.dart';
+
+  class <Aggregate>Entity extends Equatable {
+    final String id;
+    final String title;
+
+    const <Aggregate>Entity({
+      required this.id,
+      required this.title,
+    });
+
+    @override
+    List<Object?> get props => [id, title];
+  }
+  ```
+
+### 2. Repository Interfaces
+Repository interfaces define the contract that the data layer must fulfill.
+- **Path:** `domain/repos/<aggregate>_repo.dart`
+- **Rule:** Pure abstract class. Synchronous actions must return `Future<DomainResponse<T>>`. Streams must return `Stream<DomainResponse<T>>` or `Stream<T>`.
+- **Template:**
+  ```dart
+  import 'package:app/domain/entities/<aggregate>_entity.dart';
+  import 'package:app/domain/responses/domain_response.dart';
+
+  abstract class <Aggregate>Repo {
+    Future<DomainResponse<void>> update<Aggregate>({required <Aggregate>Entity item});
+    Stream<DomainResponse<<Aggregate>Entity>> <aggregate>Stream({required String id});
+  }
+  ```
+
+### 3. Use Cases
+Use Cases encapsulate a single business action. They orchestrate repositories.
+- **Rule:** Must be annotated with `@injectable`.
+- **Rule:** Must extend `ExecUseCase<T, Params>` or `StreamUseCase<T, Params>`.
+- **Rule:** Must define a dedicated `<Action><Aggregate>UseCaseParams` class.
+- **Rule:** When checking repository responses, use Dart 3 pattern matching (`if (resp case Failure(:final error))`).
+
+**A. ExecUseCase (Future-based actions)**
+- **Path:** `domain/use_cases/<aggregate>/<action>_<aggregate>_use_case.dart`
+- **Template:**
+  ```dart
+  import 'package:app/domain/repos/<aggregate>_repo.dart';
+  import 'package:app/domain/responses/domain_response.dart';
+  import 'package:app/domain/use_cases/base/exec_use_case.dart';
+  import 'package:injectable/injectable.dart';
+
+  @injectable
+  class <Action><Aggregate>UseCase extends ExecUseCase<void, <Action><Aggregate>UseCaseParams> {
+    final <Aggregate>Repo repo;
+
+    <Action><Aggregate>UseCase({required this.repo});
+
+    @override
+    Future<DomainResponse<void>> exec(<Action><Aggregate>UseCaseParams params) async {
+      final resp = await repo.update<Aggregate>(item: params.item);
+
+      // Dart 3 pattern matching for early return on failure
+      if (resp case Failure(:final error)) {
+        return Failure(error: error);
+      }
+
+      return const Success(null);
+    }
+  }
+
+  class <Action><Aggregate>UseCaseParams {
+    final <Aggregate>Entity item;
+
+    <Action><Aggregate>UseCaseParams({required this.item});
+  }
+  ```
+
+**B. StreamUseCase (Reactive streams)**
+- **Path:** `domain/use_cases/<aggregate>/<aggregate>_stream_use_case.dart`
+- **Template:**
+  ```dart
+  import 'package:app/domain/entities/<aggregate>_entity.dart';
+  import 'package:app/domain/repos/<aggregate>_repo.dart';
+  import 'package:app/domain/responses/domain_response.dart';
+  import 'package:app/domain/use_cases/base/stream_use_case.dart';
+  import 'package:injectable/injectable.dart';
+
+  @injectable
+  class <Aggregate>StreamUseCase extends StreamUseCase<DomainResponse<<Aggregate>Entity>, <Aggregate>StreamUseCaseParams> {
+    final <Aggregate>Repo repo;
+
+    <Aggregate>StreamUseCase({required this.repo});
+
+    @override
+    Stream<DomainResponse<<Aggregate>Entity>> stream(<Aggregate>StreamUseCaseParams params) {
+      return repo.<aggregate>Stream(id: params.id);
+    }
+  }
+
+  class <Aggregate>StreamUseCaseParams {
+    final String id;
+
+    <Aggregate>StreamUseCaseParams({required this.id});
+  }
+  ```
+
 ## Data Layer
+
+```
+data/
+├── <aggregate>/                # Remote API implementation per aggregate
+│   ├── requests/               # API endpoint request classes
+│   │   └── <action>_<aggregate>_request.dart
+│   ├── remote_models/          # JSON serializable remote models
+│   │   └── <aggregate>_remote_model.dart
+│   └── remote_source/          # Dio executor and JSON parser
+│       └── <aggregate>_remote_source.dart
+├── sources/                    # Local (Drift) data sources
+│   └── <aggregate>/
+│       ├── <aggregate>_local_source.dart
+│       └── <aggregate>_local_source_impl.dart
+└── repos/                      # Repository implementations
+    └── <aggregate>_repo_impl.dart
+```
 
 ### 1. Remote Data Sources & API Requests
 
