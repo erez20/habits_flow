@@ -2,8 +2,9 @@
 
 Guidance for working in this codebase: a Flutter app following clean
 architecture with a reactive, stream-based data flow. Stack: flutter_bloc
-(cubits), get_it + injectable (DI), auto_route (navigation), drift (SQLite),
-rxdart (subjects & stream composition), fimber (logging).
+(cubits), get_it + injectable (DI), auto_route (navigation), rxdart
+(subjects & stream composition), fimber (logging), plus dio (remote API)
+and/or drift (SQLite) exactly as the stack table below dictates.
 
 ## Required Stack Packages
 
@@ -18,7 +19,12 @@ Projects adopting these conventions need these architectural dependencies.
 | Reactive stream composition | `rxdart` |
 | Logging | `fimber` |
 | Code generation | `build_runner` |
-| Local SQLite persistence | `drift`, `drift_flutter`, `drift_dev` |
+| Local SQLite persistence (only when the app persists locally) | `drift`, `drift_flutter`, `drift_dev` |
+| Remote API access (only when the app calls a remote API) | `dio`, `json_annotation`, `json_serializable` |
+
+The local-source (drift) and remote-source (dio) sections apply only when the
+app actually has that concern. Handrix has a remote API and no local
+persistence: dio yes, drift no.
 
 Keep this list aligned whenever this guide adds or removes an architectural
 dependency. Feature-specific packages belong in `pubspec.yaml`, not here.
@@ -47,7 +53,7 @@ lib/
 ├── domain/              # Pure Dart business layer — NO Flutter imports
 │   ├── entities/        # Equatable domain models
 │   ├── repos/           # Abstract repository interfaces (implemented in data/)
-│   ├── responses/       # DomainResponse<T> (Success/Failure) + sealed DomainError
+│   ├── responses/       # DomainResponse<T> (Success/Failure/Loading) + sealed DomainError
 │   └── use_cases/
 │       ├── base/        # ExecUseCase<T, Params>, StreamUseCase<T, Params>
 │       ├── <aggregate>/ # One directory per aggregate; one class per operation
@@ -85,7 +91,9 @@ Generated files (`*.g.dart`, `*.gr.dart`, `*.config.dart`) are never edited by h
   stay **pure Dart (no Flutter)** — `domain` may import it, and `domain` is
   Flutter-free. A helper that needs Flutter types is therefore not `core`: a
   pure-Dart extension goes in `core/extensions/`, a Flutter-typed one under
-  `ui/`.
+  `ui/`. The single exception: `core/` may import
+  `package:flutter/foundation.dart` (compile-time constants, pure
+  utilities) — nothing else from Flutter.
 - **`main/` is imported by no one.** It is the composition root: it may import
   anything to wire the app together, but nothing depends on it. If a lower layer
   seems to need something from `main`, `main` injects it downward instead (see
@@ -112,14 +120,23 @@ void configureDependencies() => getIt.init();
 changing any annotation, run
 `dart run build_runner build --delete-conflicting-outputs`.
 
+**Entrypoints & flavors.** `main/` owns `bootstrap.dart` plus one entrypoint
+per flavor; the environment flows into `configureDependencies`. Dev-only
+flags (mock API, screen jump) are neutralized outside debug builds inside
+bootstrap.
+
 **Logging setup.** Logging initialization lives in `core/logger/app_logger.dart`.
 `initLogger()` plants `DebugTree()` (or environment-specific trees) and is
 called in `main()` during bootstrap before `configureDependencies()`:
 
 ```dart
-// core/logger/app_logger.dart — pure logger initialization
+// core/logger/app_logger.dart — logger initialization
 void initLogger() {
-  Fimber.plantTree(DebugTree());
+  if (kDebugMode) {
+    Fimber.plantTree(DebugTree());
+  }
+  // Release trees (e.g. Crashlytics-backed) are planted by the composition
+  // root, which owns the Firebase dependency.
 }
 ```
 
@@ -175,6 +192,32 @@ consumers depend on the interface, never the impl.
 → singleton; scope-owned state (coordinators) → factory + the scope's `dispose`;
 stateless (use cases) → factory.
 
+**Mocks & environments.** Impl selection uses injectable environments: real
+impls `@LazySingleton(as: X, env: [Env.dev, Env.prod])`, mocks
+`@LazySingleton(as: X, env: [Env.mock])`, living beside the real impl.
+`configureDependencies(environment:)` selects the set; the bootstrap `mockApi`
+flag maps to `Env.mock`. A class registered with no `env:` exists in every
+environment (e.g. auth, which is always real). Mocks replace the *remote
+source* for API aggregates and the *impl* for platform services; repos are
+never mocked, so repo logic runs under `Env.mock` too.
+
+**Injectable constructors.** Never give an injectable class an optional
+dependency parameter — injectable will fill it (see Gotchas). Test seams use
+a `@visibleForTesting` named constructor.
+
+**Config scalars.** Flavour/config values (base URL, API keys, app version)
+reach lower layers as `@Named` primitives provided by a `main/` module —
+lower layers never import the flavour enum.
+
+**Async-initialised infra** (device ids, cached sessions) is built in
+`bootstrap` and registered under its concrete type before
+`configureDependencies`; a `main/` module exposes the interface over it —
+never via `ignoreUnregisteredTypes` (see Gotchas).
+
+**Interfaces are earned by consumers.** Only contracts consumed by `domain`
+or `ui` get a domain interface; an abstraction used solely inside `data/`
+(e.g. the token provider) stays in `data/` with no domain twin.
+
 **Source ownership:** a source has exactly one owner — its repo. No other class
 ever injects a source. Cross-aggregate needs go through the other aggregate's
 repo *interface*: preferably composed in a use case that injects both repos;
@@ -197,7 +240,7 @@ domain/
 │   └── <aggregate>_entity.dart
 ├── repos/                      # Abstract repository interfaces
 │   └── <aggregate>_repo.dart
-├── responses/                  # DomainResponse<T> (Success/Failure) + DomainError
+├── responses/                  # DomainResponse<T> (Success/Failure/Loading) + DomainError
 │   ├── domain_response.dart
 │   └── domain_error.dart
 └── use_cases/                  # Business actions
@@ -211,6 +254,20 @@ domain/
 Entities are immutable data classes representing the core business models.
 - **Path:** `domain/entities/<aggregate>_entity.dart`
 - **Rule:** Must extend `Equatable`. Must contain a `props` getter.
+- **Rule:** No raw `Map<String, dynamic>` fields — a loose or unstable server
+  payload stays a raw map only inside the remote model and reaches the domain
+  as a typed (possibly all-nullable) value object, so wire keys are read in
+  exactly one place.
+- **Rule:** Wire enums are promoted to `domain/entities/` member-by-member,
+  the moment one actually crosses the repo boundary (appears on an entity or
+  a repo signature) — never as a whole family preemptively. A sibling that
+  stays data-internal keeps a doc-comment pointer to its promoted relatives.
+- **Rule:** Enums appearing on entities are domain vocabulary and live in
+  `domain/entities/` (`api_enums.dart`); their JSON string mapping lives in
+  remote models. Display-string extensions on domain enums live under `ui/`,
+  never on the entity.
+- **Rule:** A classification needed by both `data/` and `ui/` lives in
+  `domain/`; the *route* half of any such mapping stays in `ui/routes/`.
 - **Template:**
   ```dart
   import 'package:equatable/equatable.dart';
@@ -232,7 +289,9 @@ Entities are immutable data classes representing the core business models.
 ### 2. Repository Interfaces
 Repository interfaces define the contract that the data layer must fulfill.
 - **Path:** `domain/repos/<aggregate>_repo.dart`
-- **Rule:** Pure abstract class. Synchronous actions must return `Future<DomainResponse<T>>`. Streams must return `Stream<DomainResponse<T>>` or `Stream<T>`.
+- **Rule:** Pure abstract class. Synchronous actions must return `Future<DomainResponse<T>>` — never raw `Future<T>`. Streams must return `Stream<DomainResponse<T>>` or `Stream<T>`.
+- **Rule:** Repo methods take entities or flat named params — never wire
+  models and never a `Map`; request-body shapes are data-layer internals.
 - **Template:**
   ```dart
   import 'package:<package_name>/domain/entities/<aggregate>_entity.dart';
@@ -249,6 +308,13 @@ Use Cases encapsulate a single business action. They orchestrate repositories.
 - **Rule:** Must be annotated with `@injectable`.
 - **Rule:** Must extend `ExecUseCase<T, Params>` or `StreamUseCase<T, Params>`.
 - **Rule:** Must define a dedicated `<Action><Aggregate>UseCaseParams` class.
+  An operation with no arguments omits the Params class and uses the shared
+  `NoParams` (in `use_cases/base/`) instead.
+- **Rule:** Cubits inject use cases only, never repos.
+- **Rule:** Every repo method gets a use case in the aggregate's phase
+  (eager) — no cubit should ever find a repo method unreachable.
+- **Rule:** Use cases return domain *intent* (e.g. a next-step enum), never
+  route names; mapping intent → route is UI-layer code in `ui/routes/`.
 - **Rule:** When checking repository responses, use Dart 3 pattern matching (`if (resp case Failure(:final error))`).
 
 **A. ExecUseCase (Future-based actions)**
@@ -314,6 +380,25 @@ Use Cases encapsulate a single business action. They orchestrate repositories.
     <Aggregate>StreamUseCaseParams({required this.id});
   }
   ```
+
+### 4. Domain Responses
+
+`DomainResponse<T>` is a sealed 3-variant type: `Success(data)`,
+`Failure(error)`, `Loading({data})` — Loading optionally carries the previous
+value for stale-while-refreshing UI. All variants expose a nullable `data`
+getter. `DomainError` is a sealed Equatable hierarchy (`NetworkError`,
+`UnauthorizedError`, `ValidationError`, `UnknownError`, …) extended only when
+an aggregate's error handling needs a new subtype.
+
+**Error mapping.** `DomainError` gains a subtype the moment any consumer must
+*distinguish* an outcome — including non-HTTP outcomes (a media asset rejected
+by validation, a poll budget running out). Once a subtype exists, every repo
+producing that outcome maps to it. A status or wire code that is meaningful on
+only one endpoint (a 409 on `deleteAccount` = "active jobs exist") is mapped
+only for that repo method, and the scoping is proven by a negative test (the
+same status elsewhere stays `NetworkError`). Repo-internal control-flow
+exceptions never escape the repo; cubits never see wire codes, status numbers,
+or message strings.
 
 ## Data Layer
 
@@ -463,17 +548,15 @@ Local sources are the *only* components that touch `AppDatabase`. They do not us
 
 ### 3. Repositories (Strict Error Boundaries & Data State)
 
-Repositories orchestrate data but never touch the DB or API directly. They are the strict error boundary mapped to `DomainResponse<T>`. 
+Repositories orchestrate data but never touch the DB or API directly. They are the strict error boundary mapped to `DomainResponse<T>`.
 
-**A. Interface & Return Types (Domain Layer)**
-- **Path:** Interfaces sit in `domain/repos/<aggregate>_repo.dart`.
-- **Rule:** Repositories must enforce strict return types:
-  - Synchronous/One-off requests must return `Future<DomainResponse<T>>`. They **never** return raw `Future<T>`.
-  - Reactive subscriptions must return `Stream<T>` or `Stream<DomainResponse<T>>`.
+The contract — paths, return types, parameter rules — is defined once in
+"Repository Interfaces" (Domain Layer) above. The implementation rules:
 
-**B. Implementation (Data Layer)**
 - **Path:** Implementations sit in `data/repos/<aggregate>_repo_impl.dart`.
-- **Rule:** A single repository implementation may compose both local and remote sources. 
+- **Rule:** Sources are single-call; sequencing, retries, and polling across
+  calls belong to the repo (or a use case when they span aggregates).
+- **Rule:** A single repository implementation may compose both local and remote sources.
   - For **local sources**, it often acts as a stateless passthrough (since Drift maintains the state), mapping database exceptions.
   - For **remote sources**, it may use stateful in-memory caching (e.g. `BehaviorSubject` + `Map`) to broadcast network results.
 - **Template:**
@@ -515,9 +598,9 @@ Repositories orchestrate data but never touch the DB or API directly. They are t
         _subject.add(Map.unmodifiable(_db));
         return success;
       } on DioException catch (e) {
-        return Failure(error: NetworkError(e.response?.statusCode));
+        return Failure(error: NetworkError(statusCode: e.response?.statusCode));
       } catch (e) {
-        return Failure(error: UnknownError(e.toString()));
+        return Failure(error: UnknownError(message: e.toString()));
       }
     }
 
@@ -542,6 +625,40 @@ Repositories orchestrate data but never touch the DB or API directly. They are t
     }
   }
   ```
+
+### 4. Platform Services
+
+Plugin wrappers (push, location, permissions, media, audio, deep links, SSO,
+payments SDK) follow the remote-source pattern: abstract interface in
+`domain/services/<name>_service.dart`, implementation in
+`data/services/<name>/<name>_service_impl.dart`, registered
+`@LazySingleton(as: <Name>Service)`. A mock, when one exists, sits beside the
+impl as `mock_<name>_service_impl.dart` / `Mock<Name>ServiceImpl`, registered
+`@LazySingleton(as: <Name>Service, env: [Env.mock])` (the real impl then takes
+`env: [Env.dev, Env.prod]`). Long-lived services (session monitoring,
+push listeners) expose explicit `Future<void> init()` / `void dispose()`
+called by the composition root, never by consumers.
+
+A platform service calling a third-party HTTP endpoint keeps the call inside
+its impl — the request/model/source triad applies only to the app's own API.
+
+Global UI effects — redirects like session expiry or forced upgrade, and
+app-level banners — are domain signal streams; only the composition root
+listens and performs the effect.
+
+### 5. Network Infrastructure
+
+`data/network/` holds the dio instance factory, base request classes
+(`GetRequest`, `PostRequest`, …), and interceptors (auth token refresh,
+headers, session/upgrade monitoring). Aggregate request classes extend the
+base verbs from here. `createBareDio()` is the sanctioned interceptor-free
+transport; its legitimate uses are token refresh and third-party/pre-signed
+endpoints.
+
+**Cross-aggregate reuse in `data/`.** Remote models, request classes and
+wire-JSON helpers may be imported across aggregates; sources and repos may
+not. When two aggregates share an endpoint family, one owns the models and
+the other imports them.
 
 ## Screen & Flow Structure
 
@@ -575,7 +692,21 @@ ui/
             └── widgets/
 ```
 
+**Persona grouping.** Apps with multiple personas may add exactly one
+grouping level: `ui/screens/{common,resident,pro}/<screen_name>/`. The
+grouping level is namespace only — it owns no code of its own.
+
+**Dev-only code.** Dev tooling (widget previews, debug menu) lives under
+`ui/` like any screen; preview harness directories are dev-only and may be
+excluded from architecture-test strictness only when unavoidable.
+
 **Widget Variant Selectors.** When a UI component has multiple state-driven view variants (e.g. an app bar switching between a standard view and a selection view based on screen state), group the variants and their builder/selector widget together inside a single component directory (`widgets/<component_name>/`). The builder widget (e.g. `<Component>Builder`) owns the `BlocBuilder` switching logic and renders the appropriate variant.
+
+A content-heavy variant widget may take the whole screen state
+(`TrackingLiveContent(state: state, ...)`) — it is screen-private, so the
+coupling is already there. Smaller private pieces take explicit named params,
+and reusable widgets under `ui/widgets/` always do (params in, callbacks
+out — never a screen's state object).
 
 ### The 4-File Unit
 
@@ -591,7 +722,9 @@ named after it (`<name>_widget.dart` or `<name>_screen.dart`, `<name>_cubit.dart
 
 A cubit is never mandatory. If a widget has no state and no actions requiring a cubit, the other files don't exist: just `*_widget.dart` (or `<screen_name>_screen.dart`). Purely
 view-mechanical state (`AnimationController`, `TextEditingController`, scroll
-position) uses a `StatefulWidget`, not a cubit. Reusable helper widgets without
+position) uses a `StatefulWidget`, not a cubit. A timer whose value feeds a
+request payload or enforces a business limit is not view-mechanical — it
+belongs in the cubit. Reusable helper widgets without
 a 4-file unit use free descriptive naming without a required view suffix.
 
 **Provider forms.** Most providers are a `StatelessWidget` returning a `BlocProvider`
@@ -605,6 +738,18 @@ dispose it in `dispose()`, and forward updated parent properties to the cubit in
 `RootStackRouter` and annotated with `@AutoRouterConfig`. It owns the root
 `AutoRoute` list, including the initial route and default route type. The root
 app widget supplies this router's configuration; it does not declare routes.
+
+**Guards & deep links.** Route guards (auth/session) are auto_route guards
+owned by the router; deep links and push-driven navigation flow from the
+links/notifications platform services into the router at the composition
+root. Adopting auto_route in an existing named-route app is one atomic
+cutover, not a per-screen migration.
+
+**Route arguments** carry primitives or UI models — never entities or wire
+models; flatten at the launcher rather than re-fetching by id.
+
+**Dev tooling** may consume a derived path list the router exposes and push
+by path, so a new route needs no second registration.
 
 **Routing:** `@RoutePage()` goes on the outermost widget of each stack:
 
@@ -642,7 +787,21 @@ uses the standard single `Equatable` state structure: an empty state class
 (`props => []`), a parameterless `factory <Name>.init() => const <Name>()`, and a
 no-op `copyWith()`.
 
-**No inline conditional rendering logic in widgets.** Widgets must never contain inline conditional branch expressions (such as `if (condition) Widget1() else Widget2()` or ternary operators choosing between distinct view branches). Any condition that determines layout branching must be evaluated in the cubit or computed on the state class (or UI model) as a field or getter. The widget only inspects state properties to select what to render.
+**Time is a dependency.** A cubit that needs the current time takes
+`DateTime Function() now` via its constructor (defaulted to `DateTime.now`).
+Clock-derived values are computed once in the cubit and stored as state
+data — state getters, UI models, and `fromEntity` factories never call
+`DateTime.now()`. Genuine real-time infrastructure (e.g. token TTL) is
+exempt, and each exemption is named explicitly in the architecture test.
+Fixtures compared against the clock are defined relative to the injected
+clock, never as absolute dates.
+
+**No state-driven view branching in widgets.** A condition that *chooses
+between* view variants is evaluated in the cubit or computed on the state/UI
+model, and the widget renders via a variant selector (builder + one widget per
+variant). Two things stay inline: a boolean *gate* that shows or hides a
+single subtree (`if (state.hasError) ...[ErrorBanner()]`), and a reusable
+widget styling itself from its own constructor parameters.
 
 ### Theme & Constants
 
@@ -667,14 +826,31 @@ genuinely different projection.
 A model is promoted up the ladder only when a consumer from a wider scope
 actually appears — never preemptively.
 
+The same ladder applies to UI value types (enums, small plain classes): a
+type consumed by one screen lives in that screen's directory (beside its
+state or under its `ui_models/`); `ui/type/` is earned only by proven
+cross-screen reuse.
+
 - **Cubits and widgets deal only with UI models — never entities.** Entities
   appear inside a cubit only *in transit* at the domain boundary: map with
   `fromEntity` the moment a use case delivers one, and with `toEntity` right at
   the call when submitting back. State fields, widget code, and cubit public
   APIs never carry an entity.
 - **Always `Equatable`, always `copyWith`** — same requirements as states.
-- **`fromEntity` always; `toEntity` only if some flow actually submits the
-  model back** to a use case.
+- **`fromEntity` when an entity backs the model; `toEntity` only if some flow
+  actually submits it back** to a use case. An input-only model the server
+  never returns legitimately has only `toEntity`.
+- **Widget config is not a UI model.** A class carrying callbacks has no `UI`
+  suffix and no Equatable contract; it lives in the consuming widget's file.
+- **Locale-dependent formatting** (dates, currency via
+  `MaterialLocalizations`) happens in the widget; the UI model carries the
+  raw value.
+- **Pure value-object entities** (e.g. a geo point) may appear as widget
+  parameters; aggregate entities may not.
+- **UI models carry meaning, not paint.** When styling is state-derived, the
+  model exposes a semantic variant (`JobCardAccent.enRoute`), and the widget
+  maps variant → theme values — a UI model never holds `Color`/`Gradient` or
+  imports `ui/theme`.
 - **Conversions get their own line.** Never bury `fromEntity`/`toEntity` inside
   another call's argument list — assign to a named local first, then pass it:
 
@@ -738,7 +914,9 @@ they are leaf units, like widgets. Small dialog-internal pieces are private
 classes in the dialog's own file; anything that earns its own unit goes in the
 screen's `widgets/` (also the natural home for a widget shared by several
 dialogs, e.g. a color picker used by two forms). Inside a dialog's subtree the
-communication rules apply with the dialog's cubit as the father.
+communication rules apply with the dialog's cubit as the father. Dialog
+*chrome* — a shell widget a dialog composes (no route, no `show()`) — is a
+plain reusable widget under `ui/widgets/`, not a dialog.
 
 **The route boundary.** A dialog's route is a *sibling* of the screen's route,
 not a child — the screen's providers are unreachable from inside it, so the
@@ -752,7 +930,13 @@ widget communication rules do not cross it. Instead:
 - **Never bridge with `BlocProvider.value`** to observe a screen cubit from a
   dialog. A dialog that needs *live* data gets its own cubit subscribing to a
   domain stream, keyed by ids passed as params — same logic as rule 2: a cubit
-  that needs live data goes to the domain, never to another cubit.
+  that needs live data goes to the domain, never to another cubit. The one
+  exception: live *device/session* state owned by the parent cubit with no
+  domain stream (e.g. a recorder's elapsed seconds) may be observed via
+  `BlocProvider.value`.
+- **Platform services:** a dialog that needs one gets it via its own provider
+  (stateful dialogs), via the launcher passing it in, or by reading a public
+  field the screen cubit exposes for that purpose.
 
 **Opening.** Every dialog exposes a
 `static Future<T?> show(BuildContext context, {...})` that owns the route
@@ -770,7 +954,7 @@ Guard with `context.mounted` before using a context after any `await`.
 
 The coordinator coordinates through rx: it is a plain class (abstract interface
 + `Impl`, registered `@Injectable(as: ...)`) holding **one `BehaviorSubject` per
-signal**, with void methods as the write side and streams as the read side:
+  signal**, with void methods as the write side and streams as the read side:
 
 ```dart
 abstract class <Name>Coordinator {
@@ -838,101 +1022,73 @@ The rules that make it work:
   and rewritable when files move; bare same-dir imports keep a unit's internal
   wiring intact when its whole directory moves. No lint expresses this hybrid —
   `avoid_relative_lib_imports` guards the worst case, the rest is convention.
-- **Named parameters, always:** constructors and multi-parameter functions take
-  named parameters (`{required this.xxx}`), never positional. Since named
-  parameters cannot be private, injected dependency fields are public
-  (`final ItemRepo itemRepo`, not `_repo`). The one exception: single-value
-  wrappers and converters (`Success(data)`, `fromEntity(entity)`,
-  `exec(params)`) keep their single positional parameter — naming it adds
-  noise, and positional keeps them tear-off friendly.
+- **Named parameters, always:** constructors and functions take named
+  parameters (`{required this.xxx}`), never positional — including
+  single-argument methods (`deletePaymentMethod({required paymentMethodId})`,
+  `geocodeAddress({required address})`). Since named parameters cannot be
+  private, injected dependency fields are public (`final ItemRepo itemRepo`,
+  not `_repo`). The only exceptions are exactly the single-value wrappers and
+  converters `Success(data)`, `fromEntity(entity)`, and `exec(params)` —
+  naming those adds noise, and positional keeps them tear-off friendly.
+- **Naming:** intention-revealing, pronounceable, searchable. Classes are
+  nouns, methods are verbs. Grab-bag words are banned: no `Manager`,
+  `Helper`, `Util`, `data`, `info` — name the responsibility instead.
+- **Comments:** code should explain itself; a comment states only what the
+  code cannot (a constraint, a warning, a wire quirk). Never commit
+  commented-out code — delete it, git remembers.
+- **Functions do one thing** at one level of abstraction, with no hidden
+  side effects. Dispatching *is* one thing: `if (cond) funcA() else funcB()`
+  — or a builder choosing between named widgets (see Widget Variant
+  Selectors) — is the preferred shape for branching. Extract the branch
+  *bodies* into named functions/widgets; never replace a simple branch with
+  a class hierarchy.
+- **Composition over inheritance.** The only sanctioned base classes are the
+  framework seams this guide defines: `ExecUseCase`/`StreamUseCase`, the
+  request base verbs (`GetRequest`, `PostRequest`, …), and the sealed
+  `DomainResponse`/`DomainError` hierarchies. Never introduce a
+  `BaseCubit`/`BaseScreen`/`BaseWidget` — shared behavior travels by
+  composition (a wrapper widget like `BaseAppScreen` that screens *nest*,
+  a helper class cubits *inject*), never by extension.
+
+## Testing Notes
+
+- After a route push, always `pumpAndSettle()` — a fixed-duration `pump`
+  races the router's transition.
+- Arrange-Act-Assert structure; one behavior per test; the test name states
+  the behavior (`'UpdateAddressUseCase forwards the address id'`), not the
+  method under test. Test code is held to production-code standards.
 
 ## Architecture Tests
 
-To ensure the dependency rules are never violated, every project must include an automated architecture test. This test programmatically parses all `.dart` files and enforces the layer import boundaries.
+Every project includes an automated architecture test that parses all `.dart`
+files and enforces the rules mechanically — prose is guidance, the test is
+law. **The file itself is the source of truth: `test/architecture_test.dart`.**
+This section lists only what it must cover, so the doc never drifts from the
+code:
 
-**Path:** `test/architecture_test.dart`
-**Template:**
-```dart
-import 'dart:io';
-import 'package:flutter_test/flutter_test.dart';
+- The layer boundaries: `domain` imports no `main`/`ui`/`data`; `ui` imports
+  only `ui`/`domain`/`core`; `data` imports only `data`/`domain`/`core`;
+  `core` imports only `core`.
+- `lib/` holds exactly the sanctioned roots (`main.dart` plus
+  `main/core/domain/data/ui` and any explicitly listed dev-only roots).
+- No public member of a `*_cubit.dart` carries an Entity type.
+- No `DateTime.now()` outside `main/` and cubits; each genuine exemption is
+  named explicitly in the test.
+- Every dialog under `ui/dialogs/` has at least two consuming screens.
 
-void main() {
-  group('Architecture Dependencies', () {
-    // Recursively get all .dart files in a directory
-    List<File> getDartFiles(String path) {
-      final dir = Directory(path);
-      if (!dir.existsSync()) return [];
-      return dir
-          .listSync(recursive: true)
-          .whereType<File>()
-          .where((f) => f.path.endsWith('.dart'))
-          .toList();
-    }
+When a prose rule in this document becomes mechanically checkable, it gains a
+check in that file — extend the test, don't restate the code here.
 
-    // Extract all package:<package_name>/ imports from a file
-    List<String> getInternalImports(File file) {
-      final lines = file.readAsLinesSync();
-      final imports = <String>[];
-      for (final line in lines) {
-        final trimmed = line.trim();
-        // Support both single and double quotes
-        if (trimmed.startsWith('import ') && trimmed.contains('package:<package_name>/')) {
-          final match = RegExp(r"package:<package_name>/([^'""" + r'"]+)').firstMatch(trimmed);
-          if (match != null) {
-            imports.add(match.group(1)!);
-          }
-        }
-      }
-      return imports;
-    }
+## Gotchas (reference)
 
-    test('Domain layer must not import main, ui, or data', () {
-      final domainFiles = getDartFiles('lib/domain');
-      
-      for (final file in domainFiles) {
-        final imports = getInternalImports(file);
-        for (final imp in imports) {
-          final topLevelDir = imp.split('/').first;
-          expect(
-            ['main', 'ui', 'data'].contains(topLevelDir),
-            isFalse,
-            reason: 'File ${file.path} violates architecture rules by importing $imp. Domain layer cannot import main, ui, or data.',
-          );
-        }
-      }
-    });
+Incidents that produced rules above — kept for the *why*, read on demand:
 
-    test('UI layer must only import ui, domain, or core', () {
-      final uiFiles = getDartFiles('lib/ui');
-      
-      for (final file in uiFiles) {
-        final imports = getInternalImports(file);
-        for (final imp in imports) {
-          final topLevelDir = imp.split('/').first;
-          expect(
-            ['ui', 'domain', 'core'].contains(topLevelDir),
-            isTrue,
-            reason: 'File ${file.path} violates architecture rules by importing $imp. UI layer can only import ui, domain, or core.',
-          );
-        }
-      }
-    });
-
-    test('Data layer must only import data, domain, or core', () {
-      final dataFiles = getDartFiles('lib/data');
-      
-      for (final file in dataFiles) {
-        final imports = getInternalImports(file);
-        for (final imp in imports) {
-          final topLevelDir = imp.split('/').first;
-          expect(
-            ['data', 'domain', 'core'].contains(topLevelDir),
-            isTrue,
-            reason: 'File ${file.path} violates architecture rules by importing $imp. Data layer can only import data, domain, or core.',
-          );
-        }
-      }
-    });
-  });
-}
-```
+- **Optional dependency on an injectable class:** injectable fills optional
+  parameters like required ones. An optional `Dio?` test seam once silently
+  routed the app's authenticated dio to a third-party API. Hence: no optional
+  deps on injectables; test seams are `@visibleForTesting` named constructors.
+- **`ignoreUnregisteredTypes` stack overflow:** passing a type that other
+  registrations depend on to `ignoreUnregisteredTypes` makes
+  injectable_generator's dependency sort stack-overflow with no useful error.
+  Hence: async-initialised infra is registered under its concrete type in
+  bootstrap before `configureDependencies` runs.
